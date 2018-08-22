@@ -1,0 +1,7 @@
+tr{
+	font-family: arial;
+}
+
+.dataTables tbody tr {
+min-height: 17px; /* or whatever height you need to make them all consistent */
+}
