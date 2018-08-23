@@ -20,6 +20,7 @@
 
 		var nasdaqList = new Array(); 
 		var nyseAmexList = new Array();
+		var pinkList = new Array();
 
 		var tableNasdaq = $('#nasdaq').DataTable( {
 	  		"paging":   false,
@@ -27,7 +28,22 @@
 	        "info":     false, 
 	        "searching": false 
 		} );
-		
+
+		var tableNYSE = $('#nyse-amex').DataTable( {
+	  		"paging":   false,
+	        "ordering": false,
+	        "info":     false, 
+	        "searching": false 
+		});
+
+		var tablePink = $('#pink').DataTable( {
+	  		"paging":   false,
+	        "ordering": false,
+	        "info":     false, 
+	        "searching": false 
+		});
+
+
 /*
 		$('#nasdaq tbody').on('click', 'tr', function () {
 			var data = tableNasdaq.row( this ).data();
@@ -55,13 +71,7 @@ alert("symbol is " + symbol);
 
 		});
 
-		var tableNYSE = $('#nyse-amex').DataTable( {
-	  		"paging":   false,
-	        "ordering": false,
-	        "info":     false, 
-	        "searching": false 
 
-		});
 		
 /*
 		$('#nyse-amex tbody').on('click', 'tr', function () {
@@ -94,6 +104,11 @@ alert("symbol is " + symbol);
 
 	function addRows(){
 		$.get('http://localhost/screener/percent-decliners.json', function(data){
+
+console.log("file data is:");
+console.log(data);
+
+
 			var tableNasdaq = $('#nasdaq').DataTable();
 
 			tableNasdaq
@@ -113,10 +128,10 @@ alert("symbol is " + symbol);
 				tableNasdaq.row.add([
 					key, 
 					value.last, 
-					value.change,
-					value .volume, 
+					value.change.toFixed(2),
+					value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 					value.low, 
-					"<div class='nasdaq'><i class='icon-remove nasdaq'></i></div>"
+					"<div class='nasdaq'><i class='icon-remove'></i></div>"
         			] ); 
 
 			}
@@ -130,25 +145,43 @@ alert("symbol is " + symbol);
 
 			arrayNYSEAmex = data.NYSEAMEX; 
 
-console.log(arrayNYSEAmex);
-
 			for (const [key, value] of Object.entries(arrayNYSEAmex))
 			{
 
 				tableNYSEAmex.row.add([
 					key, 
 					value.last, 
-					value.change,
-					value .volume, 
+					value.change.toFixed(2),
+					value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 					value.low, 
-					"<div class='nasdaq'><i class='icon-remove nasdaq'></i></div>"
+					"<div class='nyse-amex'><i class='icon-remove'></i></div>"
         			] ); 
 
 			}
 
 			tableNYSEAmex.draw();
 
+			var tablePink = $('#pink').DataTable();
+			tablePink
+				.clear(); 
 
+			arrayPink = data.PINK; 
+
+			for (const [key, value] of Object.entries(arrayPink))
+			{
+
+				tablePink.row.add([
+					key, 
+					value.last, 
+					value.change.toFixed(2),
+					value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+					value.low, 
+					"<div class='pink'><i class='icon-remove'></i></div>"
+        			] ); 
+
+			}
+
+			tablePink.draw();
 
 		});
 
@@ -162,21 +195,69 @@ console.log(arrayNYSEAmex);
 
 <html>
 
-
-
-
 <body>
-
-
-
-
 
 <table class=display>
 
 <tr>
 
 	<td  valign="top">
-		<table id="nasdaq"  class="display" border=1>
+		<table id="pink"  class="display tableFont" border=1 style="font-size: 20px;">
+			<thead>
+				<tr>
+					<th colspan=6>
+					PINK
+					</th>
+				</tr>
+				<tr height = "15px;">
+					<th>	
+						Symbol
+					</th>
+					<th>	
+						Last
+					</th>	
+					<th>	
+						Change %
+					</th>
+					<th>	
+						Volume
+					</th>
+					<th>	
+						Low
+					</th>
+					<th>
+						
+					</th>
+				</tr>
+			</thead>
+			<tbody>	
+				<tr >
+					<td>	
+						Symbol
+					</td>
+					<td>
+						Last
+					</td>
+					<td>	
+						Change%
+					</td>
+					<td>	
+						Volume
+					</td>
+					<td>	
+						Low
+					</td>
+					<td>
+						
+					</td>
+				</tr>			
+			</tbody>	
+
+		</table>
+	</td>
+
+	<td  valign="top">
+		<table id="nasdaq"  class="display" border=1  style="font-size: 20px;">
 			<thead>
 				<tr>
 					<th colspan=6>
@@ -231,7 +312,7 @@ console.log(arrayNYSEAmex);
 	</td>
 
 	<td valign="top">
-		<table id="nyse-amex"  class="display" border=1>
+		<table id="nyse-amex"  class="display" border=1   style="font-size: 20px;" >
 			<thead>
 				<tr>
 					<th colspan=6>
@@ -293,6 +374,70 @@ console.log(arrayNYSEAmex);
   		</button>
 
 	</td>
+
+
+	<td  valign="top">
+		<table class="display" border=1>
+			<thead>
+				<tr>
+					<th colspan=2>
+					Show PINK
+					</th>
+				</tr>
+
+			</thead>
+			<tbody>	
+				<tr >
+					<td>	
+						Symbol
+					</td>
+				</tr>			
+			</tbody>	
+
+		</table>
+	</td>
+
+		<td  valign="top">
+		<table class="display" border=1>
+			<thead>
+				<tr>
+					<th colspan=2>
+					Show Nasdaq
+					</th>
+				</tr>
+			</thead>
+			<tbody>	
+				<tr >
+					<td>	
+						Symbol
+					</td>
+				</tr>			
+			</tbody>	
+
+		</table>
+	</td>
+
+		<td  valign="top">
+		<table class="display" border=1>
+			<thead>
+				<tr>
+					<th colspan=2>
+					Show NYSE/AMEX
+					</th>
+				</tr>
+			</thead>
+			<tbody>	
+				<tr >
+					<td>	
+						Symbol
+					</td>
+				</tr>			
+			</tbody>	
+
+		</table>
+	</td>
+
+
 
 </tr>
 
