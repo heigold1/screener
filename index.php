@@ -36,7 +36,8 @@
 */ 
 
 		$(document).on('click', '.nasdaq', function (evt) {
-			var data = $(this).closest('tr').children();
+			var row = $(this).closest('tr'); 
+			var data = row.children();
 			var symbol = $(data[0]).text();
 
 alert("symbol is " + symbol);
@@ -47,6 +48,10 @@ alert("symbol is " + symbol);
 
 			nasdaqList.push(symbol);
 			console.log(nasdaqList);
+
+			var nasdaqTable = $('#nasdaq').DataTable();
+     			nasdaqTable.row( row ).remove();
+     			nasdaqTable.draw();
 
 		});
 
@@ -97,20 +102,10 @@ alert("symbol is " + symbol);
 			arrayNasdaq = data.NASDAQ; 
 
 //delete arrayNasdaq["AMDA"];
- 
- 
- /*
-  			var sound = document.getElementById("text-alert-sound");
-  			sound.play();
-*/
 
-// 			playSound();
-
-			var audio = new Audio('./wav/text-alert.wav');
+/*			var audio = new Audio('./wav/text-alert.wav');
 			audio.play();
-
-	
-
+*/
 
 			for (const [key, value] of Object.entries(arrayNasdaq))
 			{
@@ -127,15 +122,37 @@ alert("symbol is " + symbol);
 			}
 
 			tableNasdaq.draw();
+
+			var tableNYSEAmex = $('#nyse-amex').DataTable();
+
+			tableNYSEAmex
+    			.clear(); 
+
+			arrayNYSEAmex = data.NYSEAMEX; 
+
+console.log(arrayNYSEAmex);
+
+			for (const [key, value] of Object.entries(arrayNYSEAmex))
+			{
+
+				tableNYSEAmex.row.add([
+					key, 
+					value.last, 
+					value.change,
+					value .volume, 
+					value.low, 
+					"<div class='nasdaq'><i class='icon-remove nasdaq'></i></div>"
+        			] ); 
+
+			}
+
+			tableNYSEAmex.draw();
+
+
+
 		});
 
 	}
-
-	function playSound() {
-  		var sound = document.getElementById("text-alert-sound");
-  		sound.play();
-	}
-
 
 	</script>
 
@@ -216,7 +233,11 @@ alert("symbol is " + symbol);
 	<td valign="top">
 		<table id="nyse-amex"  class="display" border=1>
 			<thead>
-
+				<tr>
+					<th colspan=6>
+					NYSE/AMEX
+					</th>
+				</tr>
 
 				<tr height = "15px;">
 					<th>	
