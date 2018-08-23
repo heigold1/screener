@@ -31,16 +31,24 @@
 /*
 		$('#nasdaq tbody').on('click', 'tr', function () {
 			var data = tableNasdaq.row( this ).data();
-			alert( 'You clicked on '+data[0]+'\'s row' );
+			alert( 'You clicked on '+data[0]+'\'s row' ); 
 		} );
 */ 
 
+		$(document).on('click', '.nasdaq', function (evt) {
+			var data = $(this).closest('tr').children();
+			var symbol = $(data[0]).text();
 
-		$(document).on('click', '.nasdaq', function () {
-			alert('clicked on delete icon');
+alert("symbol is " + symbol);
+
+			evt.stopPropagation();
+			evt.preventDefault();
+
+
+			nasdaqList.push(symbol);
+			console.log(nasdaqList);
+
 		});
-
-
 
 		var tableNYSE = $('#nyse-amex').DataTable( {
 	  		"paging":   false,
@@ -81,50 +89,83 @@
 
 	function addRows(){
 		$.get('http://localhost/screener/percent-decliners.json', function(data){
-// 			alert(data);
 			var tableNasdaq = $('#nasdaq').DataTable();
 
 			tableNasdaq
     			.clear(); 
 
 			arrayNasdaq = data.NASDAQ; 
-			for(var i = 0; i < arrayNasdaq.length; i++) {
-			    var obj = arrayNasdaq[i];
-			    console.log(obj.symbol);
+
+//delete arrayNasdaq["AMDA"];
+ 
+ 
+ /*
+  			var sound = document.getElementById("text-alert-sound");
+  			sound.play();
+*/
+
+// 			playSound();
+
+			var audio = new Audio('./wav/text-alert.wav');
+			audio.play();
+
+	
+
+
+			for (const [key, value] of Object.entries(arrayNasdaq))
+			{
 
 				tableNasdaq.row.add([
-					obj.symbol, 
-					obj.last, 
-					obj.change,
-					obj.volume, 
-					obj.low, 
+					key, 
+					value.last, 
+					value.change,
+					value .volume, 
+					value.low, 
 					"<div class='nasdaq'><i class='icon-remove nasdaq'></i></div>"
         			] ); 
+
 			}
+
 			tableNasdaq.draw();
 		});
 
 	}
 
+	function playSound() {
+  		var sound = document.getElementById("text-alert-sound");
+  		sound.play();
+	}
+
+
 	</script>
+
 
 
 </head>
 
-
 <html>
+
+
+
 
 <body>
 
-<table class=display >
-<tr colspan=6>
-TEST
-</tr>
+
+
+
+
+<table class=display>
+
 <tr>
 
 	<td  valign="top">
 		<table id="nasdaq"  class="display" border=1>
 			<thead>
+				<tr>
+					<th colspan=6>
+					NASDAQ
+					</th>
+				</tr>
 				<tr height = "15px;">
 					<th>	
 						Symbol
@@ -147,7 +188,7 @@ TEST
 				</tr>
 			</thead>
 			<tbody>	
-				<tr style="background-color:red; height: 10px">
+				<tr >
 					<td>	
 						Symbol
 					</td>
@@ -155,7 +196,7 @@ TEST
 						Last
 					</td>
 					<td>	
-						Change %
+						Change%
 					</td>
 					<td>	
 						Volume
@@ -233,6 +274,7 @@ TEST
 	</td>
 
 </tr>
+
 
 </body>
 </html>
