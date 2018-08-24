@@ -3,5 +3,13 @@ tr{
 }
 
 .dataTables tbody tr {
-min-height: 17px; /* or whatever height you need to make them all consistent */
+min-height: 20px; /* or whatever height you need to make them all consistent */
+}
+
+.tableFont{
+	font-size: 20px;
+}
+
+.redClass{
+	background-color: red !important;
 }

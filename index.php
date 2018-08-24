@@ -18,30 +18,69 @@
 	<script type="text/javascript" class="init">
 	$(document).ready(function() {
 
-		var nasdaqList = new Array(); 
-		var nyseAmexList = new Array();
-		var pinkList = new Array();
-
-		var tableNasdaq = $('#nasdaq').DataTable( {
-	  		"paging":   false,
-	        "ordering": false,
-	        "info":     false, 
-	        "searching": false 
-		} );
-
-		var tableNYSE = $('#nyse-amex').DataTable( {
-	  		"paging":   false,
-	        "ordering": false,
-	        "info":     false, 
-	        "searching": false 
-		});
-
+		//PINK List
 		var tablePink = $('#pink').DataTable( {
 	  		"paging":   false,
 	        "ordering": false,
 	        "info":     false, 
+	        "searching": false, 
+	        "createdRow": function( row, data, dataIndex ) {
+            	if ( data[2] > 30  ) {
+         			$(row).addClass('redClass');
+         		}
+         	} 
+		});
+
+		// NASDAQ
+		var tableNasdaq = $('#nasdaq').DataTable( {
+	  		"paging":   false,
+	        "ordering": false,
+	        "info":     false, 
+	        "searching": false, 
+	        "createdRow": function( row, data, dataIndex ) {
+            	if ( data[2] > 10  ) {
+         			$(row).addClass('redClass');
+         		}
+         	}
+		} );
+
+		//NYSE
+		var tableNYSEAmex = $('#nyse-amex').DataTable( {
+	  		"paging":   false,
+	        "ordering": false,
+	        "info":     false, 
+	        "searching": false, 
+	        "createdRow": function( row, data, dataIndex ) {
+            	if ( data[2] > 10  ) {
+         			$(row).addClass('redClass');
+         		}
+         	} 
+		});
+
+		//PINK List
+		var tablePink = $('#pink-list').DataTable( {
+	  		"paging":   false,
+	        "ordering": false,
+	        "info":     false, 
+	        "searching": false
+		});
+
+		// Nasdaq List
+		var tableNasdaqList = $('#nasdaq-list').DataTable( {
+	  		"paging":   false,
+	        "ordering": false,
+	        "info":     false, 
 	        "searching": false 
 		});
+
+
+		var tableNYSEAmexList = $('#nyse-amex-list').DataTable( {
+	  		"paging":   false,
+	        "ordering": false,
+	        "info":     false, 
+	        "searching": false 
+		});
+
 
 
 /*
@@ -56,21 +95,116 @@
 			var data = row.children();
 			var symbol = $(data[0]).text();
 
-alert("symbol is " + symbol);
-
 			evt.stopPropagation();
 			evt.preventDefault();
-
-
-			nasdaqList.push(symbol);
-			console.log(nasdaqList);
 
 			var nasdaqTable = $('#nasdaq').DataTable();
      			nasdaqTable.row( row ).remove();
      			nasdaqTable.draw();
 
+
+			var tableNasdaqList = $('#nasdaq-list').DataTable();
+
+			tableNasdaqList.row.add([
+				symbol, 
+				"<div class='nasdaq-list'><i class='icon-remove'></i></div>"
+    			] ); 
+
+
+			tableNasdaqList.draw();
+
 		});
 
+
+		$(document).on('click', '.pink', function (evt) {
+			var row = $(this).closest('tr'); 
+			var data = row.children();
+			var symbol = $(data[0]).text();
+
+			evt.stopPropagation();
+			evt.preventDefault();
+
+
+			var nasdaqTable = $('#pink').DataTable();
+     			nasdaqTable.row( row ).remove();
+     			nasdaqTable.draw();
+
+
+			var tablePinkList = $('#pink-list').DataTable();
+
+			tablePinkList.row.add([
+				symbol, 
+				"<div class='pink-list'><i class='icon-remove'></i></div>"
+    			] ); 
+
+
+			tablePinkList.draw();
+
+		});
+
+
+		$(document).on('click', '.nyse-amex', function (evt) {
+			var row = $(this).closest('tr'); 
+			var data = row.children();
+			var symbol = $(data[0]).text();
+
+			evt.stopPropagation();
+			evt.preventDefault();
+
+			var nasdaqTable = $('#nyse-amex').DataTable();
+     			nasdaqTable.row( row ).remove();
+     			nasdaqTable.draw();
+
+			var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
+
+			tableNYSEAmexList.row.add([
+				symbol, 
+				"<div class='nyse-amex-list'><i class='icon-remove'></i></div>"
+    			] ); 
+
+			tableNYSEAmexList.draw();
+		});
+
+
+
+		$(document).on('click', '.nasdaq-list', function (evt) {
+			var row = $(this).closest('tr'); 
+			var data = row.children();
+			var symbol = $(data[0]).text();
+
+			evt.stopPropagation();
+			evt.preventDefault();
+
+			var nasdaqTable = $('#nasdaq-list').DataTable();
+     			nasdaqTable.row( row ).remove();
+     			nasdaqTable.draw();
+     	});
+
+		$(document).on('click', '.pink-list', function (evt) {
+			var row = $(this).closest('tr'); 
+			var data = row.children();
+			var symbol = $(data[0]).text();
+
+			evt.stopPropagation();
+			evt.preventDefault();
+
+			var nasdaqTable = $('#pink-list').DataTable();
+     			nasdaqTable.row( row ).remove();
+     			nasdaqTable.draw();
+     	});
+
+		$(document).on('click', '.nyse-amex-list', function (evt) {
+			var row = $(this).closest('tr'); 
+			var data = row.children();
+			var symbol = $(data[0]).text();
+
+			evt.stopPropagation();
+			evt.preventDefault();
+
+			var nasdaqTable = $('#nyse-amex-list').DataTable();
+     			nasdaqTable.row( row ).remove();
+     			nasdaqTable.draw();
+     	}); 
 
 		
 /*
@@ -89,41 +223,56 @@ alert("symbol is " + symbol);
     			.clear()
     			.draw();
 
-
 			var tableNYSE = $('#nyse-amex').DataTable();
  
 			tableNYSE
     			.clear()
     			.draw();
 
+			var tablePink = $('#pink').DataTable();
+ 
+			tablePink
+    			.clear()
+    			.draw();
+
+
     		addRows();
 
 		});
 
-	} );
+		countdown();
+
+
+	});
 
 	function addRows(){
 		$.get('http://localhost/screener/percent-decliners.json', function(data){
 
-console.log("file data is:");
-console.log(data);
-
-
+			var audio = new Audio('./wav/text-alert.wav');
+			var playSound = 0; 
 			var tableNasdaq = $('#nasdaq').DataTable();
+			var symbol = ""; 
 
 			tableNasdaq
     			.clear(); 
 
 			arrayNasdaq = data.NASDAQ; 
 
-//delete arrayNasdaq["AMDA"];
+			var tableNasdaqList = $('#nasdaq-list').DataTable();
 
-/*			var audio = new Audio('./wav/text-alert.wav');
-			audio.play();
-*/
+			tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+    			var data = this.data();
+    			symbol = data[0];
+    			console.log("Symbol is " + symbol); 
+    			delete arrayNasdaq[symbol];
+			});
 
 			for (const [key, value] of Object.entries(arrayNasdaq))
 			{
+				if (value.change > 10)
+				{
+					playSound = 1;
+				}
 
 				tableNasdaq.row.add([
 					key, 
@@ -132,7 +281,7 @@ console.log(data);
 					value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 					value.low, 
 					"<div class='nasdaq'><i class='icon-remove'></i></div>"
-        			] ); 
+        			]); 
 
 			}
 
@@ -145,8 +294,21 @@ console.log(data);
 
 			arrayNYSEAmex = data.NYSEAMEX; 
 
+			var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
+
+			tableNYSEAmexList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+    			var data = this.data();
+    			symbol = data[0];
+    			delete arrayNYSEAmex[symbol];
+			});
+
+
 			for (const [key, value] of Object.entries(arrayNYSEAmex))
 			{
+				if (value.change > 10)
+				{
+					playSound = 1;
+				}
 
 				tableNYSEAmex.row.add([
 					key, 
@@ -167,8 +329,20 @@ console.log(data);
 
 			arrayPink = data.PINK; 
 
+			var tablePinkList = $('#pink-list').DataTable();
+
+			tablePinkList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+    			var data = this.data();
+    			symbol = data[0];
+    			delete arrayPink[symbol];
+			});
+
 			for (const [key, value] of Object.entries(arrayPink))
 			{
+				if (value.change > 30)
+				{
+					playSound = 1;
+				}
 
 				tablePink.row.add([
 					key, 
@@ -183,8 +357,27 @@ console.log(data);
 
 			tablePink.draw();
 
+			if (playSound == 1)
+			{
+				audio.play();
+			}
+
 		});
 
+	}
+
+	function countdown() {
+    // your code goes here
+    	var count = 9;
+    	var timerId = setInterval(function() {
+	        count--;
+        	$("#seconds-display").html(count);
+
+        	if(count == 0) {
+	            addRows();
+            	count = 9;
+        	}
+    	}, 1000);
 	}
 
 	</script>
@@ -368,41 +561,30 @@ console.log(data);
 		</table>
 	</td>
 
-	<td>
+	<td valgin="top" style="border:#000000 1px solid;">
+		<div id="seconds-display" style="font-size: 40px; width: 50px; text-align: center;" border=1 >
+		</div><br>
+<!--
   		<button id="clear-tables" value="submit-true">
     		Clear tables
   		</button>
-
+-->
 	</td>
-
 
 	<td  valign="top">
-		<table class="display" border=1>
+		<table id="pink-list"  class="display tableFont" border=1 style="font-size: 20px;">
 			<thead>
 				<tr>
-					<th colspan=2>
-					Show PINK
+					<th colspan=6>
+					PINK
 					</th>
 				</tr>
-
-			</thead>
-			<tbody>	
-				<tr >
-					<td>	
+				<tr height = "15px;">
+					<th>	
 						Symbol
-					</td>
-				</tr>			
-			</tbody>	
-
-		</table>
-	</td>
-
-		<td  valign="top">
-		<table class="display" border=1>
-			<thead>
-				<tr>
-					<th colspan=2>
-					Show Nasdaq
+					</th>
+					<th>
+						
 					</th>
 				</tr>
 			</thead>
@@ -411,18 +593,29 @@ console.log(data);
 					<td>	
 						Symbol
 					</td>
+
+					<td>
+						
+					</td>
 				</tr>			
 			</tbody>	
-
 		</table>
 	</td>
 
-		<td  valign="top">
-		<table class="display" border=1>
+	<td  valign="top">
+		<table id="nasdaq-list"  class="display tableFont" border=1 style="font-size: 20px;">
 			<thead>
 				<tr>
-					<th colspan=2>
-					Show NYSE/AMEX
+					<th colspan=6>
+					Nasdaq 
+					</th>
+				</tr>
+				<tr height = "15px;">
+					<th>	
+						Symbol
+					</th>
+					<th>
+						
 					</th>
 				</tr>
 			</thead>
@@ -431,13 +624,45 @@ console.log(data);
 					<td>	
 						Symbol
 					</td>
+
+					<td>
+						
+					</td>
 				</tr>			
 			</tbody>	
-
 		</table>
 	</td>
 
+	<td  valign="top">
+		<table id="nyse-amex-list"  class="display tableFont" border=1 style="font-size: 20px;">
+			<thead>
+				<tr>
+					<th colspan=6>
+					NYSE/AMEX 
+					</th>
+				</tr>
+				<tr height = "15px;">
+					<th>	
+						Symbol
+					</th>
+					<th>
+						
+					</th>
+				</tr>
+			</thead>
+			<tbody>	
+				<tr >
+					<td>	
+						Symbol
+					</td>
 
+					<td>
+						
+					</td>
+				</tr>			
+			</tbody>	
+		</table>
+	</td>
 
 </tr>
 
