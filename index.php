@@ -253,81 +253,91 @@
 			var tableNasdaq = $('#nasdaq').DataTable();
 			var symbol = ""; 
 
-			tableNasdaq
-    			.clear(); 
 
 			arrayNasdaq = data.NASDAQ; 
 
-			var tableNasdaqList = $('#nasdaq-list').DataTable();
-
-			tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-    			var data = this.data();
-    			symbol = data[0];
-    			console.log("Symbol is " + symbol); 
-    			delete arrayNasdaq[symbol];
-			});
-
-			for (const [key, value] of Object.entries(arrayNasdaq))
+			if (arrayNasdaq)
 			{
-				if (value.change > 10)
+				tableNasdaq
+    				.clear(); 	
+
+				var tableNasdaqList = $('#nasdaq-list').DataTable();
+
+				tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+	    			var data = this.data();
+	    			symbol = data[0];
+	    			console.log("Symbol is " + symbol); 
+	    			delete arrayNasdaq[symbol];
+				});
+
+				for (const [key, value] of Object.entries(arrayNasdaq))
 				{
-					playSound = 1;
+					if (value.change > 10)
+					{
+						playSound = 1;
+					}
+
+					tableNasdaq.row.add([
+						key, 
+						value.last, 
+						value.change.toFixed(2),
+						value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+						value.low, 
+						"<div class='nasdaq'><i class='icon-remove'></i></div>"
+	        			]); 
+
 				}
 
-				tableNasdaq.row.add([
-					key, 
-					value.last, 
-					value.change.toFixed(2),
-					value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-					value.low, 
-					"<div class='nasdaq'><i class='icon-remove'></i></div>"
-        			]); 
+				tableNasdaq.draw();
+		 	}  // if(arrayNasdaq)
 
-			}
-
-			tableNasdaq.draw();
-
-			var tableNYSEAmex = $('#nyse-amex').DataTable();
-
-			tableNYSEAmex
-    			.clear(); 
 
 			arrayNYSEAmex = data.NYSEAMEX; 
-
-			var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
-
-			tableNYSEAmexList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-    			var data = this.data();
-    			symbol = data[0];
-    			delete arrayNYSEAmex[symbol];
-			});
-
-
-			for (const [key, value] of Object.entries(arrayNYSEAmex))
+			if (arrayNYSEAmex)
 			{
-				if (value.change > 10)
+				var tableNYSEAmex = $('#nyse-amex').DataTable();
+
+				tableNYSEAmex
+    				.clear(); 
+
+				var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
+
+				tableNYSEAmexList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+	    			var data = this.data();
+	    			symbol = data[0];
+	    			delete arrayNYSEAmex[symbol];
+				});
+
+
+				for (const [key, value] of Object.entries(arrayNYSEAmex))
 				{
-					playSound = 1;
+					if (value.change > 10)
+					{
+						playSound = 1;
+					}
+
+					tableNYSEAmex.row.add([
+						key, 
+						value.last, 
+						value.change.toFixed(2),
+						value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+						value.low, 
+						"<div class='nyse-amex'><i class='icon-remove'></i></div>"
+	        			] ); 
+
 				}
 
-				tableNYSEAmex.row.add([
-					key, 
-					value.last, 
-					value.change.toFixed(2),
-					value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-					value.low, 
-					"<div class='nyse-amex'><i class='icon-remove'></i></div>"
-        			] ); 
+				tableNYSEAmex.draw();
+			} // if(arrayNYSEAmex)
 
-			}
 
-			tableNYSEAmex.draw();
-
+		arrayPink = data.PINK; 
+		if (arrayPink)
+		{
 			var tablePink = $('#pink').DataTable();
+
 			tablePink
 				.clear(); 
-
-			arrayPink = data.PINK; 
 
 			var tablePinkList = $('#pink-list').DataTable();
 
@@ -356,6 +366,9 @@
 			}
 
 			tablePink.draw();
+		} // if(arrayPink)
+
+
 
 			if (playSound == 1)
 			{
@@ -371,6 +384,7 @@
     	var count = 9;
     	var timerId = setInterval(function() {
 	        count--;
+console.log("count is " + count);
         	$("#seconds-display").html(count);
 
         	if(count == 0) {
@@ -561,8 +575,8 @@
 		</table>
 	</td>
 
-	<td valgin="top" style="border:#000000 1px solid;">
-		<div id="seconds-display" style="font-size: 40px; width: 50px; text-align: center;" border=1 >
+	<td valign="top" >
+		<div id="seconds-display" style="font-size: 70px; width: 120px; height: 75px; border:#000000 1px solid; text-align: center; padding-top: 55px" border=1 >
 		</div><br>
 <!--
   		<button id="clear-tables" value="submit-true">
