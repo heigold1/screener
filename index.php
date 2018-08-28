@@ -25,7 +25,15 @@
 	        "info":     false, 
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
-            	if ( data[2] > 30  ) {
+
+	        	var change = data[2];
+	        	var volumeString = data[3];
+        		var volume = parseFloat(volumeString.replace(/,/g, '')); 
+				var last = data[1];
+				var totalValue = volume*last; 
+
+				if ((((change > 40) && (last < 1.00)) || ((change > 25) & (last > 1.00))) && (totalValue > 2000))
+				{
          			$(row).addClass('redClass');
          		}
          	} 
@@ -38,7 +46,12 @@
 	        "info":     false, 
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
-            	if ( data[2] > 10  ) {
+
+	        	var change = data[2];
+	        	var last = data[1];
+
+            	if ((( last > 1.00  ) && (change > 11.00)) || ((last < 1.00) && (change > 13.00)))
+            	{
          			$(row).addClass('redClass');
          		}
          	}
@@ -51,7 +64,11 @@
 	        "info":     false, 
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
-            	if ( data[2] > 10  ) {
+	        	var change = data[2];
+	        	var last = data[1];
+
+            	if ((( last > 1.00  ) && (change > 11.00)) || ((last < 1.00) && (change > 13.00)))
+            	 {
          			$(row).addClass('redClass');
          		}
          	} 
@@ -252,53 +269,54 @@
 			var playSound = 0; 
 			var tableNasdaq = $('#nasdaq').DataTable();
 			var symbol = ""; 
+			var countSymbols = 0;
 
 
+			var tableNasdaqList = $('#nasdaq-list').DataTable();
+			tableNasdaq.clear(); 	
 			arrayNasdaq = data.NASDAQ; 
 
 			if (arrayNasdaq)
 			{
-				tableNasdaq
-    				.clear(); 	
-
-				var tableNasdaqList = $('#nasdaq-list').DataTable();
+				countSymbols += Object.keys(arrayNasdaq).length;
+				console.log("Number of symbols is " + countSymbols); 
 
 				tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 	    			var data = this.data();
 	    			symbol = data[0];
-	    			console.log("Symbol is " + symbol); 
 	    			delete arrayNasdaq[symbol];
 				});
 
 				for (const [key, value] of Object.entries(arrayNasdaq))
 				{
-					if (value.change > 10)
+					if (((value.change > 11) && (value.last >= 1.00)) || ((value.change > 13) && (value.last < 1.00)))
 					{
 						playSound = 1;
 					}
+
+					var volumeString = value.volume.toString() + "00"; 
 
 					tableNasdaq.row.add([
 						key, 
 						value.last, 
 						value.change.toFixed(2),
-						value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+						volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 						value.low, 
 						"<div class='nasdaq'><i class='icon-remove'></i></div>"
 	        			]); 
 
 				}
-
-				tableNasdaq.draw();
 		 	}  // if(arrayNasdaq)
+			tableNasdaq.draw();
 
 
+			var tableNYSEAmex = $('#nyse-amex').DataTable();
+			tableNYSEAmex.clear(); 
 			arrayNYSEAmex = data.NYSEAMEX; 
+
 			if (arrayNYSEAmex)
 			{
-				var tableNYSEAmex = $('#nyse-amex').DataTable();
-
-				tableNYSEAmex
-    				.clear(); 
+				countSymbols += Object.keys(arrayNYSEAmex).length;
 
 				var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
 
@@ -311,64 +329,72 @@
 
 				for (const [key, value] of Object.entries(arrayNYSEAmex))
 				{
-					if (value.change > 10)
+					if (((value.change > 11) && (value.last >= 1.00)) || ((value.change > 13) && (value.last < 1.00)))
 					{
 						playSound = 1;
 					}
+
+					var volumeString = value.volume.toString() + "00"; 
 
 					tableNYSEAmex.row.add([
 						key, 
 						value.last, 
 						value.change.toFixed(2),
-						value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+						volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 						value.low, 
 						"<div class='nyse-amex'><i class='icon-remove'></i></div>"
 	        			] ); 
 
 				}
-
-				tableNYSEAmex.draw();
 			} // if(arrayNYSEAmex)
+			tableNYSEAmex.draw();
 
-
-		arrayPink = data.PINK; 
-		if (arrayPink)
-		{
 			var tablePink = $('#pink').DataTable();
+			tablePink.clear(); 
+			arrayPink = data.PINK; 
 
-			tablePink
-				.clear(); 
-
-			var tablePinkList = $('#pink-list').DataTable();
-
-			tablePinkList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-    			var data = this.data();
-    			symbol = data[0];
-    			delete arrayPink[symbol];
-			});
-
-			for (const [key, value] of Object.entries(arrayPink))
+			if (arrayPink)
 			{
-				if (value.change > 30)
+				countSymbols += Object.keys(arrayPink).length;
+
+				var tablePinkList = $('#pink-list').DataTable();
+
+				tablePinkList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+	    			var data = this.data();
+	    			symbol = data[0];
+	    			delete arrayPink[symbol];
+				});
+
+				for (const [key, value] of Object.entries(arrayPink))
 				{
-					playSound = 1;
+
+					var volumeString = value.volume.toString() + "00"; 
+					var volume = parseFloat(volumeString);
+					var last = value.last;
+					var totalValue = volume*last; 
+
+					if ((((value.change > 40) && (value.last < 1.00)) || ((value.change > 25) & (value.last >= 1.00))) && totalValue > 2000)
+					{
+						playSound = 1;
+					}
+
+
+
+					tablePink.row.add([
+						key, 
+						value.last, 
+						value.change.toFixed(2),
+						volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+						value.low, 
+						"<div class='pink'><i class='icon-remove'></i></div>"
+	        			] ); 
+
 				}
-
-				tablePink.row.add([
-					key, 
-					value.last, 
-					value.change.toFixed(2),
-					value.volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-					value.low, 
-					"<div class='pink'><i class='icon-remove'></i></div>"
-        			] ); 
-
-			}
-
+			} // if(arrayPink)
 			tablePink.draw();
-		} // if(arrayPink)
 
 
+        	$("#num-symbols").html(countSymbols);
 
 			if (playSound == 1)
 			{
@@ -381,15 +407,14 @@
 
 	function countdown() {
     // your code goes here
-    	var count = 9;
+    	var count = 4;
     	var timerId = setInterval(function() {
 	        count--;
-console.log("count is " + count);
         	$("#seconds-display").html(count);
 
         	if(count == 0) {
 	            addRows();
-            	count = 9;
+            	count = 4;
         	}
     	}, 1000);
 	}
@@ -577,6 +602,8 @@ console.log("count is " + count);
 
 	<td valign="top" >
 		<div id="seconds-display" style="font-size: 70px; width: 120px; height: 75px; border:#000000 1px solid; text-align: center; padding-top: 55px" border=1 >
+		</div>
+		<div id="num-symbols" style="font-size: 70px; width: 120px; height: 75px; border:#000000 1px solid; text-align: center; padding-top: 55px" border=1 >
 		</div><br>
 <!--
   		<button id="clear-tables" value="submit-true">
@@ -603,15 +630,6 @@ console.log("count is " + count);
 				</tr>
 			</thead>
 			<tbody>	
-				<tr >
-					<td>	
-						Symbol
-					</td>
-
-					<td>
-						
-					</td>
-				</tr>			
 			</tbody>	
 		</table>
 	</td>
@@ -634,15 +652,6 @@ console.log("count is " + count);
 				</tr>
 			</thead>
 			<tbody>	
-				<tr >
-					<td>	
-						Symbol
-					</td>
-
-					<td>
-						
-					</td>
-				</tr>			
 			</tbody>	
 		</table>
 	</td>
@@ -665,15 +674,6 @@ console.log("count is " + count);
 				</tr>
 			</thead>
 			<tbody>	
-				<tr >
-					<td>	
-						Symbol
-					</td>
-
-					<td>
-						
-					</td>
-				</tr>			
 			</tbody>	
 		</table>
 	</td>
