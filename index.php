@@ -49,10 +49,20 @@
 
 	        	var change = data[2];
 	        	var last = data[1];
+				var volumeString = data[3];
+				var volume = parseInt(volumeString.replace(/,/g, ''))
 
             	if ((( last > 1.00  ) && (change > 11.00)) || ((last < 1.00) && (change > 13.00)))
             	{
-         			$(row).addClass('redClass');
+
+            		if (volume < 20000)
+            		{
+         				$(row).addClass('redClass');            			
+            		}
+            		else 
+            		{
+         				$(row).addClass('lightRedClass');            			
+            		}
          		}
          	}
 		} );
@@ -66,10 +76,19 @@
 	        "createdRow": function( row, data, dataIndex ) {
 	        	var change = data[2];
 	        	var last = data[1];
+				var volumeString = data[3];
+				var volume = parseInt(volumeString.replace(/,/g, ''))
 
             	if ((( last > 1.00  ) && (change > 11.00)) || ((last < 1.00) && (change > 13.00)))
             	 {
-         			$(row).addClass('redClass');
+            		if (volume < 20000)
+            		{
+         				$(row).addClass('redClass');            			
+            		}
+            		else 
+            		{
+         				$(row).addClass('lightRedClass');            			
+            		}
          		}
          	} 
 		});
