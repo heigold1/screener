@@ -32,7 +32,7 @@
 				var last = data[1];
 				var totalValue = volume*last; 
 
-				if ((((change > 40) && (last < 1.00)) || ((change > 25) & (last > 1.00))) && (totalValue > 2000))
+				if ((((change > 40) && (last < 1.00)) || ((change > 25) & (last > 1.00))) && (totalValue > 3000))
 				{
          			$(row).addClass('redClass');
          		}
@@ -392,12 +392,10 @@
 					var last = value.last;
 					var totalValue = volume*last; 
 
-					if ((((value.change > 40) && (value.last < 1.00)) || ((value.change > 25) & (value.last >= 1.00))) && totalValue > 2000)
+					if ((((value.change > 40) && (value.last < 1.00)) || ((value.change > 25) & (value.last >= 1.00))) && totalValue > 3000)
 					{
 						playSound = 1;
 					}
-
-
 
 					tablePink.row.add([
 						key, 
