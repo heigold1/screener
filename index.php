@@ -32,7 +32,8 @@
 				var last = data[1];
 				var totalValue = volume*last; 
 
-				if ((((change > 40) && (last < 1.00)) || ((change > 25) & (last > 1.00))) && (totalValue > 3000))
+				if ((((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
+					 ((change > parseFloat( $("#pink-dollar").val())) & (last > 1.00))) && (totalValue > 3000))
 				{
          			$(row).addClass('redClass');
          		}
@@ -52,7 +53,8 @@
 				var volumeString = data[3];
 				var volume = parseInt(volumeString.replace(/,/g, ''))
 
-            	if ((( last > 1.00  ) && (change > 11.00)) || ((last < 1.00) && (change > 13.00)))
+            	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
+            		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
             	{
 
             		if (volume < 20000)
@@ -79,8 +81,9 @@
 				var volumeString = data[3];
 				var volume = parseInt(volumeString.replace(/,/g, ''))
 
-            	if ((( last > 1.00  ) && (change > 11.00)) || ((last < 1.00) && (change > 13.00)))
-            	 {
+            	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
+            		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
+            	{
             		if (volume < 20000)
             		{
          				$(row).addClass('redClass');            			
@@ -251,6 +254,16 @@
 
 		} );
 */
+	$("#submit_button").click(function() {
+  		alert( "Handler for .click() called." );
+
+		console.log("#pink-penny is " + parseFloat($("#pink-penny").val())); 
+		console.log("#pink-dollar is " + parseFloat($("#pink-dollar").val())); 
+		console.log("#nas-nyse-penny is " + parseFloat($("#nas-nyse-penny").val())); 
+		console.log("#nas-nyse-dollar is " + parseFloat($("#nas-nyse-dollar").val())); 
+
+	});
+
 
 		$( "#clear-tables" ).click(function() {
 			var tableNasdaq = $('#nasdaq').DataTable();
@@ -308,7 +321,9 @@
 
 				for (const [key, value] of Object.entries(arrayNasdaq))
 				{
-					if (((value.change > 11) && (value.last >= 1.00)) || ((value.change > 13) && (value.last < 1.00)))
+
+            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
+            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
 					{
 						playSound = 1;
 					}
@@ -348,7 +363,8 @@
 
 				for (const [key, value] of Object.entries(arrayNYSEAmex))
 				{
-					if (((value.change > 11) && (value.last >= 1.00)) || ((value.change > 13) && (value.last < 1.00)))
+            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
+            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
 					{
 						playSound = 1;
 					}
@@ -392,7 +408,8 @@
 					var last = value.last;
 					var totalValue = volume*last; 
 
-					if ((((value.change > 40) && (value.last < 1.00)) || ((value.change > 25) & (value.last >= 1.00))) && totalValue > 3000)
+					if ((((value.change > parseFloat($("#pink-penny").val())) && (value.last < 1.00)) || 
+					     ((value.change > parseFloat( $("#pink-dollar").val())) & (value.last > 1.00))) && (totalValue > 3000))
 					{
 						playSound = 1;
 					}
@@ -435,6 +452,7 @@
         	}
     	}, 1000);
 	}
+
 
 	</script>
 
@@ -621,7 +639,33 @@
 		<div id="seconds-display" style="font-size: 70px; width: 120px; height: 75px; border:#000000 1px solid; text-align: center; padding-top: 55px" border=1 >
 		</div>
 		<div id="num-symbols" style="font-size: 70px; width: 120px; height: 75px; border:#000000 1px solid; text-align: center; padding-top: 55px" border=1 >
+		</div>
+		<div style="font-size: 20px; background-color: pink; width: 120px; height: 120px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
+			<div>
+				<b>PINK</b>
+			</div>
+			<br>
+			<div>
+				Penny: <input id="pink-penny" type="text" name="fname" value="40"  style="width: 35px; font-size: 18px"><br>
+  				$1.00: <input id="pink-dollar" type="text" name="lname" value="25" style="width: 35px; font-size: 18px">
+			</div>
+		</div>
+		<div style="font-size: 20px; width: 120px; height: 120px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
+			<div>
+				<b>NAS/NYSE</b>
+			</div>
+			<br>
+			<div>
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="13" style="width: 35px; font-size: 18px"><br>
+  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="11" style="width: 35px; font-size: 18px">
+			</div>
 		</div><br>
+		<div style="font-size: 20px; width: 120px; height: 120px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
+			 <!-- <button id="mybutton" type="button">Convert text to float</button>  -->
+			 <input id="submit_button" type="submit" value="Submit">
+		</div>
+
+
 <!--
   		<button id="clear-tables" value="submit-true">
     		Clear tables
