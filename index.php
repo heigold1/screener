@@ -33,7 +33,7 @@
 				var totalValue = volume*last; 
 
 				if ((((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-					 ((change > parseFloat( $("#pink-dollar").val())) & (last > 1.00))) && (totalValue > 3000))
+					 ((change > parseFloat( $("#pink-dollar").val())) & (last > 1.00))) && (totalValue > 4000))
 				{
          			$(row).addClass('redClass');
          		}
@@ -297,7 +297,8 @@
 	function addRows(){
 		$.get('http://localhost/screener/percent-decliners.json', function(data){
 
-			var audio = new Audio('./wav/text-alert.wav');
+			var audioAlert = new Audio('./wav/text-alert.wav');
+			var audioEmergency = new Audio('./wav/fire-truck-air-horn_daniel-simion.wav');
 			var playSound = 0; 
 			var tableNasdaq = $('#nasdaq').DataTable();
 			var symbol = ""; 
@@ -409,7 +410,7 @@
 					var totalValue = volume*last; 
 
 					if ((((value.change > parseFloat($("#pink-penny").val())) && (value.last < 1.00)) || 
-					     ((value.change > parseFloat( $("#pink-dollar").val())) & (value.last > 1.00))) && (totalValue > 3000))
+					     ((value.change > parseFloat( $("#pink-dollar").val())) & (value.last > 1.00))) && (totalValue > 4000))
 					{
 						playSound = 1;
 					}
@@ -432,8 +433,15 @@
 
 			if (playSound == 1)
 			{
-				audio.play();
+				audioAlert.play();
 			}
+
+
+			if (countSymbols == 0)
+			{
+				audioEmergency.play();
+			}
+
 
 		});
 
@@ -646,8 +654,8 @@
 			</div>
 			<br>
 			<div>
-				Penny: <input id="pink-penny" type="text" name="fname" value="40"  style="width: 35px; font-size: 18px"><br>
-  				$1.00: <input id="pink-dollar" type="text" name="lname" value="25" style="width: 35px; font-size: 18px">
+				Penny: <input id="pink-penny" type="text" name="fname" value="50"  style="width: 35px; font-size: 18px"><br>
+  				$1.00: <input id="pink-dollar" type="text" name="lname" value="32" style="width: 35px; font-size: 18px">
 			</div>
 		</div>
 		<div style="font-size: 20px; width: 120px; height: 120px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
@@ -657,7 +665,7 @@
 			<br>
 			<div>
 				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="13" style="width: 35px; font-size: 18px"><br>
-  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="11" style="width: 35px; font-size: 18px">
+  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="12" style="width: 35px; font-size: 18px">
 			</div>
 		</div><br>
 		<div style="font-size: 20px; width: 120px; height: 120px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
