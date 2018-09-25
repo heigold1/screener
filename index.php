@@ -664,8 +664,8 @@
 			</div>
 			<br>
 			<div>
-				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="13" style="width: 35px; font-size: 18px"><br>
-  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="12" style="width: 35px; font-size: 18px">
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="16" style="width: 35px; font-size: 18px"><br>
+  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="14" style="width: 35px; font-size: 18px">
 			</div>
 		</div><br>
 		<div style="font-size: 20px; width: 120px; height: 120px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
