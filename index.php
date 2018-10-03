@@ -33,7 +33,7 @@
 				var totalValue = volume*last; 
 
 				if ((((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-					 ((change > parseFloat( $("#pink-dollar").val())) & (last > 1.00))) && (totalValue > 4000))
+					 ((change > parseFloat( $("#pink-dollar").val())) & (last > 1.00))) && (totalValue > 6000))
 				{
          			$(row).addClass('redClass');
          		}
@@ -410,7 +410,7 @@
 					var totalValue = volume*last; 
 
 					if ((((value.change > parseFloat($("#pink-penny").val())) && (value.last < 1.00)) || 
-					     ((value.change > parseFloat( $("#pink-dollar").val())) & (value.last > 1.00))) && (totalValue > 4000))
+					     ((value.change > parseFloat( $("#pink-dollar").val())) & (value.last > 1.00))) && (totalValue > 6000))
 					{
 						playSound = 1;
 					}
