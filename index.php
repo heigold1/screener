@@ -33,7 +33,7 @@
 				var totalValue = volume*last; 
 
 				if ((((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-					 ((change > parseFloat( $("#pink-dollar").val())) & (last > 1.00))) && (totalValue > 6000))
+					 ((change > parseFloat( $("#pink-dollar").val())) & (last > 1.00))) && (totalValue > 10000))
 				{
          			$(row).addClass('redClass');
          		}
@@ -295,153 +295,153 @@
 	});
 
 	function addRows(){
-		$.get('http://localhost/screener/percent-decliners.json', function(data){
 
-			var audioAlert = new Audio('./wav/text-alert.wav');
-			var audioEmergency = new Audio('./wav/fire-truck-air-horn_daniel-simion.wav');
-			var playSound = 0; 
-			var tableNasdaq = $('#nasdaq').DataTable();
-			var symbol = ""; 
-			var countSymbols = 0;
+		$.get('http://localhost/screener/percent-decliners.json', function(){
+			console.log( "Grabbed percent-decliners.json successfully" );
+			})
+			.done(function(data){
 
+				var audioAlert = new Audio('./wav/text-alert.wav');
+				var audioEmergency = new Audio('./wav/fire-truck-air-horn_daniel-simion.wav');
+				var playSound = 0; 
+				var tableNasdaq = $('#nasdaq').DataTable();
+				var symbol = ""; 
+				var countSymbols = 0;
 
-			var tableNasdaqList = $('#nasdaq-list').DataTable();
-			tableNasdaq.clear(); 	
-			arrayNasdaq = data.NASDAQ; 
+				var tableNasdaqList = $('#nasdaq-list').DataTable();
+				tableNasdaq.clear(); 	
+				arrayNasdaq = data.NASDAQ; 
 
-			if (arrayNasdaq)
-			{
-				countSymbols += Object.keys(arrayNasdaq).length;
-				console.log("Number of symbols is " + countSymbols); 
-
-				tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-	    			var data = this.data();
-	    			symbol = data[0];
-	    			delete arrayNasdaq[symbol];
-				});
-
-				for (const [key, value] of Object.entries(arrayNasdaq))
+				if (arrayNasdaq)
 				{
+					countSymbols += Object.keys(arrayNasdaq).length;
+					console.log("Number of symbols is " + countSymbols); 
 
-            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
-            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
+					tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+		    			var data = this.data();
+		    			symbol = data[0];
+		    			delete arrayNasdaq[symbol];
+					});
+
+					for (const [key, value] of Object.entries(arrayNasdaq))
 					{
-						playSound = 1;
+
+	            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
+	            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
+						{
+							playSound = 1;
+						}
+
+						var volumeString = value.volume.toString() + "00"; 
+
+						tableNasdaq.row.add([
+							key, 
+							value.last, 
+							value.change.toFixed(2),
+							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+							value.low, 
+							"<div class='nasdaq'><i class='icon-remove'></i></div>"
+		        			]); 
+
 					}
-
-					var volumeString = value.volume.toString() + "00"; 
-
-					tableNasdaq.row.add([
-						key, 
-						value.last, 
-						value.change.toFixed(2),
-						volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-						value.low, 
-						"<div class='nasdaq'><i class='icon-remove'></i></div>"
-	        			]); 
-
-				}
-		 	}  // if(arrayNasdaq)
-			tableNasdaq.draw();
+			 	}  // if(arrayNasdaq)
+				tableNasdaq.draw();
 
 
-			var tableNYSEAmex = $('#nyse-amex').DataTable();
-			tableNYSEAmex.clear(); 
-			arrayNYSEAmex = data.NYSEAMEX; 
+				var tableNYSEAmex = $('#nyse-amex').DataTable();
+				tableNYSEAmex.clear(); 
+				arrayNYSEAmex = data.NYSEAMEX; 
 
-			if (arrayNYSEAmex)
-			{
-				countSymbols += Object.keys(arrayNYSEAmex).length;
-
-				var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
-
-				tableNYSEAmexList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-	    			var data = this.data();
-	    			symbol = data[0];
-	    			delete arrayNYSEAmex[symbol];
-				});
-
-
-				for (const [key, value] of Object.entries(arrayNYSEAmex))
+				if (arrayNYSEAmex)
 				{
-            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
-            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
+					countSymbols += Object.keys(arrayNYSEAmex).length;
+
+					var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
+
+					tableNYSEAmexList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+		    			var data = this.data();
+		    			symbol = data[0];
+		    			delete arrayNYSEAmex[symbol];
+					});
+
+
+					for (const [key, value] of Object.entries(arrayNYSEAmex))
 					{
-						playSound = 1;
+	            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
+	            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
+						{
+							playSound = 1;
+						}
+
+						var volumeString = value.volume.toString() + "00"; 
+
+						tableNYSEAmex.row.add([
+							key, 
+							value.last, 
+							value.change.toFixed(2),
+							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+							value.low, 
+							"<div class='nyse-amex'><i class='icon-remove'></i></div>"
+		        			] ); 
+
 					}
+				} // if(arrayNYSEAmex)
+				tableNYSEAmex.draw();
 
-					var volumeString = value.volume.toString() + "00"; 
+				var tablePink = $('#pink').DataTable();
+				tablePink.clear(); 
+				arrayPink = data.PINK; 
 
-					tableNYSEAmex.row.add([
-						key, 
-						value.last, 
-						value.change.toFixed(2),
-						volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-						value.low, 
-						"<div class='nyse-amex'><i class='icon-remove'></i></div>"
-	        			] ); 
-
-				}
-			} // if(arrayNYSEAmex)
-			tableNYSEAmex.draw();
-
-			var tablePink = $('#pink').DataTable();
-			tablePink.clear(); 
-			arrayPink = data.PINK; 
-
-			if (arrayPink)
-			{
-				countSymbols += Object.keys(arrayPink).length;
-
-				var tablePinkList = $('#pink-list').DataTable();
-
-				tablePinkList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-	    			var data = this.data();
-	    			symbol = data[0];
-	    			delete arrayPink[symbol];
-				});
-
-				for (const [key, value] of Object.entries(arrayPink))
+				if (arrayPink)
 				{
+					countSymbols += Object.keys(arrayPink).length;
 
-					var volumeString = value.volume.toString() + "00"; 
-					var volume = parseFloat(volumeString);
-					var last = value.last;
-					var totalValue = volume*last; 
+					var tablePinkList = $('#pink-list').DataTable();
 
-					if ((((value.change > parseFloat($("#pink-penny").val())) && (value.last < 1.00)) || 
-					     ((value.change > parseFloat( $("#pink-dollar").val())) & (value.last > 1.00))) && (totalValue > 6000))
+					tablePinkList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+		    			var data = this.data();
+		    			symbol = data[0];
+		    			delete arrayPink[symbol];
+					});
+
+					for (const [key, value] of Object.entries(arrayPink))
 					{
-						playSound = 1;
+
+						var volumeString = value.volume.toString() + "00"; 
+						var volume = parseFloat(volumeString);
+						var last = value.last;
+						var totalValue = volume*last; 
+
+						if ((((value.change > parseFloat($("#pink-penny").val())) && (value.last < 1.00)) || 
+						     ((value.change > parseFloat( $("#pink-dollar").val())) & (value.last > 1.00))) && (totalValue > 10000))
+						{
+							playSound = 1;
+						}
+
+						tablePink.row.add([
+							key, 
+							value.last, 
+							value.change.toFixed(2),
+							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
+							value.low, 
+							"<div class='pink'><i class='icon-remove'></i></div>"
+		        			] ); 
+
 					}
+				} // if(arrayPink)
+				tablePink.draw();
 
-					tablePink.row.add([
-						key, 
-						value.last, 
-						value.change.toFixed(2),
-						volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-						value.low, 
-						"<div class='pink'><i class='icon-remove'></i></div>"
-	        			] ); 
+	        	$("#num-symbols").html(countSymbols);
 
+				if (playSound == 1)
+				{
+					audioAlert.play();
 				}
-			} // if(arrayPink)
-			tablePink.draw();
 
-
-        	$("#num-symbols").html(countSymbols);
-
-			if (playSound == 1)
-			{
-				audioAlert.play();
-			}
-
-
-			if (countSymbols == 0)
-			{
-				audioEmergency.play();
-			}
-
+				if (countSymbols == 0)
+				{
+					audioEmergency.play();
+				}
 
 		});
 
