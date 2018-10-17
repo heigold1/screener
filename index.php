@@ -120,15 +120,6 @@
 	        "searching": false 
 		});
 
-
-
-/*
-		$('#nasdaq tbody').on('click', 'tr', function () {
-			var data = tableNasdaq.row( this ).data();
-			alert( 'You clicked on '+data[0]+'\'s row' ); 
-		} );
-*/ 
-
 		$(document).on('click', '.nasdaq', function (evt) {
 			var row = $(this).closest('tr'); 
 			var data = row.children();
@@ -151,7 +142,6 @@
 
 
 			tableNasdaqList.draw();
-
 		});
 
 
@@ -204,8 +194,6 @@
 			tableNYSEAmexList.draw();
 		});
 
-
-
 		$(document).on('click', '.nasdaq-list', function (evt) {
 			var row = $(this).closest('tr'); 
 			var data = row.children();
@@ -245,24 +233,15 @@
      			nasdaqTable.draw();
      	}); 
 
-		
-/*
-		$('#nyse-amex tbody').on('click', 'tr', function () {
+		$("#submit_button").click(function() {
+	  		alert( "Handler for .click() called." );
 
-			var data = tableNYSE.row( this ).data();
-			alert( 'You clicked on '+data[0]+'\'s row' );
+			console.log("#pink-penny is " + parseFloat($("#pink-penny").val())); 
+			console.log("#pink-dollar is " + parseFloat($("#pink-dollar").val())); 
+			console.log("#nas-nyse-penny is " + parseFloat($("#nas-nyse-penny").val())); 
+			console.log("#nas-nyse-dollar is " + parseFloat($("#nas-nyse-dollar").val())); 
 
-		} );
-*/
-	$("#submit_button").click(function() {
-  		alert( "Handler for .click() called." );
-
-		console.log("#pink-penny is " + parseFloat($("#pink-penny").val())); 
-		console.log("#pink-dollar is " + parseFloat($("#pink-dollar").val())); 
-		console.log("#nas-nyse-penny is " + parseFloat($("#nas-nyse-penny").val())); 
-		console.log("#nas-nyse-dollar is " + parseFloat($("#nas-nyse-dollar").val())); 
-
-	});
+		});
 
 
 		$( "#clear-tables" ).click(function() {
@@ -291,8 +270,10 @@
 
 		countdown();
 
-
 	});
+
+	var globalData = "";;
+	var prevGlobalData = ""; 
 
 	function addRows(){
 
@@ -303,10 +284,33 @@
 
 				var audioAlert = new Audio('./wav/text-alert.wav');
 				var audioEmergency = new Audio('./wav/fire-truck-air-horn_daniel-simion.wav');
+				var audioEqual = new Audio('./wav/equal.mp3');
 				var playSound = 0; 
 				var tableNasdaq = $('#nasdaq').DataTable();
 				var symbol = ""; 
 				var countSymbols = 0;
+
+				globalData = data; 
+
+				console.log("Coparing prevGlobalData:");
+				console.log(prevGlobalData);
+				console.log("With globalData:");
+				console.log(globalData);
+
+				var prevGlobalDataString = JSON.stringify(prevGlobalData);
+				var globalDataString = JSON.stringify(globalData);
+
+				if (prevGlobalDataString == globalDataString)
+				{
+					audioEqual.play();
+					console.log("data is equal");
+				}
+				else
+				{
+					console.log("data is not equal");
+				}
+
+				prevGlobalData = globalData;
 
 				var tableNasdaqList = $('#nasdaq-list').DataTable();
 				tableNasdaq.clear(); 	
