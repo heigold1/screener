@@ -292,22 +292,12 @@
 
 				globalData = data; 
 
-				console.log("Coparing prevGlobalData:");
-				console.log(prevGlobalData);
-				console.log("With globalData:");
-				console.log(globalData);
-
 				var prevGlobalDataString = JSON.stringify(prevGlobalData);
 				var globalDataString = JSON.stringify(globalData);
 
 				if (prevGlobalDataString == globalDataString)
 				{
 					audioEqual.play();
-					console.log("data is equal");
-				}
-				else
-				{
-					console.log("data is not equal");
 				}
 
 				prevGlobalData = globalData;
