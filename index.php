@@ -272,8 +272,8 @@
 
 	});
 
-	var globalData = "";;
-	var prevGlobalData = ""; 
+	var globalData = "";
+	var prevGlobalData = "";
 
 	function addRows(){
 
@@ -284,7 +284,7 @@
 
 				var audioAlert = new Audio('./wav/text-alert.wav');
 				var audioEmergency = new Audio('./wav/fire-truck-air-horn_daniel-simion.wav');
-				var audioEqual = new Audio('./wav/equal.mp3');
+				var audioEqual = new Audio('./wav/equal.wav');
 				var playSound = 0; 
 				var tableNasdaq = $('#nasdaq').DataTable();
 				var symbol = ""; 
@@ -300,7 +300,7 @@
 					audioEqual.play();
 				}
 
-				prevGlobalData = globalData;
+				prevGlobalData = JSON.parse(JSON.stringify(globalData));
 
 				var tableNasdaqList = $('#nasdaq-list').DataTable();
 				tableNasdaq.clear(); 	
