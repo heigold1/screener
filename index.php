@@ -329,7 +329,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNasdaq.row.add([
-							key, 
+							"<a style='color: black' target='_blank' href='http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "'>" + key + "</a>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -370,7 +370,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNYSEAmex.row.add([
-							key, 
+							"<a style='color: black' target='_blank' href='http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "'>" + key + "</a>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -413,7 +413,7 @@
 						}
 
 						tablePink.row.add([
-							key, 
+							"<a style='color: black' target='_blank' href='http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "'>" + key + "</a>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
