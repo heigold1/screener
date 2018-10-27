@@ -16,6 +16,14 @@
 	<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" class="init">
+
+	var newsLookupWindow; 
+
+	function openNewsLookupWindow(link){
+		newsLookupWindow = window.open(link, "newslookup-window"); 
+	}
+
+
 	$(document).ready(function() {
 
 		//PINK List
@@ -329,7 +337,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNasdaq.row.add([
-							"<a style='color: black' target='_blank' href='http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "'>" + key + "</a>", 
+							"<a style='color: black' target='_blank'  onclick='return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -370,7 +378,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNYSEAmex.row.add([
-							"<a style='color: black' target='_blank' href='http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "'>" + key + "</a>", 
+							"<a style='color: black' target='_blank'  onclick='return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -413,7 +421,7 @@
 						}
 
 						tablePink.row.add([
-							"<a style='color: black' target='_blank' href='http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "'>" + key + "</a>", 
+							"<a style='color: black' target='_blank'  onclick='return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
