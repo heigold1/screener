@@ -52,7 +52,7 @@
 				var totalValue = volume*last; 
 
 				if ((((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-					 ((change > parseFloat( $("#pink-dollar").val())) & (last > 1.00))) && (totalValue > 10000))
+					 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))) && (totalValue > 10000))
 				{
          			$(row).addClass('redClass');
          		}
