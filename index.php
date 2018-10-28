@@ -350,7 +350,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNasdaq.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\">", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\" readonly>", 
 //							"<a style='color: black' target='_blank'  onclick='console.log($(this).text()); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
 							value.last, 
 							value.change.toFixed(2),
@@ -392,7 +392,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\">", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -435,7 +435,7 @@
 						}
 
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\">", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
