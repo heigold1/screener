@@ -23,6 +23,17 @@
 		newsLookupWindow = window.open(link, "newslookup-window"); 
 	}
 
+	function copyToClipboard(object){
+  		object.select();
+  		try {
+    		var successful = document.execCommand('copy');
+    		var msg = successful ? 'successful' : 'unsuccessful';
+    		console.log('Copying text command was ' + msg);
+  		} catch (err) {
+    		console.log('Oops, unable to copy');
+  		}
+	}
+
 
 	$(document).ready(function() {
 
@@ -74,6 +85,8 @@
          				$(row).addClass('lightRedClass');            			
             		}
          		}
+
+         		$(row).addClass('allRows');
          	}
 		} );
 
@@ -276,7 +289,7 @@
 
 		});
 
-		countdown();
+		countdown();	
 
 	});
 
@@ -337,7 +350,8 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNasdaq.row.add([
-							"<a style='color: black' target='_blank'  onclick='return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\">", 
+//							"<a style='color: black' target='_blank'  onclick='console.log($(this).text()); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -378,7 +392,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNYSEAmex.row.add([
-							"<a style='color: black' target='_blank'  onclick='return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\">", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -421,7 +435,7 @@
 						}
 
 						tablePink.row.add([
-							"<a style='color: black' target='_blank'  onclick='return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\">", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
