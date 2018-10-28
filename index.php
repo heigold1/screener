@@ -429,7 +429,7 @@
 						var totalValue = volume*last; 
 
 						if ((((value.change > parseFloat($("#pink-penny").val())) && (value.last < 1.00)) || 
-						     ((value.change > parseFloat( $("#pink-dollar").val())) & (value.last > 1.00))) && (totalValue > 10000))
+						     ((value.change > parseFloat( $("#pink-dollar").val())) && (value.last > 1.00))) && (totalValue > 10000))
 						{
 							playSound = 1;
 						}
