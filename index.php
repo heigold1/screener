@@ -144,7 +144,7 @@
 		$(document).on('click', '.nasdaq', function (evt) {
 			var row = $(this).closest('tr'); 
 			var data = row.children();
-			var symbol = $(data[0]).text();
+			var symbol = $(data[0]).children(0).val()
 
 			evt.stopPropagation();
 			evt.preventDefault();

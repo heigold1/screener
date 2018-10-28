@@ -20,8 +20,8 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
 
 .symbolText{
 	display: inline-block;
-	width: 95px;
-	font-size: 25px !important;
+	width: 115px;
+	font-size: 20px !important;
 	padding-top: 0px !important;
     padding-right: 0px !important;
     padding-bottom: 0px !important;
