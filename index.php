@@ -34,6 +34,80 @@
   		}
 	}
 
+	/** when the user either clicks on the "X" or the symbol text box of a NASDAQ row **/ 
+	function removeNasdaq(object)
+	{
+		var row = object.closest('tr'); 
+		var data = row.children();
+		var symbol = $(data[0]).children(0).val()
+
+		var nasdaqTable = $('#nasdaq').DataTable();
+ 			nasdaqTable.row( row ).remove();
+ 			nasdaqTable.draw();
+
+
+		var tableNasdaqList = $('#nasdaq-list').DataTable();
+
+		tableNasdaqList.row.add([
+			symbol, 
+			'<input type="text" class="newsText">',
+			'<input type="checkbox" checked>',
+			'',
+			"<div class='nasdaq-list'><i class='icon-remove'></i></div>"
+			] ); 
+
+
+		tableNasdaqList.draw();
+	}
+
+	/** when the user either clicks on the "X" or the symbol text box of a PINK row **/ 
+	function removePink(object)
+	{
+			var row = object.closest('tr'); 
+			var data = row.children();
+			var symbol = $(data[0]).children(0).val()
+
+			var nasdaqTable = $('#pink').DataTable();
+     			nasdaqTable.row( row ).remove();
+     			nasdaqTable.draw();
+
+			var tablePinkList = $('#pink-list').DataTable();
+
+			tablePinkList.row.add([
+				symbol, 
+				'<input type="text" class="newsText">',
+			 	'<input type="checkbox" checked>',
+				'',
+				"<div class='pink-list'><i class='icon-remove'></i></div>"
+    			] ); 
+
+			tablePinkList.draw();
+	}
+
+	function removeNyseAmex(object)
+	{
+			var row = object.closest('tr'); 
+			var data = row.children();
+			var symbol = $(data[0]).children(0).val()
+
+			var nasdaqTable = $('#nyse-amex').DataTable();
+     			nasdaqTable.row( row ).remove();
+     			nasdaqTable.draw();
+
+			var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
+
+			tableNYSEAmexList.row.add([
+				symbol, 
+				'<input type="text" class="newsText">',
+			 	'<input type="checkbox" checked>',
+				'',
+				"<div class='nyse-amex-list'><i class='icon-remove'></i></div>"
+    			] ); 
+
+			tableNYSEAmexList.draw();
+
+	}
+
 
 	$(document).ready(function() {
 
@@ -122,7 +196,10 @@
 	  		"paging":   false,
 	        "ordering": false,
 	        "info":     false, 
-	        "searching": false
+	        "searching": false, 
+			"createdRow": function( row, data, dataIndex ) {
+				$(row).addClass('allRows');
+			}
 		});
 
 		// Nasdaq List
@@ -130,7 +207,10 @@
 	  		"paging":   false,
 	        "ordering": false,
 	        "info":     false, 
-	        "searching": false 
+	        "searching": false, 
+			"createdRow": function( row, data, dataIndex ) {
+				$(row).addClass('allRows');
+			}
 		});
 
 
@@ -138,81 +218,35 @@
 	  		"paging":   false,
 	        "ordering": false,
 	        "info":     false, 
-	        "searching": false 
+	        "searching": false, 
+			"createdRow": function( row, data, dataIndex ) {
+				$(row).addClass('allRows');
+			}
 		});
 
+
+
+
+		/** Clicking on the "X" of a nasdaq row **/
 		$(document).on('click', '.nasdaq', function (evt) {
-			var row = $(this).closest('tr'); 
-			var data = row.children();
-			var symbol = $(data[0]).children(0).val()
-
 			evt.stopPropagation();
 			evt.preventDefault();
-
-			var nasdaqTable = $('#nasdaq').DataTable();
-     			nasdaqTable.row( row ).remove();
-     			nasdaqTable.draw();
-
-
-			var tableNasdaqList = $('#nasdaq-list').DataTable();
-
-			tableNasdaqList.row.add([
-				symbol, 
-				"<div class='nasdaq-list'><i class='icon-remove'></i></div>"
-    			] ); 
-
-
-			tableNasdaqList.draw();
+			removeNasdaq($(this));
 		});
 
 
+		/** Clicking on the "X" of a pink row **/
 		$(document).on('click', '.pink', function (evt) {
-			var row = $(this).closest('tr'); 
-			var data = row.children();
-			var symbol = $(data[0]).children(0).val()
-
 			evt.stopPropagation();
 			evt.preventDefault();
-
-
-			var nasdaqTable = $('#pink').DataTable();
-     			nasdaqTable.row( row ).remove();
-     			nasdaqTable.draw();
-
-
-			var tablePinkList = $('#pink-list').DataTable();
-
-			tablePinkList.row.add([
-				symbol, 
-				"<div class='pink-list'><i class='icon-remove'></i></div>"
-    			] ); 
-
-
-			tablePinkList.draw();
-
+			removePink($(this));
 		});
 
-
+		/** Clicking on the "X" of a nyse-amex row **/
 		$(document).on('click', '.nyse-amex', function (evt) {
-			var row = $(this).closest('tr'); 
-			var data = row.children();
-			var symbol = $(data[0]).children(0).val()
-
 			evt.stopPropagation();
 			evt.preventDefault();
-
-			var nasdaqTable = $('#nyse-amex').DataTable();
-     			nasdaqTable.row( row ).remove();
-     			nasdaqTable.draw();
-
-			var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
-
-			tableNYSEAmexList.row.add([
-				symbol, 
-				"<div class='nyse-amex-list'><i class='icon-remove'></i></div>"
-    			] ); 
-
-			tableNYSEAmexList.draw();
+			removeNyseAmex($(this));
 		});
 
 		$(document).on('click', '.nasdaq-list', function (evt) {
@@ -254,17 +288,6 @@
      			nasdaqTable.draw();
      	}); 
 
-		$("#submit_button").click(function() {
-	  		alert( "Handler for .click() called." );
-
-			console.log("#pink-penny is " + parseFloat($("#pink-penny").val())); 
-			console.log("#pink-dollar is " + parseFloat($("#pink-dollar").val())); 
-			console.log("#nas-nyse-penny is " + parseFloat($("#nas-nyse-penny").val())); 
-			console.log("#nas-nyse-dollar is " + parseFloat($("#nas-nyse-dollar").val())); 
-
-		});
-
-
 		$( "#clear-tables" ).click(function() {
 			var tableNasdaq = $('#nasdaq').DataTable();
  
@@ -289,7 +312,8 @@
 
 		});
 
-		countdown();	
+//		countdown();	
+addRows();
 
 	});
 
@@ -335,6 +359,7 @@
 					tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
+						tableNasdaqList.cell(rowIdx, 2).data(arrayNasdaq[symbol].low);
 		    			delete arrayNasdaq[symbol];
 					});
 
@@ -350,8 +375,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNasdaq.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\" readonly>", 
-//							"<a style='color: black' target='_blank'  onclick='console.log($(this).text()); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")'>" + key + "</a>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -377,6 +401,7 @@
 					tableNYSEAmexList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
+						tableNYSEAmexList.cell(rowIdx, 2).data(arrayNYSEAmex[symbol].low);
 		    			delete arrayNYSEAmex[symbol];
 					});
 
@@ -392,7 +417,7 @@
 						var volumeString = value.volume.toString() + "00"; 
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -417,6 +442,7 @@
 					tablePinkList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
+						tablePinkList.cell(rowIdx, 2).data(arrayPink[symbol].low);
 		    			delete arrayPink[symbol];
 					});
 
@@ -435,7 +461,7 @@
 						}
 
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); return openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\")' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
@@ -684,11 +710,6 @@
   				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="14" style="width: 35px; font-size: 18px">
 			</div>
 		</div><br>
-		<div style="font-size: 20px; width: 120px; height: 120px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
-			 <!-- <button id="mybutton" type="button">Convert text to float</button>  -->
-			 <input id="submit_button" type="submit" value="Submit">
-		</div>
-
 
 <!--
   		<button id="clear-tables" value="submit-true">
@@ -710,7 +731,16 @@
 						Symbol
 					</th>
 					<th>
-						
+						News
+					</th>
+					<th>
+
+					</th>
+					<th>
+						Low
+					</th>
+					<th>
+					
 					</th>
 				</tr>
 			</thead>
@@ -732,7 +762,16 @@
 						Symbol
 					</th>
 					<th>
-						
+						News 
+					</th>
+					<th>
+					
+					</th>
+					<th>
+						Low
+					</th>
+					<th>
+					
 					</th>
 				</tr>
 			</thead>
@@ -754,7 +793,16 @@
 						Symbol
 					</th>
 					<th>
-						
+						News 
+					</th>
+					<th>
+					
+					</th>
+					<th>
+						Low
+					</th>
+					<th>
+
 					</th>
 				</tr>
 			</thead>
