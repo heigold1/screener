@@ -312,8 +312,7 @@
 
 		});
 
-//		countdown();	
-addRows();
+		countdown();	
 
 	});
 
@@ -359,8 +358,12 @@ addRows();
 					tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
-						tableNasdaqList.cell(rowIdx, 2).data(arrayNasdaq[symbol].low);
-		    			delete arrayNasdaq[symbol];
+						tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].low);
+						if (symbol in arrayNasdaq)
+						{
+		    				delete arrayNasdaq[symbol];
+		    			}	
+		    			
 					});
 
 					for (const [key, value] of Object.entries(arrayNasdaq))
@@ -401,8 +404,12 @@ addRows();
 					tableNYSEAmexList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
-						tableNYSEAmexList.cell(rowIdx, 2).data(arrayNYSEAmex[symbol].low);
-		    			delete arrayNYSEAmex[symbol];
+						tableNYSEAmexList.cell(rowIdx, 3).data(arrayNYSEAmex[symbol].low);
+						if (symbol in arrayNYSEAmex)
+						{
+		    				delete arrayNYSEAmex[symbol];
+		    			}							
+		    			
 					});
 
 
@@ -442,8 +449,11 @@ addRows();
 					tablePinkList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
-						tablePinkList.cell(rowIdx, 2).data(arrayPink[symbol].low);
-		    			delete arrayPink[symbol];
+						tablePinkList.cell(rowIdx, 3).data(arrayPink[symbol].low);
+						if (symbol in arrayPink)
+						{
+		    				delete arrayPink[symbol];
+		    			}	
 					});
 
 					for (const [key, value] of Object.entries(arrayPink))
