@@ -257,9 +257,9 @@
 			evt.stopPropagation();
 			evt.preventDefault();
 
-			var nasdaqTable = $('#nasdaq-list').DataTable();
-     			nasdaqTable.row( row ).remove();
-     			nasdaqTable.draw();
+			var nasdaqListTable = $('#nasdaq-list').DataTable();
+     			nasdaqListTable.row( row ).remove();
+     			nasdaqListTable.draw();
      	});
 
 		$("#btnManualAddNasdaq").click(function(){
@@ -298,10 +298,24 @@
 			evt.stopPropagation();
 			evt.preventDefault();
 
-			var nasdaqTable = $('#nyse-amex-list').DataTable();
-     			nasdaqTable.row( row ).remove();
-     			nasdaqTable.draw();
+			var nyseAmexListTable = $('#nyse-amex-list').DataTable();
+     			nyseAmexListTable.row( row ).remove();
+     			nyseAmexListTable.draw();
      	}); 
+
+		$("#btnManualAddNyseAmex").click(function(){
+			tableNYSEAmexList.row.add([
+			$.trim($("#manualAddNyseAmex").val()), 
+			'<input type="text" class="newsText">',
+			'<input type="checkbox" checked>',
+			'',
+			"<div class='nyse-amex-list'><i class='icon-remove'></i></div>"
+			] ); 
+
+			$("#manualAddNyseAmex").val("");
+
+			tableNYSEAmexList.draw();
+		}); 
 
 		$( "#clear-tables" ).click(function() {
 			var tableNasdaq = $('#nasdaq').DataTable();
@@ -810,7 +824,7 @@
 			<thead>
 				<tr>
 					<th colspan=6>
-					NYSE/AMEX 
+					NYSE/AMEX   <input id="manualAddNyseAmex" type="text" class="manualAddText"> <button id="btnManualAddNyseAmex" type="button">Add Symbol</button> 
 					</th>
 				</tr>
 				<tr height = "15px;">
