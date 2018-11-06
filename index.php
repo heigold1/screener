@@ -262,6 +262,21 @@
      			nasdaqTable.draw();
      	});
 
+		$("#btnManualAddNasdaq").click(function(){
+			tableNasdaqList.row.add([
+			$.trim($("#manualAddNasdaq").val()), 
+			'<input type="text" class="newsText">',
+			'<input type="checkbox" checked>',
+			'',
+			"<div class='nasdaq-list'><i class='icon-remove'></i></div>"
+			] ); 
+
+			$("#manualAddNasdaq").val("");
+
+			tableNasdaqList.draw();
+		}); 
+
+
 		$(document).on('click', '.pink-list', function (evt) {
 			var row = $(this).closest('tr'); 
 			var data = row.children();
@@ -358,9 +373,9 @@
 					tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
-						tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].low);
 						if (symbol in arrayNasdaq)
 						{
+							tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].low);							
 		    				delete arrayNasdaq[symbol];
 		    			}	
 		    			
@@ -404,9 +419,9 @@
 					tableNYSEAmexList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
-						tableNYSEAmexList.cell(rowIdx, 3).data(arrayNYSEAmex[symbol].low);
 						if (symbol in arrayNYSEAmex)
 						{
+							tableNYSEAmexList.cell(rowIdx, 3).data(arrayNYSEAmex[symbol].low);
 		    				delete arrayNYSEAmex[symbol];
 		    			}							
 		    			
@@ -449,9 +464,9 @@
 					tablePinkList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
 		    			symbol = data[0];
-						tablePinkList.cell(rowIdx, 3).data(arrayPink[symbol].low);
 						if (symbol in arrayPink)
 						{
+							tablePinkList.cell(rowIdx, 3).data(arrayPink[symbol].low);
 		    				delete arrayPink[symbol];
 		    			}	
 					});
@@ -764,7 +779,7 @@
 			<thead>
 				<tr>
 					<th colspan=6>
-					Nasdaq 
+						Nasdaq  <input id="manualAddNasdaq" type="text" class="manualAddText"> <button id="btnManualAddNasdaq" type="button">Add Symbol</button> 
 					</th>
 				</tr>
 				<tr height = "15px;">

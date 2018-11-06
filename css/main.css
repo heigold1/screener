@@ -46,6 +46,20 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
     margin-left: 0px !important;
 }
 
+.manualAddText{
+	display: inline-block;
+	width: 75px;
+	font-size: 20px !important;
+	padding-top: 0px !important;
+    padding-right: 0px !important;
+    padding-bottom: 0px !important;
+    padding-left: 0px !important;
+	margin-top: 0px !important;
+    margin-right: 0px !important;
+    margin-bottom: 0px !important;
+    margin-left: 0px !important;
+}
+
 .allRows{
 	height: 15px !important;
 }
