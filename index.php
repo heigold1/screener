@@ -389,7 +389,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayNasdaq)
 						{
-							tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].low);							
+							tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].change.toFixed(2));							
 		    				delete arrayNasdaq[symbol];
 		    			}	
 		    			
@@ -435,7 +435,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayNYSEAmex)
 						{
-							tableNYSEAmexList.cell(rowIdx, 3).data(arrayNYSEAmex[symbol].low);
+							tableNYSEAmexList.cell(rowIdx, 3).data(arrayNYSEAmex[symbol].change.toFixed(2));
 		    				delete arrayNYSEAmex[symbol];
 		    			}							
 		    			
@@ -480,7 +480,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayPink)
 						{
-							tablePinkList.cell(rowIdx, 3).data(arrayPink[symbol].low);
+							tablePinkList.cell(rowIdx, 3).data(arrayPink[symbol].change.toFixed(2));
 		    				delete arrayPink[symbol];
 		    			}	
 					});
