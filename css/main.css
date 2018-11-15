@@ -18,6 +18,16 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
 	background-color: #FF7B7B !important;
 }
 
+.yellowClass{
+	background-color: yellow !important;
+}
+
+.blackClass{
+	background-color: black !important;
+	color: white !important;
+
+}
+
 .symbolText {
 	display: inline-block;
 	width: 115px;

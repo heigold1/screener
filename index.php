@@ -128,8 +128,16 @@
 				if ((((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
 					 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))) && (totalValue > 10000))
 				{
-         			$(row).addClass('redClass');
+					if (last < 1.00)
+					{
+         				$(row).addClass('yellowClass');						
+					}
+					else
+					{
+         				$(row).addClass('redClass');
+					}
          		}
+
          	} 
 		});
 
@@ -150,7 +158,11 @@
             		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
             	{
 
-            		if (volume < 20000)
+            		if (last < 1.00)
+            		{
+						$(row).addClass('yellowClass');
+            		}
+            		else if (volume < 20000)
             		{
          				$(row).addClass('redClass');            			
             		}
@@ -161,6 +173,12 @@
          		}
 
          		$(row).addClass('allRows');
+
+         		if (volume > 100000)
+         		{
+ 					$('td', row).eq(3).addClass('blackClass');
+         		}
+
          	}
 		} );
 
@@ -179,7 +197,11 @@
             	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
             		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
             	{
-            		if (volume < 20000)
+            		if (last < 1.00)
+            		{
+						$(row).addClass('yellowClass');
+            		}
+            		else if (volume < 20000)
             		{
          				$(row).addClass('redClass');            			
             		}
@@ -188,6 +210,12 @@
          				$(row).addClass('lightRedClass');            			
             		}
          		}
+
+         		if (volume > 100000)
+         		{
+ 					$('td', row).eq(3).addClass('blackClass');
+         		}
+         		
          	} 
 		});
 
