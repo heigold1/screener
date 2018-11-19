@@ -22,10 +22,26 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
 	background-color: yellow !important;
 }
 
+.lightBlueClass{
+	background-color:  	#ADD8E6 !important;
+}
+
+.darkBlueClass{
+	background-color:  #87CEFA	 !important;
+}
+
+.lightGreyClass{
+	background-color: lightgrey !important; 
+}
+
+.darkGreyClass{
+	background-color: #464646 !important; 
+	color: white !important;
+}
+
 .blackClass{
 	background-color: black !important;
 	color: white !important;
-
 }
 
 .symbolText {

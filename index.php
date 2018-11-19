@@ -119,8 +119,8 @@
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
 
-	        	var change = data[2];
-	        	var volumeString = data[3];
+	        	var change = data[3];
+	        	var volumeString = data[4];
         		var volume = parseFloat(volumeString.replace(/,/g, '')); 
 				var last = data[1];
 				var totalValue = volume*last; 
@@ -138,6 +138,8 @@
 					}
          		}
 
+         		$(row).addClass('allRows');
+
          	} 
 		});
 
@@ -149,10 +151,12 @@
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
 
-	        	var change = data[2];
+	        	var change = data[3];
 	        	var last = data[1];
-				var volumeString = data[3];
-				var volume = parseInt(volumeString.replace(/,/g, ''))
+				var volumeString = data[4];
+				var volume = parseInt(volumeString.replace(/,/g, ''));
+				var volumeRatio = parseFloat(data[5]);
+
 
             	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
             		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
@@ -164,21 +168,37 @@
             		}
             		else if (volume < 20000)
             		{
-         				$(row).addClass('redClass');            			
+         				$(row).addClass('darkBlueClass');            			
             		}
             		else 
             		{
-         				$(row).addClass('lightRedClass');            			
+         				$(row).addClass('lightBlueClass');            			
             		}
          		}
 
          		$(row).addClass('allRows');
 
-         		if (volume > 100000)
+	         	if (volume > 100000)
          		{
- 					$('td', row).eq(3).addClass('blackClass');
+ 					$('td', row).eq(4).addClass('blackClass');
+         		}
+	         	else if (volume > 70000)
+         		{
+ 					$('td', row).eq(4).addClass('darkGreyClass');
+         		}
+         		else if (volume > 35000)
+         		{
+ 					$('td', row).eq(4).addClass('lightGreyClass');
          		}
 
+         		if (volumeRatio > 0.17)
+         		{
+					$('td', row).eq(5).addClass('redClass');	
+         		}
+         		else if (volumeRatio > 0.1)
+         		{
+					$('td', row).eq(5).addClass('lightRedClass');	
+         		}
          	}
 		} );
 
@@ -189,10 +209,11 @@
 	        "info":     false, 
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
-	        	var change = data[2];
+	        	var change = data[3];
 	        	var last = data[1];
-				var volumeString = data[3];
+				var volumeString = data[4];
 				var volume = parseInt(volumeString.replace(/,/g, ''))
+				var volumeRatio = parseFloat(data[5]);
 
             	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
             		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
@@ -203,19 +224,38 @@
             		}
             		else if (volume < 20000)
             		{
-         				$(row).addClass('redClass');            			
+         				$(row).addClass('darkBlueClass');            			
             		}
             		else 
             		{
-         				$(row).addClass('lightRedClass');            			
+         				$(row).addClass('lightBlueClass');            			
             		}
          		}
 
-         		if (volume > 100000)
+         		$(row).addClass('allRows');
+
+	         	if (volume > 100000)
          		{
- 					$('td', row).eq(3).addClass('blackClass');
+ 					$('td', row).eq(4).addClass('blackClass');
+         		}
+	         	else if (volume > 70000)
+         		{
+ 					$('td', row).eq(4).addClass('darkGreyClass');
+         		}
+         		else if (volume > 35000)
+         		{
+ 					$('td', row).eq(4).addClass('lightGreyClass');
          		}
          		
+         		if (volumeRatio > 0.17)
+         		{
+					$('td', row).eq(5).addClass('redClass');	
+         		}
+         		else if (volumeRatio > 0.1)
+         		{
+					$('td', row).eq(5).addClass('lightRedClass');	
+         		}
+
          	} 
 		});
 
@@ -251,9 +291,6 @@
 				$(row).addClass('allRows');
 			}
 		});
-
-
-
 
 		/** Clicking on the "X" of a nasdaq row **/
 		$(document).on('click', '.nasdaq', function (evt) {
@@ -410,7 +447,6 @@
 				if (arrayNasdaq)
 				{
 					countSymbols += Object.keys(arrayNasdaq).length;
-					console.log("Number of symbols is " + countSymbols); 
 
 					tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 		    			var data = this.data();
@@ -433,13 +469,17 @@
 						}
 
 						var volumeString = value.volume.toString() + "00"; 
+						var volume = parseInt(value.volume.toString() + "00");
+						var avgVolume = parseInt(value.avg_volume.toString() + "00"); 
+						var volumeRatio = volume/avgVolume;
 
 						tableNasdaq.row.add([
 							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
+							value.low, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-							value.low, 
+							volumeRatio.toFixed(2),
 							"<div class='nasdaq'><i class='icon-remove'></i></div>"
 		        			]); 
 
@@ -479,13 +519,17 @@
 						}
 
 						var volumeString = value.volume.toString() + "00"; 
+						var volume = parseInt(value.volume.toString() + "00");
+						var avgVolume = parseInt(value.avg_volume.toString() + "00"); 
+						var volumeRatio = volume/avgVolume;
 
 						tableNYSEAmex.row.add([
 							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
+							value.low,
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-							value.low, 
+							volumeRatio.toFixed(2),
 							"<div class='nyse-amex'><i class='icon-remove'></i></div>"
 		        			] ); 
 
@@ -530,9 +574,9 @@
 						tablePink.row.add([
 							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
+							value.low, 
 							value.change.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-							value.low, 
 							"<div class='pink'><i class='icon-remove'></i></div>"
 		        			] ); 
 
@@ -600,14 +644,14 @@
 					<th>	
 						Last
 					</th>	
+					<th>
+						Low
+					</th>
 					<th>	
 						Change %
 					</th>
 					<th>	
 						Volume
-					</th>
-					<th>	
-						Low
 					</th>
 					<th>
 						
@@ -622,14 +666,14 @@
 					<td>
 						Last
 					</td>
+					<td>
+						Low
+					</td>
 					<td>	
 						Change%
 					</td>
 					<td>	
 						Volume
-					</td>
-					<td>	
-						Low
 					</td>
 					<td>
 						
@@ -644,7 +688,7 @@
 		<table id="nasdaq"  class="display" border=1  style="font-size: 20px;">
 			<thead>
 				<tr>
-					<th colspan=6>
+					<th colspan=7>
 					NASDAQ
 					</th>
 				</tr>
@@ -656,13 +700,16 @@
 						Last
 					</th>	
 					<th>	
+						Low
+					</th>
+					<th>	
 						Change %
 					</th>
 					<th>	
 						Volume
 					</th>
 					<th>	
-						Low
+						Vol Ratio
 					</th>
 					<th>
 						
@@ -677,6 +724,9 @@
 					<td>
 						Last
 					</td>
+					<td>
+						Low
+					</td>
 					<td>	
 						Change%
 					</td>
@@ -684,7 +734,7 @@
 						Volume
 					</td>
 					<td>	
-						Low
+						Vol Ratio
 					</td>
 					<td>
 						
@@ -699,7 +749,7 @@
 		<table id="nyse-amex"  class="display" border=1   style="font-size: 20px;" >
 			<thead>
 				<tr>
-					<th colspan=6>
+					<th colspan=7>
 					NYSE/AMEX
 					</th>
 				</tr>
@@ -711,6 +761,9 @@
 					<th>	
 						Last
 					</th>	
+					<th>
+						Low
+					</th>
 					<th>	
 						Change %
 					</th>
@@ -718,7 +771,7 @@
 						Volume
 					</th>
 					<th>	
-						Low
+						Vol Ratio
 					</th>
 					<th>
 						
@@ -734,6 +787,8 @@
 					<td>
 						Last
 					</td>
+					<td>
+						Low
 					<td>	
 						Change %
 					</td>
@@ -741,7 +796,7 @@
 						Volume
 					</td>
 					<td>	
-						Low
+						Vol Ratio
 					</td>
 					<td>
 						
@@ -773,8 +828,8 @@
 			</div>
 			<br>
 			<div>
-				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="21" style="width: 35px; font-size: 18px"><br>
-  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="13" style="width: 35px; font-size: 18px">
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="23" style="width: 35px; font-size: 18px"><br>
+  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="14" style="width: 35px; font-size: 18px">
 			</div>
 		</div><br>
 
