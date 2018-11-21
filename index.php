@@ -140,6 +140,10 @@
 
          		$(row).addClass('allRows');
 
+				$('td', row).eq(1).addClass('innerTD');
+				$('td', row).eq(2).addClass('innerTD');
+				$('td', row).eq(3).addClass('innerTD');
+				$('td', row).eq(4).addClass('innerTD');
          	} 
 		});
 
@@ -177,6 +181,12 @@
          		}
 
          		$(row).addClass('allRows');
+
+				$('td', row).eq(1).addClass('innerTD');
+				$('td', row).eq(2).addClass('innerTD');
+				$('td', row).eq(3).addClass('innerTD');
+				$('td', row).eq(4).addClass('innerTD');
+				$('td', row).eq(5).addClass('innerTD');
 
 	         	if (volume > 100000)
          		{
@@ -233,6 +243,12 @@
          		}
 
          		$(row).addClass('allRows');
+
+				$('td', row).eq(1).addClass('innerTD');
+				$('td', row).eq(2).addClass('innerTD');
+				$('td', row).eq(3).addClass('innerTD');
+				$('td', row).eq(4).addClass('innerTD');
+				$('td', row).eq(5).addClass('innerTD');
 
 	         	if (volume > 100000)
          		{
@@ -367,6 +383,16 @@
      			nyseAmexListTable.row( row ).remove();
      			nyseAmexListTable.draw();
      	}); 
+
+		$(document).on('click', '.innerTD', function(evt){
+			var row = $(this).closest('tr'); 
+			var data = row.find('.symbolText');
+			var symbol = data[0].value;
+
+			openNewsLookupWindow("http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + symbol)
+		});
+
+
 
 		$("#btnManualAddNyseAmex").click(function(){
 			tableNYSEAmexList.row.add([
