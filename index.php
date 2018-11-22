@@ -547,10 +547,10 @@
 						// if a stock's low drops more than 10 percent in one minute 
 						// then make the alert noise.
 						lowCurrHash[key] = value.low_percent.toFixed(2);
-
+						var differenceInLow = 0;
 						if (key in lowPrevHash)
 						{
-							var differenceInLow =  lowCurrHash[key] - lowPrevHash[key]; 
+							differenceInLow = lowCurrHash[key] - lowPrevHash[key]; 
 
 							if (differenceInLow > MINIMUM_LOW_DIFF)
 							{
@@ -574,7 +574,7 @@
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
-							value.low_percent.toFixed(2), 
+							value.low_percent.toFixed(2) + " (" + differenceInLow.toFixed(2) + ")", 
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 							volumeRatio.toFixed(2),
 							"<div class='nasdaq'><i class='icon-remove'></i></div>"
@@ -611,10 +611,10 @@
 						// if a stock's low drops more than 10 percent in one minute 
 						// then make the alert noise.
 						lowCurrHash[key] = value.low_percent.toFixed(2);
-
+						var differenceInLow = 0;
 						if (key in lowPrevHash)
 						{
-							var differenceInLow =  lowCurrHash[key] - lowPrevHash[key]; 
+							differenceInLow =  lowCurrHash[key] - lowPrevHash[key]; 
 
 							if (differenceInLow > MINIMUM_LOW_DIFF)
 							{
@@ -638,7 +638,7 @@
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
-							value.low_percent.toFixed(2),
+							value.low_percent.toFixed(2) + " (" + differenceInLow.toFixed(2) + ")", 
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 							volumeRatio.toFixed(2),
 							"<div class='nyse-amex'><i class='icon-remove'></i></div>"
