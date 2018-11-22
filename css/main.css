@@ -44,6 +44,11 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
 	color: white !important;
 }
 
+.lightBrownClass{
+	background-color: #E2AF80 !important;
+}
+
+
 .symbolText {
 	display: inline-block;
 	width: 115px;
