@@ -10,14 +10,20 @@
 	
 	</style>
 
-<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
-<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
 
 	<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" class="init">
 
 	var newsLookupWindow; 
+	var currentMinute; 
+	var lowPrevHash = new Object();
+	var lowCurrHash = new Object();
+	const MINIMUM_LOW_DIFF = 9; 
+
 
 	function openNewsLookupWindow(link){
 		newsLookupWindow = window.open(link, "newslookup-window"); 
@@ -111,6 +117,8 @@
 
 	$(document).ready(function() {
 
+		currentMinute = moment().minutes(); 
+
 		//PINK List
 		var tablePink = $('#pink').DataTable( {
 	  		"paging":   false,
@@ -155,12 +163,14 @@
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
 
+	        	var symbol = $.trim($(data[0]).val());
 	        	var change = data[3];
 	        	var last = data[1];
-				var volumeString = data[4];
+	        	var low = data[2];
+	        	var lowPercent = data[4];
+				var volumeString = data[5];
 				var volume = parseInt(volumeString.replace(/,/g, ''));
-				var volumeRatio = parseFloat(data[5]);
-
+				var volumeRatio = parseFloat(data[6]);
 
             	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
             		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
@@ -179,6 +189,14 @@
          				$(row).addClass('lightBlueClass');            			
             		}
          		}
+         		else if (symbol in lowPrevHash)
+				{
+					var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
+					if (differenceInLow > MINIMUM_LOW_DIFF)
+					{
+						$(row).addClass('orangeClass');            			
+					}
+				}
 
          		$(row).addClass('allRows');
 
@@ -187,18 +205,25 @@
 				$('td', row).eq(3).addClass('innerTD');
 				$('td', row).eq(4).addClass('innerTD');
 				$('td', row).eq(5).addClass('innerTD');
+				$('td', row).eq(6).addClass('innerTD');
+
+            	if (((low > 1.00) && (lowPercent > parseFloat($("#nas-nyse-dollar").val()))) || 
+            		((low < 1.00) && (lowPercent > parseFloat($("#nas-nyse-penny").val()))))
+            	{
+					$('td', row).eq(4).addClass('lightBrownClass');
+            	}
 
 	         	if (volume > 100000)
          		{
- 					$('td', row).eq(4).addClass('blackClass');
+ 					$('td', row).eq(5).addClass('blackClass');
          		}
 	         	else if (volume > 70000)
          		{
- 					$('td', row).eq(4).addClass('darkGreyClass');
+ 					$('td', row).eq(5).addClass('darkGreyClass');
          		}
          		else if (volume > 35000)
          		{
- 					$('td', row).eq(4).addClass('lightGreyClass');
+ 					$('td', row).eq(5).addClass('lightGreyClass');
          		}
 
          		if (volumeRatio > 0.17)
@@ -207,7 +232,7 @@
          		}
          		else if (volumeRatio > 0.1)
          		{
-					$('td', row).eq(5).addClass('lightRedClass');	
+					$('td', row).eq(6).addClass('lightRedClass');	
          		}
          	}
 		} );
@@ -219,11 +244,15 @@
 	        "info":     false, 
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
+
+				var symbol = $.trim($(data[0]).val());
 	        	var change = data[3];
 	        	var last = data[1];
-				var volumeString = data[4];
+				var low = data[2];
+	        	var lowPercent = data[4];
+				var volumeString = data[5];
 				var volume = parseInt(volumeString.replace(/,/g, ''))
-				var volumeRatio = parseFloat(data[5]);
+				var volumeRatio = parseFloat(data[6]);
 
             	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
             		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
@@ -241,6 +270,14 @@
          				$(row).addClass('lightBlueClass');            			
             		}
          		}
+         		else if (symbol in lowPrevHash)
+				{
+					var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
+					if (differenceInLow > MINIMUM_LOW_DIFF)
+					{
+						$(row).addClass('orangeClass');            			
+					}
+				}
 
          		$(row).addClass('allRows');
 
@@ -249,27 +286,36 @@
 				$('td', row).eq(3).addClass('innerTD');
 				$('td', row).eq(4).addClass('innerTD');
 				$('td', row).eq(5).addClass('innerTD');
+				$('td', row).eq(6).addClass('innerTD');
+
+				// if the low is under the radar, turn the cell brown
+            	if (((low > 1.00) && (lowPercent > parseFloat($("#nas-nyse-dollar").val()))) || 
+            		((low < 1.00) && (lowPercent > parseFloat($("#nas-nyse-penny").val()))))
+            	{
+					$('td', row).eq(4).addClass('lightBrownClass');
+            	}
+
 
 	         	if (volume > 100000)
          		{
- 					$('td', row).eq(4).addClass('blackClass');
+ 					$('td', row).eq(5).addClass('blackClass');
          		}
 	         	else if (volume > 70000)
          		{
- 					$('td', row).eq(4).addClass('darkGreyClass');
+ 					$('td', row).eq(5).addClass('darkGreyClass');
          		}
          		else if (volume > 35000)
          		{
- 					$('td', row).eq(4).addClass('lightGreyClass');
+ 					$('td', row).eq(5).addClass('lightGreyClass');
          		}
          		
          		if (volumeRatio > 0.17)
          		{
-					$('td', row).eq(5).addClass('redClass');	
+					$('td', row).eq(6).addClass('redClass');	
          		}
          		else if (volumeRatio > 0.1)
          		{
-					$('td', row).eq(5).addClass('lightRedClass');	
+					$('td', row).eq(6).addClass('lightRedClass');	
          		}
 
          	} 
@@ -441,6 +487,17 @@
 
 	function addRows(){
 
+		// every minute set the new lows 
+		var nowMinute = moment().minutes();
+		if (currentMinute != nowMinute)
+		{
+			currentMinute = nowMinute; 
+			for (const [key, value] of Object.entries(lowCurrHash))
+			{
+				lowPrevHash[key] = lowCurrHash[key];
+			}
+		}
+
 		$.get('http://localhost/screener/percent-decliners.json', function(){
 			console.log( "Grabbed percent-decliners.json successfully" );
 			})
@@ -487,6 +544,19 @@
 
 					for (const [key, value] of Object.entries(arrayNasdaq))
 					{
+						// if a stock's low drops more than 10 percent in one minute 
+						// then make the alert noise.
+						lowCurrHash[key] = value.low_percent.toFixed(2);
+
+						if (key in lowPrevHash)
+						{
+							var differenceInLow =  lowCurrHash[key] - lowPrevHash[key]; 
+
+							if (differenceInLow > MINIMUM_LOW_DIFF)
+							{
+								playSound = 1;
+							}
+						}
 
 	            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
 	            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
@@ -504,6 +574,7 @@
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
+							value.low_percent.toFixed(2), 
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 							volumeRatio.toFixed(2),
 							"<div class='nasdaq'><i class='icon-remove'></i></div>"
@@ -535,9 +606,22 @@
 		    			
 					});
 
-
 					for (const [key, value] of Object.entries(arrayNYSEAmex))
 					{
+						// if a stock's low drops more than 10 percent in one minute 
+						// then make the alert noise.
+						lowCurrHash[key] = value.low_percent.toFixed(2);
+
+						if (key in lowPrevHash)
+						{
+							var differenceInLow =  lowCurrHash[key] - lowPrevHash[key]; 
+
+							if (differenceInLow > MINIMUM_LOW_DIFF)
+							{
+								playSound = 1;
+							}
+						}
+
 	            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
 	            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
 						{
@@ -554,6 +638,7 @@
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
+							value.low_percent.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 							volumeRatio.toFixed(2),
 							"<div class='nyse-amex'><i class='icon-remove'></i></div>"
@@ -731,6 +816,9 @@
 					<th>	
 						Change %
 					</th>
+					<th>
+						Low %
+					</th>
 					<th>	
 						Volume
 					</th>
@@ -754,7 +842,10 @@
 						Low
 					</td>
 					<td>	
-						Change%
+						Change %
+					</td>
+					<td>
+						Low % 
 					</td>
 					<td>	
 						Volume
@@ -793,6 +884,9 @@
 					<th>	
 						Change %
 					</th>
+					<th>
+						Low %
+					</th>
 					<th>	
 						Volume
 					</th>
@@ -817,6 +911,9 @@
 						Low
 					<td>	
 						Change %
+					</td>
+					<td>
+						Low %
 					</td>
 					<td>	
 						Volume
