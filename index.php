@@ -172,7 +172,15 @@
 				var volume = parseInt(volumeString.replace(/,/g, ''));
 				var volumeRatio = parseFloat(data[6]);
 
-            	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
+         		if (symbol in lowPrevHash)
+				{
+					var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
+					if (differenceInLow > MINIMUM_LOW_DIFF)
+					{
+						$(row).addClass('orangeClass');            			
+					}
+				}
+            	else if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
             		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
             	{
 
@@ -189,14 +197,7 @@
          				$(row).addClass('lightBlueClass');            			
             		}
          		}
-         		else if (symbol in lowPrevHash)
-				{
-					var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
-					if (differenceInLow > MINIMUM_LOW_DIFF)
-					{
-						$(row).addClass('orangeClass');            			
-					}
-				}
+
 
          		$(row).addClass('allRows');
 
@@ -254,7 +255,15 @@
 				var volume = parseInt(volumeString.replace(/,/g, ''))
 				var volumeRatio = parseFloat(data[6]);
 
-            	if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
+         		if (symbol in lowPrevHash)
+				{
+					var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
+					if (differenceInLow > MINIMUM_LOW_DIFF)
+					{
+						$(row).addClass('orangeClass');            			
+					}
+				}
+            	else if (((last > 1.00) && (change > parseFloat($("#nas-nyse-dollar").val()))) || 
             		((last < 1.00) && (change > parseFloat($("#nas-nyse-penny").val()))))
             	{
             		if (last < 1.00)
@@ -270,14 +279,6 @@
          				$(row).addClass('lightBlueClass');            			
             		}
          		}
-         		else if (symbol in lowPrevHash)
-				{
-					var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
-					if (differenceInLow > MINIMUM_LOW_DIFF)
-					{
-						$(row).addClass('orangeClass');            			
-					}
-				}
 
          		$(row).addClass('allRows');
 
@@ -536,7 +537,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayNasdaq)
 						{
-							tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].change.toFixed(2));							
+							tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].change.toFixed(2));	
 		    				delete arrayNasdaq[symbol];
 		    			}	
 		    			
@@ -574,7 +575,7 @@
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
-							value.low_percent.toFixed(2) + " (" + differenceInLow.toFixed(2) + ")", 
+							value.low_percent.toFixed(2), 
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 							volumeRatio.toFixed(2),
 							"<div class='nasdaq'><i class='icon-remove'></i></div>"
@@ -638,7 +639,7 @@
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
-							value.low_percent.toFixed(2) + " (" + differenceInLow.toFixed(2) + ")", 
+							value.low_percent.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 							volumeRatio.toFixed(2),
 							"<div class='nyse-amex'><i class='icon-remove'></i></div>"
