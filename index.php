@@ -171,8 +171,9 @@
 				var volumeString = data[5];
 				var volume = parseInt(volumeString.replace(/,/g, ''));
 				var volumeRatio = parseFloat(data[6]);
+				var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
 
-         		if (symbol in lowPrevHash)
+         		if ((symbol in lowPrevHash) && (differenceInLow > MINIMUM_LOW_DIFF))
 				{
 					var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
 					if (differenceInLow > MINIMUM_LOW_DIFF)
@@ -254,8 +255,9 @@
 				var volumeString = data[5];
 				var volume = parseInt(volumeString.replace(/,/g, ''))
 				var volumeRatio = parseFloat(data[6]);
+				var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
 
-         		if (symbol in lowPrevHash)
+         		if ((symbol in lowPrevHash) && (differenceInLow > MINIMUM_LOW_DIFF))
 				{
 					var differenceInLow =  lowCurrHash[symbol] - lowPrevHash[symbol]; 
 					if (differenceInLow > MINIMUM_LOW_DIFF)
