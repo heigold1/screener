@@ -230,7 +230,7 @@
 
          		if (volumeRatio > 0.17)
          		{
-					$('td', row).eq(5).addClass('redClass');	
+					$('td', row).eq(6).addClass('redClass');	
          		}
          		else if (volumeRatio > 0.1)
          		{
@@ -587,7 +587,6 @@
 			 	}  // if(arrayNasdaq)
 				tableNasdaq.draw();
 
-
 				var tableNYSEAmex = $('#nyse-amex').DataTable();
 				tableNYSEAmex.clear(); 
 				arrayNYSEAmex = data.NYSEAMEX; 
@@ -802,7 +801,7 @@
 		<table id="nasdaq"  class="display" border=1  style="font-size: 20px;">
 			<thead>
 				<tr>
-					<th colspan=7>
+					<th colspan=8>
 					NASDAQ
 					</th>
 				</tr>
@@ -869,7 +868,7 @@
 		<table id="nyse-amex"  class="display" border=1   style="font-size: 20px;" >
 			<thead>
 				<tr>
-					<th colspan=7>
+					<th colspan=8>
 					NYSE/AMEX
 					</th>
 				</tr>
