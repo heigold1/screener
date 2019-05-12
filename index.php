@@ -117,6 +117,8 @@
 
 	$(document).ready(function() {
 
+		alert("SET YOUR YESTERDAY DAY VARIABLES IN NEWSLOOKUP proxy.php AND proxy_sec.php");
+
 		currentMinute = moment().minutes(); 
 
 		//PINK List
@@ -133,8 +135,22 @@
 				var last = data[1];
 				var totalValue = volume*last; 
 
-				if ((((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-					 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))) && (totalValue > 10000))
+				if (
+					(
+						(
+						 ((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
+						 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
+						 ) 
+						&& (totalValue > 90000)
+					) ||
+					(
+						(change >  parseFloat($("#pink-penny").val())) && 
+						(last < 0.01) && 
+						(last > 0.001) &&
+						(volume > 110000)
+					)
+
+					)
 				{
 					if (last < 1.00)
 					{
@@ -437,8 +453,9 @@
 			var row = $(this).closest('tr'); 
 			var data = row.find('.symbolText');
 			var symbol = data[0].value;
+			copyToClipboard(data);
 
-			openNewsLookupWindow("http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + symbol)
+			openNewsLookupWindow("http://ec2-54-210-42-143.compute-1.amazonaws.com/newslookup/index.php?symbol=" + symbol)
 		});
 
 
@@ -481,7 +498,7 @@
 
 		});
 
-		countdown();	
+ 		countdown();	
 
 	});
 
@@ -573,7 +590,7 @@
 						var volumeRatio = volume/avgVolume;
 
 						tableNasdaq.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-54-210-42-143.compute-1.amazonaws.com/newslookup/index.php?symbol=" + key +  "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -636,7 +653,7 @@
 						var volumeRatio = volume/avgVolume;
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-54-210-42-143.compute-1.amazonaws.com/newslookup/index.php?symbol=" + key +  "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
@@ -677,15 +694,30 @@
 						var volume = parseFloat(volumeString);
 						var last = value.last;
 						var totalValue = volume*last; 
+						var change = value.change;
 
-						if ((((value.change > parseFloat($("#pink-penny").val())) && (value.last < 1.00)) || 
-						     ((value.change > parseFloat( $("#pink-dollar").val())) && (value.last > 1.00))) && (totalValue > 10000))
-						{
-							playSound = 1;
-						}
+						if (
+								(
+									(
+									 ((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
+									 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
+									 ) 
+									&& (totalValue > 90000)
+								) ||
+								(
+									(change >  parseFloat($("#pink-penny").val())) && 
+									(last < 0.01) && 
+									(last > 0.001) &&
+									(volume > 110000)
+								)
+
+							)
+							{
+								playSound = 1;
+							}
 
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://www.heigoldinvestments.com/newslookup/index.php?symbol=" + key +  "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-54-210-42-143.compute-1.amazonaws.com/newslookup/index.php?symbol=" + key +  "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -953,7 +985,7 @@
 			</div>
 			<br>
 			<div>
-				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="23" style="width: 35px; font-size: 18px"><br>
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="21" style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="14" style="width: 35px; font-size: 18px">
 			</div>
 		</div><br>
