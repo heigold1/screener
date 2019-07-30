@@ -94,6 +94,27 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
     margin-left: 0px !important;
 }
 
+.impulseBuyText{
+/*	visibility: hidden; 
+	display: none;  */ 
+	width: 20px;
+	height: 10px; 
+}
+
 .allRows{
 	height: 15px !important;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 40%; /* Full height */
+}
+
+.closeModal{
+	font-size: 35; 
 }

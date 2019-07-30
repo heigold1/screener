@@ -29,9 +29,38 @@
 		newsLookupWindow = window.open(link, "newslookup-window"); 
 	}
 
-	function prepareImpulseBuy(object)
+	function closeModalWindow(){
+		console.log("inside closeModal");
+		var modal = document.getElementById('myModal');
+		modal.style.display = "none";
+	}
+
+	function createOrderStub(symbol, price, percentage)
 	{
-		alert("test");
+		var rawNumShares = 250/price;
+		percentage = percentage.toFixed(2);
+
+		if (price > 1.00)
+		{
+			price = price + 0.01; 
+			price = price.toFixed(2);
+		}
+		else
+		{
+			price = price + 0.0001; 
+			price = price.toFixed(4);
+		}
+
+		var numShares = parseInt(Math.ceil(rawNumShares/100)*100);
+		var orderStub = symbol + " BUY " + numShares + " $" + price + " (" + percentage + "%)"; 
+		return orderStub; 
+	}
+
+	function prepareImpulseBuy(symbol, orderStub)
+	{
+		var modal = document.getElementById('myModal');
+		$("div#myModal").html(" <img style='max-width:100%; max-height:100%;' src='http://bigcharts.marketwatch.com/kaavio.Webhost/charts/big.chart?nosettings=1&symb=" + symbol + "&uf=0&type=2&size=2&freq=1&entitlementtoken=0c33378313484ba9b46b8e24ded87dd6&time=4&rand=" + Math.random() + "&compidx=&ma=0&maval=9&lf=1&lf2=0&lf3=0&height=335&width=579&mocktick=1)'></a><br><br><span style='font-size:30px;'>" + orderStub + "</span><br><br><button class='closeModal' style='font-size: 35px !important; height: 45px' onclick='closeModalWindow();'>Close</button>");
+        modal.style.display = "block";
 	}
 
 	function copyToClipboard(object){
@@ -146,7 +175,6 @@
 				$('td', row).eq(2).addClass('innerTD');
 				$('td', row).eq(3).addClass('innerTD');
 				$('td', row).eq(4).addClass('innerTD');
-				$('td', row).eq(6).addClass('innerTD');
 
 				if (
 					(
@@ -736,9 +764,13 @@
 
 						var changePercentagePink = value.change.toFixed(2)
 
+
+
 						if (changePercentagePink > 53 && (totalValue > 500))
 						{
-							impulseBuy = "<span class='impulseButton' onclick='prepareImpulseBuy($(this))'>BUY</span>";
+							var orderStub = createOrderStub(jQuery.trim(key), last, change);
+
+							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removePink($(this));' value=\"" + orderStub + "\" readonly>";
 						}
 
 						tablePink.row.add([
@@ -1124,6 +1156,17 @@
 
 </tr>
 
+<div id="myModal" class="modal" style="display: none">
+
+  <!-- Modal content -->
+
+<!-- 
+  <div id="modalContent" class="modal-content">
+    
+  </div>
+-->
+
+</div>
 
 </body>
 </html>
