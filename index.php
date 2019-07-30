@@ -29,6 +29,11 @@
 		newsLookupWindow = window.open(link, "newslookup-window"); 
 	}
 
+	function prepareImpulseBuy(object)
+	{
+		alert("test");
+	}
+
 	function copyToClipboard(object){
   		object.select();
   		try {
@@ -73,9 +78,9 @@
 			var data = row.children();
 			var symbol = $(data[0]).children(0).val()
 
-			var nasdaqTable = $('#pink').DataTable();
-     			nasdaqTable.row( row ).remove();
-     			nasdaqTable.draw();
+			var pinkTable = $('#pink').DataTable();
+     			pinkTable.row( row ).remove();
+     			pinkTable.draw();
 
 			var tablePinkList = $('#pink-list').DataTable();
 
@@ -135,39 +140,48 @@
 				var last = data[1];
 				var totalValue = volume*last; 
 
-				if (
-					(
-						(
-						 ((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-						 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
-						 ) 
-						&& (totalValue > 90000)
-					) ||
-					(
-						(change >  parseFloat($("#pink-penny").val())) && 
-						(last < 0.01) && 
-						(last > 0.001) &&
-						(volume > 110000)
-					)
-
-					)
-				{
-					if (last < 1.00)
-					{
-         				$(row).addClass('yellowClass');						
-					}
-					else
-					{
-         				$(row).addClass('redClass');
-					}
-         		}
-
          		$(row).addClass('allRows');
 
 				$('td', row).eq(1).addClass('innerTD');
 				$('td', row).eq(2).addClass('innerTD');
 				$('td', row).eq(3).addClass('innerTD');
 				$('td', row).eq(4).addClass('innerTD');
+				$('td', row).eq(6).addClass('innerTD');
+
+				if (
+					(
+						(
+						 ((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
+						 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
+						 ) 
+						&& (totalValue > 500)
+					)  /* ||
+					(
+						(change >  parseFloat($("#pink-penny").val())) && 
+						(last < 0.01) && 
+						(last > 0.001) &&
+						(volume > 110000)
+					)  */
+
+					)
+				{
+					if (last < 1.00)
+					{
+         				$(row).addClass('yellowClass');				
+					}
+					else
+					{
+         				$(row).addClass('lightBlueClass');
+					}
+
+					// if 
+					if (change > 79)
+         			{
+	 					$('td', row).eq(6).addClass('orangeClass');
+         			}
+         		}
+
+
          	} 
 		});
 
@@ -518,8 +532,8 @@
 			}
 		}
 
-		$.get('http://localhost/screener/percent-decliners.json', function(){
-			console.log( "Grabbed percent-decliners.json successfully" );
+		$.get('http://localhost/screener/decliners.json', function(){
+			console.log( "Grabbed decliners.json successfully 2" );
 			})
 			.done(function(data){
 
@@ -702,27 +716,39 @@
 									 ((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
 									 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
 									 ) 
-									&& (totalValue > 90000)
-								) ||
+									&& (totalValue > 500)
+								)  /* ||
 								(
 									(change >  parseFloat($("#pink-penny").val())) && 
 									(last < 0.01) && 
 									(last > 0.001) &&
 									(volume > 110000)
-								)
+								) */
 
 							)
 							{
 								playSound = 1;
 							}
 
+						// this is for the impulse buy, if a pink is down 90% we don't need to check, 
+						// just put in the buy order.
+						var impulseBuy = "";
+
+						var changePercentagePink = value.change.toFixed(2)
+
+						if (changePercentagePink > 53 && (totalValue > 500))
+						{
+							impulseBuy = "<span class='impulseButton' onclick='prepareImpulseBuy($(this))'>BUY</span>";
+						}
+
 						tablePink.row.add([
 							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-54-210-42-143.compute-1.amazonaws.com/newslookup/index.php?symbol=" + key +  "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
-							value.change.toFixed(2),
+							changePercentagePink,
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-							"<div class='pink'><i class='icon-remove'></i></div>"
+							"<div class='pink'><i class='icon-remove'></i></div>", 
+							impulseBuy
 		        			] ); 
 
 					}
@@ -778,7 +804,7 @@
 		<table id="pink"  class="display tableFont" border=1 style="font-size: 20px;">
 			<thead>
 				<tr>
-					<th colspan=6>
+					<th colspan=7>
 					PINK
 					</th>
 				</tr>
@@ -800,6 +826,9 @@
 					</th>
 					<th>
 						
+					</th>
+					<th>
+						Buy
 					</th>
 				</tr>
 			</thead>
@@ -823,6 +852,9 @@
 					<td>
 						
 					</td>
+					<th>
+						
+					</th>
 				</tr>			
 			</tbody>	
 
@@ -985,8 +1017,8 @@
 			</div>
 			<br>
 			<div>
-				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="21" style="width: 35px; font-size: 18px"><br>
-  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="14" style="width: 35px; font-size: 18px">
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="17" style="width: 35px; font-size: 18px"><br>
+  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="12" style="width: 35px; font-size: 18px">
 			</div>
 		</div><br>
 
