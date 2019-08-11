@@ -429,6 +429,7 @@
   			var checkbox = $("#chk-" + value);
   			checkbox.prop("checked", true);
   			var row = checkbox.closest('tr');
+  			row.removeClass('whiteClass');
   			row.addClass('orangeClass');
 		}
 
