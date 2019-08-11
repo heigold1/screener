@@ -52,6 +52,10 @@
 		}
 
 		var numShares = parseInt(Math.ceil(rawNumShares/100)*100);
+		if (numShares > 500000)
+		{
+			numShares = 500000;
+		}
 		var orderStub = symbol + " BUY " + numShares + " $" + price + " (" + percentage + "%)"; 
 		return orderStub; 
 	}
@@ -91,7 +95,7 @@
 		tableNasdaqList.row.add([
 			symbol, 
 			'<input type="text" class="newsText">',
-			'<input type="checkbox" checked>',
+			'<input type="checkbox" class="list-check" id="chk-' + symbol + '">',
 			'',
 			"<div class='nasdaq-list'><i class='icon-remove'></i></div>"
 			] ); 
@@ -116,7 +120,7 @@
 			tablePinkList.row.add([
 				symbol, 
 				'<input type="text" class="newsText">',
-			 	'<input type="checkbox" checked>',
+				'<input type="checkbox" class="list-check" id="chk-' + symbol + '">',
 				'',
 				"<div class='pink-list'><i class='icon-remove'></i></div>"
     			] ); 
@@ -139,7 +143,7 @@
 			tableNYSEAmexList.row.add([
 				symbol, 
 				'<input type="text" class="newsText">',
-			 	'<input type="checkbox" checked>',
+				'<input type="checkbox" class="list-check" id="chk-' + symbol + '">',
 				'',
 				"<div class='nyse-amex-list'><i class='icon-remove'></i></div>"
     			] ); 
@@ -390,6 +394,8 @@
 	        "searching": false, 
 			"createdRow": function( row, data, dataIndex ) {
 				$(row).addClass('allRows');
+				$(row).addClass('trList'); 
+				$(row).attr('id', 'tr-list-' + data[0]); 
 			}
 		});
 
@@ -401,6 +407,8 @@
 	        "searching": false, 
 			"createdRow": function( row, data, dataIndex ) {
 				$(row).addClass('allRows');
+				$(row).addClass('trList'); 
+				$(row).attr('id', 'tr-list-' + data[0]); 
 			}
 		});
 
@@ -412,8 +420,48 @@
 	        "searching": false, 
 			"createdRow": function( row, data, dataIndex ) {
 				$(row).addClass('allRows');
+				$(row).addClass('trList'); 
+				$(row).attr('id', 'tr-list-' + data[0]); 
 			}
 		});
+
+		function iterateThroughEarningsSymbols(value, index, array) {
+  			var checkbox = $("#chk-" + value);
+  			checkbox.prop("checked", true);
+  			var row = checkbox.closest('tr');
+  			row.addClass('orangeClass');
+		}
+
+		$(document).on('click', '#check-earnings', function (evt) {
+		    $.ajax({
+		        url: 'http://ec2-54-210-42-143.compute-1.amazonaws.com/newslookup/get-earnings-stocks.php',
+		        async: true, 
+		        dataType: 'json',
+		        success:  function (data) {
+					data.forEach(iterateThroughEarningsSymbols); 
+		        },
+		        error: function (xhr, ajaxOptions, thrownError) {
+		          console.log("there was an error in calling save-earnings-stocks.php");
+		          alert("ERROR in grabbing the earnings symbols file.");
+		        }
+
+		    });
+
+		});
+
+		$(document).on('click', '.list-check', function (evt) {
+			if($(this).prop("checked") == true){
+				$(this).closest('tr').removeClass('whiteClass');
+				$(this).closest('tr').addClass('orangeClass');
+			}
+			else
+			{
+				$(this).closest('tr').removeClass('orangeClass');
+				$(this).closest('tr').addClass('whiteClass');
+
+			}
+		});
+
 
 		/** Clicking on the "X" of a nasdaq row **/
 		$(document).on('click', '.nasdaq', function (evt) {
@@ -598,7 +646,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayNasdaq)
 						{
-							tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].change.toFixed(2));	
+							tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].low_percent.toFixed(2));	
 		    				delete arrayNasdaq[symbol];
 		    			}	
 		    			
@@ -661,7 +709,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayNYSEAmex)
 						{
-							tableNYSEAmexList.cell(rowIdx, 3).data(arrayNYSEAmex[symbol].change.toFixed(2));
+							tableNYSEAmexList.cell(rowIdx, 3).data(arrayNYSEAmex[symbol].low_percent.toFixed(2));
 		    				delete arrayNYSEAmex[symbol];
 		    			}							
 		    			
@@ -724,7 +772,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayPink)
 						{
-							tablePinkList.cell(rowIdx, 3).data(arrayPink[symbol].change.toFixed(2));
+							tablePinkList.cell(rowIdx, 3).data(arrayPink[symbol].low_percent.toFixed(2));
 		    				delete arrayPink[symbol];
 		    			}	
 					});
@@ -765,8 +813,8 @@
 						var changePercentagePink = value.change.toFixed(2)
 
 
-
-						if (changePercentagePink > 53 && (totalValue > 500))
+						// setting the threshold of 79%, anything lower than 79% we can impulse-buy.
+						if (changePercentagePink > 79 && (totalValue > 500))
 						{
 							var orderStub = createOrderStub(jQuery.trim(key), last, change);
 
@@ -1051,6 +1099,11 @@
 			<div>
 				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="17" style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="12" style="width: 35px; font-size: 18px">
+			</div>
+			<div>
+				<button id="check-earnings">
+    				Check Earnings
+  				</button>
 			</div>
 		</div><br>
 

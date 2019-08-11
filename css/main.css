@@ -52,6 +52,10 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
 	background-color: orange !important;
 }
 
+.whiteClass{
+	background-color: #ffffff !important;
+}
+
 .symbolText {
 	display: inline-block;
 	width: 115px;
