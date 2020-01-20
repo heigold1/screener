@@ -37,7 +37,7 @@
 
 	function createOrderStub(symbol, price, percentage)
 	{
-		var rawNumShares = 250/price;
+		var rawNumShares = 350/price;
 		percentage = percentage.toFixed(2);
 
 		if (price > 1.00)
@@ -609,7 +609,7 @@
 			}
 		}
 
-		$.get('http://localhost/screener/decliners.json', function(){
+		$.get('http://localhost/screener/percent-decliners.json', function(){
 			console.log( "Grabbed decliners.json successfully 2" );
 			})
 			.done(function(data){
