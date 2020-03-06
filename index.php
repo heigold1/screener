@@ -533,7 +533,7 @@
 		$(document).on('click', '.nyse-amex-list', function (evt) {
 			var row = $(this).closest('tr'); 
 			var data = row.children();
-			var symbol = $(data[0]).text();
+			var symbol = $(data[0]).text()
 
 			evt.stopPropagation();
 			evt.preventDefault();
@@ -544,12 +544,13 @@
      	}); 
 
 		$(document).on('click', '.innerTD', function(evt){
+			var vixNumber = $("#vixNumber").html();
 			var row = $(this).closest('tr'); 
 			var data = row.find('.symbolText');
 			var symbol = data[0].value;
 			copyToClipboard(data);
 
-			openNewsLookupWindow("http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol)
+			openNewsLookupWindow("http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber); 
 		});
 
 
@@ -624,6 +625,7 @@
 				var tableNasdaq = $('#nasdaq').DataTable();
 				var symbol = ""; 
 				var countSymbols = 0;
+				var vixNumber; 
 
 				globalData = data; 
 
@@ -640,6 +642,12 @@
 				var tableNasdaqList = $('#nasdaq-list').DataTable();
 				tableNasdaq.clear(); 	
 				arrayNasdaq = data.NASDAQ; 
+				vixNumber = data.VIX; 
+
+				if (vixNumber)
+				{
+					$("#vixNumber").html(vixNumber);
+				}
 
 				if (arrayNasdaq)
 				{
@@ -684,7 +692,7 @@
 						var volumeRatio = volume/avgVolume;
 
 						tableNasdaq.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -747,7 +755,7 @@
 						var volumeRatio = volume/avgVolume;
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
@@ -826,7 +834,7 @@
 						}
 
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							changePercentagePink,
@@ -1104,12 +1112,23 @@
 				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="17" style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="11" style="width: 35px; font-size: 18px">
 			</div>
-			<div>
-				<button id="check-earnings">
-    				Check Earnings
-  				</button>
+
+		</div>
+		<div style="width: 120px; height: 80px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
+			<div style="font-size: 20px;">
+				<b>VIX</b>
+			</div><br> 
+			<div style="font-size: 40px;" id="vixNumber">
+
 			</div>
-		</div><br>
+		</div>
+		<div>
+			<button id="check-earnings">
+    			Check Earnings
+  			</button>
+		</div>
+		<br>
+
 
 <!--
   		<button id="clear-tables" value="submit-true">
