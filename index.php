@@ -640,6 +640,18 @@
 					audioEqual.play();
 				}
 
+				var prevCurrModal = document.getElementById('prev-current-modal');	
+				if ($("#display-prev-curr").is(":checked"))
+				{
+					$("div#prev-div").html("prevGlobalDataString is *" + prevGlobalDataString + "*");
+					$("div#curr-div").html("globalDataString is *" + globalDataString + "*"); 
+		        	prevCurrModal.style.display = "block";
+				}
+				else
+				{
+					prevCurrModal.style.display = "none";
+				}
+
 				prevGlobalData = JSON.parse(JSON.stringify(globalData));
 
 				var tableNasdaqList = $('#nasdaq-list').DataTable();
@@ -1130,6 +1142,10 @@
     			Check Earnings
   			</button>
 		</div>
+		<div>
+			<input type="checkbox" id="display-prev-curr">,
+			<label for="display-prev-curr">Display prev/curr</label>
+		</div>
 		<br>
 
 
@@ -1246,6 +1262,21 @@
 -->
 
 </div>
+
+
+<div id="prev-current-modal" class="modal" style="display: none; overflow-x: hidden; overflow-y: auto; text-align: center; width: 1000px; height: 700px">
+
+  <!-- Modal content -->
+  <div id="prev-div">
+    
+  </div>
+  <div id="curr-div">
+    
+  </div>
+
+</div>
+
+
 
 </body>
 </html>
