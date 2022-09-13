@@ -158,7 +158,8 @@
 
 	$(document).ready(function() {
 
-		alert("SET YOUR YESTERDAY DAY VARIABLES IN NEWSLOOKUP proxy.php AND proxy_sec.php");
+		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
+		checkLockupDates.play(); 
 
 		currentMinute = moment().minutes(); 
 
