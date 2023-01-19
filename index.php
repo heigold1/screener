@@ -95,11 +95,20 @@
 
 		var tableNasdaqList = $('#nasdaq-list').DataTable();
 
+		var today = new Date(); 
+		var hours = today.getHours(); 
+		var minutes = today.getMinutes();
+		if (minutes < 10)
+		{
+			minutes = "0" + minutes; 
+		}
+
 		tableNasdaqList.row.add([
 			symbol, 
+			((hours + 24)%12 || 12) + ":" + minutes + " " + ((hours >= 12) ? "PM" : "AM"), 
 			'<input type="text" class="newsText">',
 			'<input type="checkbox" class="list-check" id="chk-' + symbol + '">',
-			'',
+			'', 
 			"<div class='nasdaq-list'><i class='icon-remove'></i></div>"
 			] ); 
 
@@ -120,8 +129,17 @@
 
 			var tablePinkList = $('#pink-list').DataTable();
 
+			var today = new Date(); 
+			var hours = today.getHours(); 
+			var minutes = today.getMinutes();
+			if (minutes < 10)
+			{
+				minutes = "0" + minutes; 
+			}
+
 			tablePinkList.row.add([
 				symbol, 
+				((hours + 24)%12 || 12) + ":" + minutes + " " + ((hours >= 12) ? "PM" : "AM"), 
 				'<input type="text" class="newsText">',
 				'<input type="checkbox" class="list-check" id="chk-' + symbol + '">',
 				'',
@@ -143,8 +161,17 @@
 
 			var tableNYSEAmexList = $('#nyse-amex-list').DataTable();
 
+			var today = new Date(); 
+			var hours = today.getHours(); 
+			var minutes = today.getMinutes();
+			if (minutes < 10)
+			{
+				minutes = "0" + minutes; 
+			}
+
 			tableNYSEAmexList.row.add([
 				symbol, 
+				((hours + 24)%12 || 12) + ":" + minutes + " " + ((hours >= 12) ? "PM" : "AM"), 
 				'<input type="text" class="newsText">',
 				'<input type="checkbox" class="list-check" id="chk-' + symbol + '">',
 				'',
@@ -507,11 +534,21 @@
      	});
 
 		$("#btnManualAddNasdaq").click(function(){
+
+			var today = new Date(); 
+			var hours = today.getHours(); 
+			var minutes = today.getMinutes();
+			if (minutes < 10) 
+			{
+				minutes = "0" + minutes; 
+			}
+
 			tableNasdaqList.row.add([
 			$.trim($("#manualAddNasdaq").val()), 
+			((hours + 24)%12 || 12) + ":" + minutes + " " + ((hours >= 12) ? "PM" : "AM"), 
 			'<input type="text" class="newsText">',
 			'<input type="checkbox" checked>',
-			'',
+			' ', 
 			"<div class='nasdaq-list'><i class='icon-remove'></i></div>"
 			] ); 
 
@@ -560,8 +597,18 @@
 
 
 		$("#btnManualAddNyseAmex").click(function(){
+
+			var today = new Date(); 
+			var hours = today.getHours(); 
+			var minutes = today.getMinutes();
+			if (minutes < 10) 
+			{
+				minutes = "0" + minutes; 
+			}
+
 			tableNYSEAmexList.row.add([
 			$.trim($("#manualAddNyseAmex").val()), 
+			((hours + 24)%12 || 12) + ":" + minutes + " " + ((hours >= 12) ? "PM" : "AM"), 
 			'<input type="text" class="newsText">',
 			'<input type="checkbox" checked>',
 			'',
@@ -674,7 +721,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayNasdaq)
 						{
-							tableNasdaqList.cell(rowIdx, 3).data(arrayNasdaq[symbol].low_percent.toFixed(2));	
+							tableNasdaqList.cell(rowIdx, 4).data(arrayNasdaq[symbol].low_percent.toFixed(2));	
 		    				delete arrayNasdaq[symbol];
 		    			}	
 		    			
@@ -737,7 +784,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayNYSEAmex)
 						{
-							tableNYSEAmexList.cell(rowIdx, 3).data(arrayNYSEAmex[symbol].low_percent.toFixed(2));
+							tableNYSEAmexList.cell(rowIdx, 4).data(arrayNYSEAmex[symbol].low_percent.toFixed(2));
 		    				delete arrayNYSEAmex[symbol];
 		    			}							
 		    			
@@ -800,7 +847,7 @@
 		    			symbol = data[0];
 						if (symbol in arrayPink)
 						{
-							tablePinkList.cell(rowIdx, 3).data(arrayPink[symbol].low_percent.toFixed(2));
+							tablePinkList.cell(rowIdx, 4).data(arrayPink[symbol].low_percent.toFixed(2));
 		    				delete arrayPink[symbol];
 		    			}	
 					});
@@ -1170,6 +1217,9 @@
 						Symbol
 					</th>
 					<th>
+						Time
+					</th>
+					<th>
 						News
 					</th>
 					<th>
@@ -1201,6 +1251,9 @@
 						Symbol
 					</th>
 					<th>
+						Time
+					</th>
+					<th>
 						News 
 					</th>
 					<th>
@@ -1230,6 +1283,9 @@
 				<tr height = "15px;">
 					<th>	
 						Symbol
+					</th>
+					<th>
+						Time
 					</th>
 					<th>
 						News 
