@@ -185,6 +185,7 @@
 
 	$(document).ready(function() {
 
+		alert("Check lockup expiration dates"); 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 		checkLockupDates.play(); 
 
