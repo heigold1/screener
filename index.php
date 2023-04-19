@@ -185,7 +185,7 @@
 
 	$(document).ready(function() {
 
-		alert("Check lockup expiration dates"); 
+		alert("Check lockup expiration dates and TAKE YOUR LUMBROKINASE"); 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 		checkLockupDates.play(); 
 
