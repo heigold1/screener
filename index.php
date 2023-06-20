@@ -64,10 +64,20 @@
 	{
 		var modal = document.getElementById('myModal');
 		$("div#myModal").html(
-			" <img style='max-width:100%; max-height:100%;' src='https://api.wsj.net/api/kaavio/charts/big.chart?nosettings=1&symb=" + symbol + "&uf=0&type=2&size=2&style=320&freq=1&entitlementtoken=0c33378313484ba9b46b8e24ded87dd6&time=4&rand=" + Math.random() + "&compidx=&ma=0&maval=9&lf=1&lf2=0&lf3=0&height=335&width=579&mocktick=1'></a><br><br><span style='font-size:30px;'>" 
+			" <img style='max-width:100%; max-height:100%;' src='https://api.wsj.net/api/kaavio/charts/big.chart?nosettings=1&symb=US:" + symbol + "&uf=0&type=2&size=2&style=320&freq=1&entitlementtoken=0c33378313484ba9b46b8e24ded87dd6&time=4&rand=" + Math.random() + "&compidx=&ma=0&maval=9&lf=1&lf2=0&lf3=0&height=335&width=579&mocktick=1'></a><br><br><span style='font-size:30px;'>" 
 
 			+ orderStub + "</span><br><br><button class='closeModal' style='font-size: 35px !important; height: 45px' onclick='closeModalWindow();'>Close</button>");
         modal.style.display = "block";
+	}
+
+	function createOrderStubRT(symbol, price, percentage)
+	{
+
+	}
+
+	function prepareImpulseBuyRT(symbol, last, change)
+	{
+
 	}
 
 	function copyToClipboard(object){
@@ -750,6 +760,13 @@
 							playSound = 1;
 						}
 
+						var rtSymbol = parseInt(key.search(/\.RT/)); 
+						var impulseBuy = "";
+						if (rtSymbol >= 0)
+						{
+							impulseBuy = "YES"; 
+						}
+
 						var volumeString = value.volume.toString() + "00"; 
 						var volume = parseInt(value.volume.toString() + "00");
 						var avgVolume = parseInt(value.avg_volume.toString() + "00"); 
@@ -763,7 +780,8 @@
 							value.low_percent.toFixed(2), 
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 							volumeRatio.toFixed(2),
-							"<div class='nasdaq'><i class='icon-remove'></i></div>"
+							"<div class='nasdaq'><i class='icon-remove'></i></div>", 
+							impulseBuy
 		        			]); 
 
 					}
@@ -813,6 +831,15 @@
 							playSound = 1;
 						}
 
+
+						var rtSymbol = parseInt(key.search(/\.RT/)); 
+						var impulseBuy = "";
+						if (rtSymbol >= 0)
+						{
+							var orderStub = createOrderStubRT("test", 3.5, 4.5);
+							impulseBuy = "YES"; 
+						}
+
 						var volumeString = value.volume.toString() + "00"; 
 						var volume = parseInt(value.volume.toString() + "00");
 						var avgVolume = parseInt(value.avg_volume.toString() + "00"); 
@@ -826,7 +853,8 @@
 							value.low_percent.toFixed(2),
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
 							volumeRatio.toFixed(2),
-							"<div class='nyse-amex'><i class='icon-remove'></i></div>"
+							"<div class='nyse-amex'><i class='icon-remove'></i></div>", 
+							impulseBuy
 		        			] ); 
 
 					}
@@ -1021,7 +1049,7 @@
 		<table id="nasdaq"  class="display" border=1  style="font-size: 20px;">
 			<thead>
 				<tr>
-					<th colspan=8>
+					<th colspan=9>
 					NASDAQ
 					</th>
 				</tr>
@@ -1049,6 +1077,9 @@
 					</th>
 					<th>
 						
+					</th>
+					<th>
+						Buy
 					</th>
 				</tr>
 			</thead>
@@ -1078,6 +1109,9 @@
 					<td>
 						
 					</td>
+					<td>
+						Buy
+					</td>
 				</tr>			
 			</tbody>	
 
@@ -1088,7 +1122,7 @@
 		<table id="nyse-amex"  class="display" border=1   style="font-size: 20px;" >
 			<thead>
 				<tr>
-					<th colspan=8>
+					<th colspan=9>
 					NYSE/AMEX
 					</th>
 				</tr>
@@ -1118,6 +1152,10 @@
 					<th>
 						
 					</th>
+					<th>
+						Buy
+					</th>
+
 				</tr>
 			</thead>
 			<tbody>	
@@ -1145,6 +1183,9 @@
 					</td>
 					<td>
 						
+					</td>
+					<td>
+						Buy
 					</td>
 				</tr>			
 			</tbody>	
