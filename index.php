@@ -76,6 +76,7 @@
 	function createOrderStubRT(symbol, price, percentage)
 	{
 		var prevClose = price/(1 - percentage/100); 
+
 		var newPrice = prevClose - (prevClose*0.84); 
 
 		if (newPrice > 1.00)
