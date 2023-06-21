@@ -70,13 +70,36 @@
         modal.style.display = "block";
 	}
 
+	// For stocks ending in ".RT" we impulse buy them at 84% down from previous closing price.
+	// Also, we are currently using $350 per trade for this. 
+
 	function createOrderStubRT(symbol, price, percentage)
 	{
+		var prevClose = price/(1 - percentage/100); 
+		var newPrice = prevClose - (prevClose*0.84); 
 
-	}
+		if (newPrice > 1.00)
+		{
+			newPrice = newPrice.toFixed(2);
+		}
+		else
+		{
+			newPrice = newPrice.toFixed(4);
+		}
 
-	function prepareImpulseBuyRT(symbol, last, change)
-	{
+		var numShares = 350/newPrice; 
+		numShares = Math.round(100*numShares)/100; 
+
+		// There is some kind of regulation that states that you can't place an order for more than 
+		// 118,500 shares. 
+		if (numShares > 118500) 
+		{
+			numShares = 118500; 
+		}
+
+		var orderStub = symbol + " BUY " + numShares + " $" + newPrice + " (84.00%)"; 
+
+		return orderStub; 
 
 	}
 
@@ -764,7 +787,9 @@
 						var impulseBuy = "";
 						if (rtSymbol >= 0)
 						{
-							impulseBuy = "YES"; 
+							var orderStub = createOrderStubRT(jQuery.trim(key), value.last, value.change);
+
+							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removeNyseAmex($(this));' value=\"" + orderStub + "\" readonly>";
 						}
 
 						var volumeString = value.volume.toString() + "00"; 
@@ -831,13 +856,13 @@
 							playSound = 1;
 						}
 
-
 						var rtSymbol = parseInt(key.search(/\.RT/)); 
 						var impulseBuy = "";
 						if (rtSymbol >= 0)
 						{
-							var orderStub = createOrderStubRT("test", 3.5, 4.5);
-							impulseBuy = "YES"; 
+							var orderStub = createOrderStubRT(jQuery.trim(key), value.last, value.change);
+
+							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removeNyseAmex($(this));' value=\"" + orderStub + "\" readonly>";
 						}
 
 						var volumeString = value.volume.toString() + "00"; 
