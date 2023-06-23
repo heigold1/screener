@@ -1240,7 +1240,7 @@
 			</div>
 			<br>
 			<div>
-				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="16" style="width: 35px; font-size: 18px"><br>
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="14" style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="11" style="width: 35px; font-size: 18px">
 			</div>
 
