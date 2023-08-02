@@ -104,6 +104,37 @@
 
 	}
 
+	// For fast drop stocks I'm going to try testing buying them when I see them, provided they drop past 
+	// the usual 18-20% level
+
+	function createOrderStubFastDrop(symbol, price, percentage)
+	{
+		var rawNumShares = 150/price;
+		var numShares = 0; 
+		percentage = percentage.toFixed(2);
+
+		if (price > 1.00)
+		{
+			price = price + 0.01; 
+			price = price.toFixed(2);
+			numShares = parseInt(Math.ceil(rawNumShares/10)*10);
+		}
+		else
+		{
+			price = price + 0.0001; 
+			price = price.toFixed(4);
+			numShares = parseInt(Math.ceil(rawNumShares/100)*100);
+		}
+
+		if (numShares > 500000)
+		{
+			numShares = 500000;
+		}
+		var orderStub = symbol + " BUY " + numShares + " $" + price + " (" + percentage + "%)"; 
+		return orderStub; 
+	}
+
+
 	function copyToClipboard(object){
   		object.select();
   		try {
@@ -764,10 +795,11 @@
 
 					for (const [key, value] of Object.entries(arrayNasdaq))
 					{
-						// if a stock's low drops more than 10 percent in one minute 
+						// if a stock's low drops more than 10 percent in one minute (i.e. super fast drop)
 						// then make the alert noise.
 						lowCurrHash[key] = value.low_percent.toFixed(2);
 						var differenceInLow = 0;
+						var fastDrop = false; 
 						if (key in lowPrevHash)
 						{
 							differenceInLow = lowCurrHash[key] - lowPrevHash[key]; 
@@ -775,6 +807,7 @@
 							if (differenceInLow > MINIMUM_LOW_DIFF)
 							{
 								playSound = 1;
+								fastDrop = true; 
 							}
 						}
 
@@ -789,6 +822,12 @@
 						if (rtSymbol >= 0)
 						{
 							var orderStub = createOrderStubRT(jQuery.trim(key), value.last, value.change);
+
+							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removeNyseAmex($(this));' value=\"" + orderStub + "\" readonly>";
+						}
+						else if (fastDrop == true)
+						{
+							var orderStub = createOrderStubFastDrop(jQuery.trim(key), value.last, value.change);
 
 							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removeNyseAmex($(this));' value=\"" + orderStub + "\" readonly>";
 						}
@@ -841,6 +880,7 @@
 						// then make the alert noise.
 						lowCurrHash[key] = value.low_percent.toFixed(2);
 						var differenceInLow = 0;
+						var fastDrop = false; 
 						if (key in lowPrevHash)
 						{
 							differenceInLow =  lowCurrHash[key] - lowPrevHash[key]; 
@@ -848,6 +888,7 @@
 							if (differenceInLow > MINIMUM_LOW_DIFF)
 							{
 								playSound = 1;
+								fastDrop = true; 
 							}
 						}
 
@@ -862,6 +903,12 @@
 						if (rtSymbol >= 0)
 						{
 							var orderStub = createOrderStubRT(jQuery.trim(key), value.last, value.change);
+
+							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removeNyseAmex($(this));' value=\"" + orderStub + "\" readonly>";
+						}
+						else if (fastDrop == true)
+						{
+							var orderStub = createOrderStubFastDrop(jQuery.trim(key), value.last, value.change);
 
 							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removeNyseAmex($(this));' value=\"" + orderStub + "\" readonly>";
 						}
