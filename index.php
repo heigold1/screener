@@ -250,8 +250,13 @@
 
 	$(document).ready(function() {
 
+	
 		alert("Check lockup expiration dates and TAKE YOUR LUMBROKINASE"); 
+
+		alert("Remember, you can go in at pre-market low levels, just use the three-tier approach"); 
+
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
+
 		checkLockupDates.play(); 
 
 		currentMinute = moment().minutes(); 
