@@ -256,6 +256,8 @@
 		alert("Remember, you can go in at pre-market low levels, just use the three-tier approach"); 
 
 		alert("Remember, you can go for stocks with SEC filings where it mentions that the news came out at an earlier date.  You can treat them as non-news"); 
+		alert("You can go for lower-volume stocks at the 18-19% level, AS LONG AS the price is high (i.e. $10 a share)"); 
+
 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 
