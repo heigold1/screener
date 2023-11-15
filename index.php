@@ -839,9 +839,10 @@
 						var volume = parseInt(value.volume.toString() + "00");
 						var avgVolume = parseInt(value.avg_volume.toString() + "00"); 
 						var volumeRatio = volume/avgVolume;
+						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
 						tableNasdaq.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -1033,16 +1034,14 @@
 
 	function countdown() {
     // your code goes here
-		/* brent change count back to 4 */
-    	var count = 24;
+    	var count = 4;
     	var timerId = setInterval(function() {
 	        count--;
         	$("#seconds-display").html(count);
 
         	if(count == 0) {
 	            addRows();
-	            /* brent change count back to 4 */ 
-            	count = 24;
+            	count = 4;
         	}
     	}, 1000);
 	}
