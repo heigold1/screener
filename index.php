@@ -1033,14 +1033,16 @@
 
 	function countdown() {
     // your code goes here
-    	var count = 4;
+		/* brent change count back to 4 */
+    	var count = 24;
     	var timerId = setInterval(function() {
 	        count--;
         	$("#seconds-display").html(count);
 
         	if(count == 0) {
 	            addRows();
-            	count = 4;
+	            /* brent change count back to 4 */ 
+            	count = 24;
         	}
     	}, 1000);
 	}
@@ -1309,8 +1311,12 @@
   			</button>
 		</div>
 		<div>
-			<input type="checkbox" id="display-prev-curr">,
+			<input type="checkbox" id="display-prev-curr">
 			<label for="display-prev-curr">Display prev/curr</label>
+		</div>
+		<div>
+			<input type="checkbox" id="check-sec" checked>
+			<label for="check-sec">Check SEC</label>
 		</div>
 		<br>
 
