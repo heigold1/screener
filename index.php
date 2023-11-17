@@ -921,9 +921,10 @@
 						var volume = parseInt(value.volume.toString() + "00");
 						var avgVolume = parseInt(value.avg_volume.toString() + "00"); 
 						var volumeRatio = volume/avgVolume;
+						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
@@ -1002,8 +1003,10 @@
 							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removePink($(this));' value=\"" + orderStub + "\" readonly>";
 						}
 
+						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
+
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							changePercentagePink,
