@@ -89,7 +89,7 @@
 		}
 
 		var numShares = 350/newPrice; 
-		numShares = Math.round(100*numShares)/100; 
+		numShares = Math.round(numShares/100)*100; 
 
 		// There is some kind of regulation that states that you can't place an order for more than 
 		// 118,500 shares. 
