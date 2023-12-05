@@ -251,7 +251,7 @@
 	$(document).ready(function() {
 
 	
-		alert("- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- RESTART TMX POWERSTREAM"); 
+		alert("\n- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- CHECK THE TRADE HALTS"); 
 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 
