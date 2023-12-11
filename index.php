@@ -533,12 +533,9 @@
   			row.addClass('orangeClass');
 		}
 
-
-// old URL is http://ec2-54-210-42-143.compute-1.amazonaws.com/newslookup/get-earnings-stocks.php
-
 		$(document).on('click', '#check-earnings', function (evt) {
 		    $.ajax({
-		        url: 'http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/get-earnings-stocks.php',
+		        url: 'http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/get-earnings-stocks.php',
 		        async: true, 
 		        dataType: 'json',
 		        success:  function (data) {
@@ -658,9 +655,12 @@
 			var row = $(this).closest('tr'); 
 			var data = row.find('.symbolText');
 			var symbol = data[0].value;
+			var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
+
 			copyToClipboard(data);
 
-			openNewsLookupWindow("http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber); 
+			openNewsLookupWindow("http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber  + "&check-sec=" + checkSec); 
+
 		});
 
 
@@ -842,7 +842,7 @@
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
 						tableNasdaq.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -924,7 +924,7 @@
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
@@ -1006,7 +1006,7 @@
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-217-144-56.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							changePercentagePink,
