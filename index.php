@@ -841,8 +841,15 @@
 						var volumeRatio = volume/avgVolume;
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
+						var symbolBackground = ""; 
+						var length = jQuery.trim(key).length; 
+						if (length == 5) 
+						{
+							symbolBackground = "background-color: pink; "
+						}
+
 						tableNasdaq.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type='text' class='symbolText' style='color: black; " + symbolBackground + " ' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -923,8 +930,15 @@
 						var volumeRatio = volume/avgVolume;
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
+						var symbolBackground = ""; 
+						var length = jQuery.trim(key).length; 
+						if (length == 5) 
+						{
+							symbolBackground = "background-color: pink; "
+						}
+
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black; " + symbolBackground + "' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
