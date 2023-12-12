@@ -841,9 +841,10 @@
 						var volumeRatio = volume/avgVolume;
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
+						var hasPeriod = jQuery.trim(key).indexOf('.'); 
 						var symbolBackground = ""; 
 						var length = jQuery.trim(key).length; 
-						if (length == 5) 
+						if ((length == 5) || (hasPeriod != -1))
 						{
 							symbolBackground = "background-color: pink; "
 						}
@@ -930,9 +931,10 @@
 						var volumeRatio = volume/avgVolume;
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
+						var hasPeriod = jQuery.trim(key).indexOf('.'); 
 						var symbolBackground = ""; 
 						var length = jQuery.trim(key).length; 
-						if (length == 5) 
+						if ((length == 5) || (hasPeriod != -1))  
 						{
 							symbolBackground = "background-color: pink; "
 						}
