@@ -1012,7 +1012,7 @@
 
 
 						// setting the threshold of 79%, anything lower than 79% we can impulse-buy.
-						if (changePercentagePink > 79 && (totalValue > 500))
+						if (totalValue > 500)
 						{
 							var orderStub = createOrderStub(jQuery.trim(key), last, change);
 
