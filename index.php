@@ -60,13 +60,67 @@
 		return orderStub; 
 	}
 
+
+	// unlike the other prepareImpulseBuy, we are building the order string from within the function because 
+	// we have to grab the previous close via API. 
+
+	function prepareImpulseBuyPink(symbol)
+	{
+ 
+		var orerStub = ""; 
+ 
+    	$.ajax({
+	        url: 'http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
+        	data: {symbol: symbol, 
+                   amount: "350", 
+                   percentage: "84"},
+        	async: true, 
+        	dataType: 'html',
+        	success:  function (data) {
+
+			var modal = document.getElementById('myModal');
+			$("div#myModal").html(
+				" <img style='max-width:100%; max-height:100%;' src='https://api.wsj.net/api/kaavio/charts/big.chart?nosettings=1&symb=US:" + symbol + "&uf=0&type=2&size=2&style=320&freq=1&entitlementtoken=0c33378313484ba9b46b8e24ded87dd6&time=4&rand=" + Math.random() + "&compidx=&ma=0&maval=9&lf=1&lf2=0&lf3=0&height=335&width=579&mocktick=1'></a><br><br><span style='font-size:30px;'>" 
+
+				+ data + "</span><br><br><button class='closeModal' style='font-size: 35px !important; height: 45px; display: inline-block; ' onclick='closeModalWindow();'>Close</button>" + 
+
+				"&nbsp;&nbsp;<input type=\"text\" class=\"impulseBuyText\" style='color: black; font-size: 35px !important; height: 45px; width: 75px; display: inline-block; '  onclick='console.log($(this)); copyToClipboard($(this)); ' value=\"" + data + "\" readonly>"
+
+				);
+
+        	modal.style.display = "block";
+
+        	},
+        	error: function (xhr, ajaxOptions, thrownError) {
+          	console.log("there was an error in calling save-earnings-stocks.php");
+          	alert("ERROR in preparing order for " + symbol + ".");
+        	}
+    	});
+
+	}
+
 	function prepareImpulseBuy(symbol, orderStub)
 	{
 		var modal = document.getElementById('myModal');
 		$("div#myModal").html(
 			" <img style='max-width:100%; max-height:100%;' src='https://api.wsj.net/api/kaavio/charts/big.chart?nosettings=1&symb=US:" + symbol + "&uf=0&type=2&size=2&style=320&freq=1&entitlementtoken=0c33378313484ba9b46b8e24ded87dd6&time=4&rand=" + Math.random() + "&compidx=&ma=0&maval=9&lf=1&lf2=0&lf3=0&height=335&width=579&mocktick=1'></a><br><br><span style='font-size:30px;'>" 
 
-			+ orderStub + "</span><br><br><button class='closeModal' style='font-size: 35px !important; height: 45px' onclick='closeModalWindow();'>Close</button>");
+			+ orderStub + "</span><br><br><button class='closeModal' style='font-size: 35px !important; height: 45px; display: inline-block; ' onclick='closeModalWindow();'>Close</button><input id=symbol-text></input>");
+
+		$("#symbol-text").val(data); 
+
+
+
+  		var copyTextarea = $("#symbol-text");
+  			copyTextarea.select();
+  			try {
+    			var successful = document.execCommand('copy');
+    			var msg = successful ? 'successful' : 'unsuccessful';
+    			console.log('Copying text command was ' + msg);
+  			} catch (err) {
+    			console.log('Oops, unable to copy');
+  			}
+
         modal.style.display = "block";
 	}
 
@@ -1016,7 +1070,7 @@
 						{
 							var orderStub = createOrderStub(jQuery.trim(key), last, change);
 
-							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuy(\"" + jQuery.trim(key) +  "\", \"" + orderStub + "\"); removePink($(this));' value=\"" + orderStub + "\" readonly>";
+							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuyPink(\"" + jQuery.trim(key) + "\"); removePink($(this));' value=\"" + orderStub + "\" readonly>";
 						}
 
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
