@@ -305,7 +305,7 @@
 	$(document).ready(function() {
 
 	
-		alert("\n- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- CHECK THE TRADE HALTS"); 
+		alert("\n- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- CHECK THE TRADE HALTS\n\n- CHECK YOUR DELISTING NOTES"); 
 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 
