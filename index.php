@@ -803,6 +803,17 @@
 
 				globalData = data; 
 
+				/********************************************
+				 ***** CORPORATE ACTIONS DATA STRUCTURE *****
+				 ********************************************/
+
+const corporateActionsStocks=[
+"GNPX", "CAMP", "BSGM", "TCRT", "NA", "GOVX", "FBLG", "XTKG", "QGEN", "LFWD", "GRI", "COMS", "NEUE", "MMAT", "INBS", "HUBG", "FLUT", "ECCF", "AMIX", "TC", "NSTB", "NSTB", "HAO", "BTSG", "AVBP", "ARAV", "ARAV", "AMJB", "YIBO", "SOGP", "REVB", "RAIN", "OBDE", "NCDL", "ESMT", "RAIN", "KAVL", "INO", "GOLLQ", "GOLLQ", "GOLLQ", "ESMT", "CGON", "BTSG", "SUGP", "MFAN", "JL", "INSG", "CORZ", "ORTX", "ORTX", "GSDI", "GSDI", "DTSS", "CORZ", "SRC", "REBN", "PCSA", "SRC", "NVVE", "MRTX", "EVAX", "MRTX", "AFJK", "KSPI", "GXAI", "CNEY", "CLEU", "SALM", "PSBD", "PBLA", "CCTG", "GORV", "AULT", "UXIN", "RNAZ", "BVH", "HOVR", "ELIQ", "BVH", "SYNX", "EFTR", "SDHC", "TLPH", "TCTM", "NEXN", "MESO", "BETS", "TTNP", "ROMA", "HWH", "ONCT", "GRDI", "GPP", "GPP", "EIGR", "SLGC", "SABS", "SLGC", "DSS", "AIC", "AAIN", "SRT", "NMRD", "CHS", "SRT", "JSPR", "HALL", "CHS", "ALTM", "ACON", "TENX", "PRSO", "LXEH", "LTHM", "FLEX", "TBLT", "PNST", "KTTA" ];
+
+				/***********************************************
+				 *** END OF CORPORATE ACTIONS DATA STRUCTURE ***
+				 ***********************************************/
+
 				var prevGlobalDataString = JSON.stringify(prevGlobalData);
 				var globalDataString = JSON.stringify(globalData);
 
@@ -837,6 +848,7 @@
 
 				if (arrayNasdaq)
 				{
+
 					countSymbols += Object.keys(arrayNasdaq).length;
 
 					tableNasdaqList.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
@@ -849,6 +861,14 @@
 		    			}	
 		    			
 					});
+
+					// Here we go through the corporate actions array and eliminate any stock found in that array 
+					// from the list 
+
+					for (let i = 0; i < corporateActionsStocks.length; i++)
+					{
+						delete arrayNasdaq[corporateActionsStocks[i]]; 
+					}
 
 					for (const [key, value] of Object.entries(arrayNasdaq))
 					{
@@ -939,6 +959,14 @@
 		    			}							
 		    			
 					});
+
+					// Here we go through the corporate actions array and eliminate any stock found in that array 
+					// from the list 
+
+					for (let i = 0; i < corporateActionsStocks.length; i++)
+					{
+						delete arrayNYSEAmex[corporateActionsStocks[i]]; 
+					}
 
 					for (const [key, value] of Object.entries(arrayNYSEAmex))
 					{
