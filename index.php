@@ -305,7 +305,7 @@
 	$(document).ready(function() {
 
 	
-		alert("\n- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- CHECK CORPORATE ACTIONS"); 
+		alert("\n- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS"); 
 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 
@@ -808,7 +808,8 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"VLCN", "GTBP", "FRGT", "HOLO", "GUTS", "GNPX", "CAMP", "BSGM", "ANRO", "TRUG", "TCRT", "NA", "DAY", "CMAX", "AS", "ARQ", "GOVX", "FBLG", "XTKG", "QGEN", "PBM", "NSTB", "HAO", "BTSG", "AVBP", "ARAV", "AMJB", "YIBO", "SOGP", "REVB", "RAIN", "OBDE", "NCDL", "ESMT", "KAVL", "INO", "GOLLQ", "CGON", "SUGP","MRTX", "EVAX", "AFJK", "KSPI", "GXAI", "CNEY", "CLEU", "SALM", "PSBD", "PBLA", "CCTG", "GORV", "AULT", "UXIN", "RNAZ", "BVH", "HOVR", "ELIQ", "SYNX",  "GRDI", "GPP", "EIGR", "SLGC", "SABS", "DSS", "AIC", "AAIN", "SRT", "NMRD", "CHS", "JSPR", "HALL", "ALTM", "ACON", 
+"VLCN", "GTBP", "FRGT", "HOLO", "GUTS", "GNPX", "CAMP", "BSGM", "ANRO", "TRUG", "TCRT", "NA", "DAY", "CMAX", "AS", "ARQ", "GOVX", "FBLG", "XTKG", "QGEN", "LFWD", "GRI", "COMS", "NEUE", "MMAT", "INBS", "HUBG", "FLUT", "ECCF", "AMIX", "TC", "PBM", "NSTB", "HAO", "BTSG", "AVBP", "ARAV", "AMJB", "YIBO", "SOGP", "REVB", "RAIN", "OBDE", "NCDL", "ESMT", "KAVL", "INO", "GOLLQ", "CGON", "SUGP", "MFAN", "JL", "INSG", "CORZ", "ORTX", "GSDI", "DTSS", "SRC", "REBN", "PCSA", "NVVE", "MRTX", "EVAX", "AFJK", "KSPI", "GXAI", "CNEY", "CLEU", "SALM", "PSBD", "PBLA", "CCTG", "GORV", "AULT", "UXIN", "RNAZ", "BVH", "HOVR", "ELIQ", "SYNX", "EFTR", "SDHC", "TLPH", "TCTM", "NEXN", "MESO", "BETS", "TTNP", "ROMA", "HWH", "ONCT", "GRDI", "GPP", "EIGR",
+
 
 				/***********************************************
 				 *** END OF CORPORATE ACTIONS DATA STRUCTURE ***
@@ -822,11 +823,14 @@ const corporateActionsStocks=[
 				  "JL", // Waterfall halt on JANUARY 29TH 2024
 				  "SAVE", // Teriminated merger on JANUARY 26TH 2024
 				  "AEY", // Halted on a bankruptcy on FEBRUARY 1st 2024
-				  "NSTG", // Bankruptcy on FEBRUARY 5, 2024 
 				  "EXPR", // In talks about Restructuring, FEBRUARY 1st, 2024 
+				  "NSTG", // Bankruptcy on FEBRUARY 5, 2024 
 				  "NVTA", // Dropped MAJORLY on bankruptcy news FEBRUARY 5th, 2024 
 				  "NSTG", // Dropped majorly on restructure/bankruptcy news FEBRUARY 5h, 2024 
                 ]; 
+
+
+				  // NVTA - Keep putting in an order a 85% in every day, was halted, was going to be delisted 
 
 				/***********************************************
 				 ******** END OF BLACKLISTED STOCKS ************
