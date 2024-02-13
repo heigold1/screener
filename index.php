@@ -808,7 +808,8 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"STI", "SGLY", "ASMB", "KERN", "ZJYL", "PMNT", "KYTX", "AHR", "SCPX", "VLCN", "GTBP", "FRGT", "HOLO", "GUTS", "GNPX", "CAMP", "BSGM", "ANRO", "TRUG", "TCRT", "NA", "DAY", "CMAX", "AS", "ARQ", "GOVX", "FBLG", "XTKG", "QGEN", "LFWD", "GRI", "NEUE", "MMAT", "INBS", "HUBG", "FLUT", "ECCF", "AMIX", "TC", "PBM", "HAO", "BTSG", "AVBP", "AMJB", "YIBO", "SOGP", "REVB", "OBDE", "NCDL", "KAVL", "INO", "CGON", "SUGP", "MFAN", "JL", "INSG", "CORZ", "DTSS", "REBN", "PCSA", "NVVE", "EVAX", "AFJK", "KSPI", "GXAI", "CNEY", "CLEU", "PSBD", "PBLA", "CCTG", "GORV", "AULT", "UXIN", "RNAZ", "HOVR", "SYNX", "EFTR", "SDHC", "TLPH", "TCTM", "NEXN", "MESO", "BETS", "TTNP", "ROMA", "HWH",
+"VRM", "EJH", "DTIL", "SGLY", "ASMB", "UAVS", "TELO", "TBBB", "MGX", "GRYP", "DHAI", "CENTA", "CENT", "ZJYL", "PMNT", "KYTX", "BRLS", "AHR", "SCPX", "VLCN", "STI", "GTBP", "FRGT", "HOLO", "GUTS", "GNPX", "CAMP", "BSGM", "ANRO", "TRUG", "TCRT", "NA", "DAY", "CMAX", "AS", "ARQ", "GOVX", "FBLG", "XTKG", "QGEN", "LFWD", "GRI", "NEUE", "MMAT", "INBS", "HUBG", "FLUT", "ECCF", "AMIX", "TC", "PBM", "HAO", "BTSG", "AVBP", "AMJB", "YIBO", "SOGP", "REVB", "OBDE", "NCDL", "KAVL", "INO", "CGON", "SUGP", "MFAN", "JL", "INSG", "CORZ", "DTSS", "REBN", "PCSA", "NVVE", "EVAX", "AFJK", "KSPI", "GXAI", "CNEY", "CLEU", "PSBD", "PBLA", "CCTG", "GORV", "AULT", "UXIN", "RNAZ", "BVH", "HOVR",
+
 
 
 
@@ -823,8 +824,9 @@ const corporateActionsStocks=[
                   "RR", // Waterfall halt on JANUARY 26TH 2024
 				  "JL", // Waterfall halt on JANUARY 29TH 2024
 				  "SAVE", // Teriminated merger on JANUARY 26TH 2024
-				  "AEY", // Halted on a bankruptcy on FEBRUARY 1st 2024
+				  "AEY", // Halted on a bankruptcy on FEBRUARY 1st 2024.  Totally toxic stock, don't ever trade 
 				  "EXPR", // In talks about Restructuring, FEBRUARY 1st, 2024 
+				  "POL" // Bankruptcy threatened on Feb 12 2024 
                 ]; 
 
 
