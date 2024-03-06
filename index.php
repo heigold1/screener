@@ -305,7 +305,7 @@
 	$(document).ready(function() {
 
 	
-		alert("\n- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS\n\n - Reset the database"); 
+		alert("\n- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS\n\n - Reset the database\n\n - Run the Corporate Actions data structure.\n\n - Unmute the websites\n\n - Go over the index.php notes"); 
 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 
@@ -808,7 +808,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"VRM", "EJH", "DTIL", "SGLY", "ASMB", "UAVS", "TELO", "TBBB", "MGX", "GRYP", "DHAI", "CENTA", "CENT", "ZJYL", "PMNT", "KYTX", "BRLS", "AHR", "SCPX", "VLCN", "STI", "GTBP", "FRGT", "HOLO", "GUTS", "GNPX", "CAMP", "BSGM", "ANRO", "TRUG", "TCRT", "NA", "DAY", "CMAX", "AS", "ARQ", "GOVX", "FBLG", "XTKG", "QGEN", "LFWD", "GRI", "NEUE", "MMAT", "INBS", "HUBG", "FLUT", "ECCF", "AMIX", "TC", "PBM", "HAO", "BTSG", "AVBP", "AMJB", "YIBO", "SOGP", "REVB", "OBDE", "NCDL", "KAVL", "INO", "CGON", "SUGP", "MFAN", "JL", "INSG", "CORZ", "DTSS", "REBN", "PCSA", "NVVE", "EVAX", "AFJK", "KSPI", "GXAI", "CNEY", "CLEU", "PSBD", "PBLA", "CCTG", "GORV", "AULT", "UXIN", "RNAZ", "BVH", "HOVR",
+"CSPI", "PIK", "CPHI", "APVO", "TR", "QTI", "LGCL", "TBRG", "LQR", "IFBD", "DOC", "BODI", "FUFU", "DOC2", "CRML", "SMXT", "MTUS", "WMT", "ASTH", "LOT", "VHAI", "WETH", "COO", "SELX", "TVGN", "SOC", "CERO", "UMAC", "AXIL", "PRKS", "ATCH", "TELO", "TBBB", "MGX", "DHAI", "CENTA", "CENT", "ZJYL", "PMNT", "KYTX", "BRLS", "AHR", "SCPX",
 
 
 
@@ -824,9 +824,14 @@ const corporateActionsStocks=[
                   "RR", // Waterfall halt on JANUARY 26TH 2024
 				  "JL", // Waterfall halt on JANUARY 29TH 2024
 				  "SAVE", // Teriminated merger on JANUARY 26TH 2024
-				  "AEY", // Halted on a bankruptcy on FEBRUARY 1st 2024.  Totally toxic stock, don't ever trade 
 				  "EXPR", // In talks about Restructuring, FEBRUARY 1st, 2024 
-				  "POL" // Bankruptcy threatened on Feb 12 2024 
+				  "POL", // Bankruptcy threatened on Feb 12 2024 
+				  "CREV", // Major low-volume stock, halted on Feb 13th 2024 
+				  "GMBL", // Delisting on Feb 23rd.  You can put this back on/after Feb 23rd. 
+				  "LBBB", // Halted twice on Feb 14th 
+				  "GCT", // Waterfall halt on Feb 20th 
+				  "VERO", // Close call on February 26th.  Set off send trade on the two-tier 
+				  "IAS", // Horrible earnings net income.  Took a bad loss on it. 
                 ]; 
 
 
