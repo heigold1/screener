@@ -305,7 +305,15 @@
 	$(document).ready(function() {
 
 	
-		alert("\n- Check lockup expiration dates\n\n- TAKE YOUR LUMBROKINASE\n\n- CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS\n\n - Reset the database\n\n - Run the Corporate Actions data structure.\n\n - Unmute the websites\n\n - Go over the index.php notes"); 
+		alert("\n - TAKE YOUR LUMBROKINASE" + 
+			"\n\n - Unmute the websites" + 
+			"\n\n - Reset the database" + 
+			"\n\n - Grab the eTrade API token" + 
+			"\n\n - Run the Corporate Actions data structure." + 
+			"\n\n - Run NetBeans" + 
+			"\n\n - Check lockup expiration dates " + 
+			"\n\n - CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS" + 
+			"\n\n - Go over the index.php notes"); 
 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 
