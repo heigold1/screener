@@ -308,12 +308,13 @@
 		alert("\n - TAKE YOUR LUMBROKINASE" + 
 			"\n\n - Unmute the websites" + 
 			"\n\n - Reset the database" + 
-			"\n\n - Grab the eTrade API token" + 
 			"\n\n - Run the Corporate Actions data structure." + 
+			"\n\n - Grab the eTrade API token" + 
 			"\n\n - Run NetBeans" + 
 			"\n\n - Check lockup expiration dates " + 
 			"\n\n - CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS" + 
-			"\n\n - Go over the index.php notes"); 
+			"\n\n - Go over the index.php notes" + 
+			"\n\n - Olives & Parmesan Cheese!"); 
 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 
@@ -816,7 +817,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"CSPI", "PIK", "CPHI", "APVO", "TR", "QTI", "LGCL", "TBRG", "LQR", "IFBD", "DOC", "BODI", "FUFU", "DOC2", "CRML", "SMXT", "MTUS", "WMT", "ASTH", "LOT", "VHAI", "WETH", "COO", "SELX", "TVGN", "SOC", "CERO", "UMAC", "AXIL", "PRKS", "ATCH", "TELO", "TBBB", "MGX", "DHAI", "CENTA", "CENT", "ZJYL", "PMNT", "KYTX", "BRLS", "AHR", "SCPX",
+"CSPI", "AFMD", "PGY", "GXAI", "GOEV", "CISO", "PIK", "RYDE", "CPHI", "APVO", "TR", "QTI", "LGCL", "TBRG", "LQR", "IFBD", "DOC", "BODI", "FUFU", "DOC2", "CRML", "SMXT", "MTUS", "WMT", "ASTH", "LOT", "VHAI", "WETH", "COO", "SELX", "TVGN", "SOC", "CERO", "UMAC", "AXIL", "PRKS", "ATCH", "TELO", "TBBB", "MGX", "DHAI", "CENTA", "CENT", "ZJYL", "PMNT", "KYTX", "BRLS",
 
 
 
@@ -840,6 +841,8 @@ const corporateActionsStocks=[
 				  "GCT", // Waterfall halt on Feb 20th 
 				  "VERO", // Close call on February 26th.  Set off send trade on the two-tier 
 				  "IAS", // Horrible earnings net income.  Took a bad loss on it. 
+				  "BIAF", // Waterfall halt on March 6th 
+				  "COCH", // Waterfall halt on March 7th 
                 ]; 
 
 
