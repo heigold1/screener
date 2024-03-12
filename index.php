@@ -310,8 +310,8 @@
 			"\n\n - Reset the database" + 
 			"\n\n - Run the Corporate Actions data structure." + 
 			"\n\n - Grab the eTrade API token" + 
-			"\n\n - Run NetBeans" + 
 			"\n\n - Check lockup expiration dates " + 
+			"\n\n - Run NetBeans" + 
 			"\n\n - CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS" + 
 			"\n\n - Go over the index.php notes" + 
 			"\n\n - Olives & Parmesan Cheese!"); 
@@ -817,7 +817,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"CSPI", "AFMD", "PGY", "GXAI", "GOEV", "CISO", "PIK", "RYDE", "CPHI", "APVO", "TR", "QTI", "LGCL", "TBRG", "LQR", "IFBD", "DOC", "BODI", "FUFU", "DOC2", "CRML", "SMXT", "MTUS", "WMT", "ASTH", "LOT", "VHAI", "WETH", "COO", "SELX", "TVGN", "SOC", "CERO", "UMAC", "AXIL", "PRKS", "ATCH", "TELO", "TBBB", "MGX", "DHAI", "CENTA", "CENT", "ZJYL", "PMNT", "KYTX", "BRLS",
+"CSPI", "AFMD", "PGY", "GXAI", "GOEV", "CISO", "PIK", "RYDE", "TR", "QTI", "LGCL", "TBRG", "LQR", "DOC", "BODI", "FUFU", "DOC2", "CRML", "SMXT", "MTUS", "WMT", "ASTH", "LOT", "VHAI", "WETH", "COO", "SELX", "TVGN", "SOC", "CERO", "UMAC", "AXIL", "PRKS", "ATCH",
 
 
 
