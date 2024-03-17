@@ -78,13 +78,31 @@
         	dataType: 'html',
         	success:  function (data) {
 
+        	console.log("Returned JASON object is:");
+        	console.log(data); 
+
+        	var responseData = JSON.parse(data); 
+
+        	var orderStub = responseData.orderStub; 
+        	var change = responseData.change; 
+        	var backgroundColor = ""; 
+
+        	if (change > 50)
+        	{
+        		backgroundColor = "background-color: lightgreen;"; 
+        	}
+        	else
+        	{
+        		backgroundColor = " background-color: pink; "
+        	}
+
 			var modal = document.getElementById('myModal');
 			$("div#myModal").html(
-				" <img style='max-width:100%; max-height:100%;' src='https://api.wsj.net/api/kaavio/charts/big.chart?nosettings=1&symb=US:" + symbol + "&uf=0&type=2&size=2&style=320&freq=1&entitlementtoken=0c33378313484ba9b46b8e24ded87dd6&time=4&rand=" + Math.random() + "&compidx=&ma=0&maval=9&lf=1&lf2=0&lf3=0&height=335&width=579&mocktick=1'></a><br><br><span style='font-size:30px;'>" 
+				" <img style='max-width:100%; max-height:100%;' src='https://api.wsj.net/api/kaavio/charts/big.chart?nosettings=1&symb=US:" + symbol + "&uf=0&type=2&size=2&style=320&freq=1&entitlementtoken=0c33378313484ba9b46b8e24ded87dd6&time=4&rand=" + Math.random() + "&compidx=&ma=0&maval=9&lf=1&lf2=0&lf3=0&height=335&width=579&mocktick=1'></a><br><br><span style='font-size:30px;" + backgroundColor + "'>" 
 
-				+ data + "</span><br><br><button class='closeModal' style='font-size: 35px !important; height: 45px; display: inline-block; ' onclick='closeModalWindow();'>Close</button>" + 
+				+ orderStub + "</span><br><br><span style='font-size:30px;" + backgroundColor + "'>Change is " + change + "</span><button class='closeModal' style='font-size: 35px !important; height: 45px; display: inline-block; ' onclick='closeModalWindow();'>Close</button>" + 
 
-				"&nbsp;&nbsp;<input type=\"text\" class=\"impulseBuyText\" style='color: black; font-size: 35px !important; height: 45px; width: 75px; display: inline-block; '  onclick='console.log($(this)); copyToClipboard($(this)); ' value=\"" + data + "\" readonly>"
+				"&nbsp;&nbsp;<input type='text' class='impulseBuyText' style='color: black; font-size: 35px !important; height: 45px; width: 75px; display: inline-block; '  onclick='console.log($(this)); copyToClipboard($(this)); ' value='" + orderStub + "' readonly>"
 
 				);
 
@@ -315,6 +333,11 @@
 			"\n\n - CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS" + 
 			"\n\n - Go over the index.php notes" + 
 			"\n\n - Olives & Parmesan Cheese!"); 
+
+// TO DO list - 
+// 1) Make a Javascript reminder alert if there is a "to report" or "to highlight" in the news. 
+// 2) Create the Javascript OHLC chart to replace the bigcharts 30-day chart. 
+
 
 		var checkLockupDates = new Audio('./wav/check-lockup-dates.wav');
 
@@ -817,7 +840,8 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"CSPI", "AFMD", "PGY", "GXAI", "GOEV", "CISO", "PIK", "RYDE", "TR", "QTI", "LGCL", "TBRG", "LQR", "DOC", "BODI", "FUFU", "DOC2", "CRML", "SMXT", "MTUS", "WMT", "ASTH", "LOT", "VHAI", "WETH", "COO", "SELX", "TVGN", "SOC", "CERO", "UMAC", "AXIL", "PRKS", "ATCH",
+"TPL", "CSPI", "LFWD", "OTLK", "XTIA", "NTRP", "HPCO", "NMHI", "AFMD", "RYDE", "TR", "QTI", "LGCL", "TBRG", "LQR", "DOC", "BODI", "FUFU", "DOC2", "CRML", "SMXT", "MTUS", "WMT", "ASTH", "LOT", "VHAI", "WETH", "COO", "SELX", "CHRO", "TVGN", "SOC", "CERO",
+
 
 
 
@@ -843,6 +867,7 @@ const corporateActionsStocks=[
 				  "IAS", // Horrible earnings net income.  Took a bad loss on it. 
 				  "BIAF", // Waterfall halt on March 6th 
 				  "COCH", // Waterfall halt on March 7th 
+				  "LEXX", // Dropped 46% on no news, March 12th 
                 ]; 
 
 
@@ -1424,7 +1449,7 @@ const corporateActionsStocks=[
 			<br>
 			<div>
 				Penny: <input id="pink-penny" type="text" name="fname" value="50"  style="width: 35px; font-size: 18px"><br>
-  				$1.00: <input id="pink-dollar" type="text" name="lname" value="32" style="width: 35px; font-size: 18px">
+  				$1.00: <input id="pink-dollar" type="text" name="lname" value="25" style="width: 35px; font-size: 18px">
 			</div>
 		</div>
 		<div style="font-size: 20px; width: 120px; height: 120px; border:#000000 1px solid; text-align: center; padding-top: 15px" border=1 >
