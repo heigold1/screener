@@ -23,6 +23,7 @@
 	var lowPrevHash = new Object();
 	var lowCurrHash = new Object();
 	const MINIMUM_LOW_DIFF = 9; 
+	var pinkSheetPreviousClose = []; 
 
 
 	function openNewsLookupWindow(link){
@@ -60,6 +61,46 @@
 		return orderStub; 
 	}
 
+	function checkPinkSheetChange(symbol, last) 
+	{
+		var prevClose; 
+		var change; 
+
+		if (!(symbol in pinkSheetPreviousClose))
+		{
+	   		$.ajax({
+		        url: 'http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
+	        	data: {symbol: symbol},
+	        	async: true, 
+	        	dataType: 'html',
+	        	success:  function (data) {
+
+	        	console.log("Returned JASON object is:");
+	        	console.log(data); 
+
+	        	var responseData = JSON.parse(data); 
+
+	        	prevClose = responseData.prevClose; 
+
+	        	pinkSheetPreviousClose[symbol] = prevClose; 
+	        },
+        		error: function (xhr, ajaxOptions, thrownError) {
+          		console.log("there was an error in calling pink-sheet-prev-close.php");
+          		alert("ERROR in preparing order for " + symbol + ", message is " + xhr.statusText);
+          		console.log(thrownError); 
+	        	}
+    		});
+		}
+		else 
+		{
+			prevClose = pinkSheetPreviousClose[symbol]; 
+		}
+
+		change = (prevClose - last)*100/prevClose; 
+
+		return change; 
+
+	}
 
 	// unlike the other prepareImpulseBuy, we are building the order string from within the function because 
 	// we have to grab the previous close via API. 
@@ -110,7 +151,7 @@
 
         	},
         	error: function (xhr, ajaxOptions, thrownError) {
-          	console.log("there was an error in calling save-earnings-stocks.php");
+          	console.log("there was an error in calling prepare-order.php");
           	alert("ERROR in preparing order for " + symbol + ".");
         	}
     	});
@@ -353,6 +394,7 @@
 	        "searching": false, 
 	        "createdRow": function( row, data, dataIndex ) {
 
+				var symbol = $.trim($(data[0]).val());
 	        	var change = data[3];
 	        	var volumeString = data[4];
         		var volume = parseFloat(volumeString.replace(/,/g, '')); 
@@ -367,25 +409,25 @@
 				$('td', row).eq(4).addClass('innerTD');
 
 				if (
-					(
 						(
-						 ((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-						 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
-						 ) 
-						&& (totalValue > 500)
-					)  /* ||
-					(
-						(change >  parseFloat($("#pink-penny").val())) && 
-						(last < 0.01) && 
-						(last > 0.001) &&
-						(volume > 110000)
-					)  */
-
+							(
+						 	((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
+						 	((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
+						 	) 
+							&& (totalValue > 500)
+						) 
 					)
 				{
 					if (last < 1.00)
 					{
-         				$(row).addClass('yellowClass');				
+         				$(row).addClass('yellowClass');		
+
+         				var actualChange = checkPinkSheetChange(symbol, last); 
+
+         				if (actualChange > 50)
+         				{
+        					$('td', row).eq(3).addClass('greenClass');
+         				}
 					}
 					else
 					{

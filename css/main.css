@@ -34,6 +34,10 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
 	background-color: lightgrey !important; 
 }
 
+.greenClass{
+	background-color: #00ff00 !important; 
+}
+
 .darkGreyClass{
 	background-color: #464646 !important; 
 	color: white !important;
