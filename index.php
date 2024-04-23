@@ -365,15 +365,19 @@
 
 	
 		alert("\n - TAKE YOUR LUMBROKINASE" + 
+			"\n\n - Check Jay's days off" + 
+			"\n\n - Check the $yesterdayDays variable and make sure it's right.  CHECK IT ON THE ACTUAL SERVER" + 
 			"\n\n - Unmute the websites" + 
 			"\n\n - Reset the database" + 
 			"\n\n - Run the Corporate Actions data structure." + 
 			"\n\n - Grab the eTrade API token" + 
 			"\n\n - Check lockup expiration dates " + 
 			"\n\n - Run NetBeans" + 
-			"\n\n - CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS" + 
+			"\n\n - CHECK THE PINK SHEETS AND CORPORATE ACTIONS FOR RECENTLY DELISTED STOCKS" + 
+			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that have 'Q' added to their symbols (i.e. they are going to the Pink Sheets that morning).  Put in your entry at 85%" +  
 			"\n\n - Go over the index.php notes" + 
-			"\n\n - Olives & Parmesan Cheese!"); 
+			"\n\n - Olives & Parmesan Cheese!" + 
+			"\n\n - Eat oranges!!!"); 
 
 // TO DO list - 
 // 1) Make a Javascript reminder alert if there is a "to report" or "to highlight" in the news. 
@@ -882,9 +886,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"TPL", "CSPI", "LFWD", "OTLK", "XTIA", "NTRP", "HPCO", "NMHI", "AFMD", "RYDE", "TR", "QTI", "LGCL", "TBRG", "LQR", "DOC", "BODI", "FUFU", "DOC2", "CRML", "SMXT", "MTUS", "WMT", "ASTH", "LOT", "VHAI", "WETH", "COO", "SELX", "CHRO", "TVGN", "SOC", "CERO",
-
-
+"ZAPP", "PIRS", "MYSZ", "BPTS", "WINT", "SMFL", "TRSG", "SLSR", "GSUN", "SERV", "MTEN", "IBTA", "GGB", "CTRI", "CDTG", "BENF", "JUNE", "TWG", "FRPH", "ULS", "SKYE", "PACS", "EICC", "MNDR", "HAFN", "SUUN", "EPRX", "ZBAO", "MAMO", "GE", "MMM", "UBXG", "ODFL", "MMA", "BOLD", "TPL", "MGRE", "GHI", "BEPJ", "BCG", "DXYZ", "LINK", "AUNA",
 
 
 
@@ -902,7 +904,6 @@ const corporateActionsStocks=[
 				  "EXPR", // In talks about Restructuring, FEBRUARY 1st, 2024 
 				  "POL", // Bankruptcy threatened on Feb 12 2024 
 				  "CREV", // Major low-volume stock, halted on Feb 13th 2024 
-				  "GMBL", // Delisting on Feb 23rd.  You can put this back on/after Feb 23rd. 
 				  "LBBB", // Halted twice on Feb 14th 
 				  "GCT", // Waterfall halt on Feb 20th 
 				  "VERO", // Close call on February 26th.  Set off send trade on the two-tier 
@@ -910,6 +911,8 @@ const corporateActionsStocks=[
 				  "BIAF", // Waterfall halt on March 6th 
 				  "COCH", // Waterfall halt on March 7th 
 				  "LEXX", // Dropped 46% on no news, March 12th 
+				  "EIGR", // Chapter 11 on April 1st 2024 
+				  "ANGH", // Dropped 47.22% on no news, April 3rd 2024 
                 ]; 
 
 
