@@ -365,16 +365,18 @@
 
 	
 		alert("\n - TAKE YOUR LUMBROKINASE" + 
+			"\n Do you need to make any more care packages?" + 
 			"\n\n - Check Jay's days off" + 
 			"\n\n - Check the $yesterdayDays variable and make sure it's right.  CHECK IT ON THE ACTUAL SERVER" + 
 			"\n\n - Unmute the websites" + 
 			"\n\n - Reset the database" + 
-			"\n\n - Run the Corporate Actions data structure." + 
+			"\n\n - Run the Corporate Actions data structure, REFRESH the corporate actions page. " + 
 			"\n\n - Grab the eTrade API token" + 
 			"\n\n - Check lockup expiration dates " + 
 			"\n\n - Run NetBeans" + 
+			"\n\n - Check the halts page for any company halted which might be being bought out" + 
 			"\n\n - CHECK THE PINK SHEETS AND CORPORATE ACTIONS FOR RECENTLY DELISTED STOCKS" + 
-			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that have 'Q' added to their symbols (i.e. they are going to the Pink Sheets that morning).  Put in your entry at 85%" +  
+			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Go over the index.php notes" + 
 			"\n\n - Olives & Parmesan Cheese!" + 
 			"\n\n - Eat oranges!!!"); 
@@ -886,7 +888,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"ZAPP", "PIRS", "MYSZ", "BPTS", "WINT", "SMFL", "TRSG", "SLSR", "GSUN", "SERV", "MTEN", "IBTA", "GGB", "CTRI", "CDTG", "BENF", "JUNE", "TWG", "FRPH", "ULS", "SKYE", "PACS", "EICC", "MNDR", "HAFN", "SUUN", "EPRX", "ZBAO", "MAMO", "GE", "MMM", "UBXG", "ODFL", "MMA", "BOLD", "TPL", "MGRE", "GHI", "BEPJ", "BCG", "DXYZ", "LINK", "AUNA",
+"ELWS", "BNR", "TIRX", "BTOC", "ADN", "ZK", "SVCO", "PAL", "NNE", "SCCO", "SOWG", "VIK", "BWLP", "ZONE", "XTKG", "RBRK", "MRX", "LOAR", "MFAO", "NCI", "YYGH", "MFI", "TRSG", "SLSR", "SERV", "MTEN", "IBTA", "GGB", "CTRI", "CDTG", "JUNE", "TWG", "FRPH",
 
 
 
