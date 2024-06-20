@@ -38,7 +38,7 @@
 
 	function createOrderStub(symbol, price, percentage)
 	{
-		var rawNumShares = 350/price;
+		var rawNumShares = 250/price;
 		percentage = percentage.toFixed(2);
 
 		if (price > 1.00)
@@ -113,7 +113,7 @@
     	$.ajax({
 	        url: 'http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
         	data: {symbol: symbol, 
-                   amount: "350", 
+                   amount: "250", 
                    percentage: "84"},
         	async: true, 
         	dataType: 'html',
@@ -184,7 +184,7 @@
 	}
 
 	// For stocks ending in ".RT" we impulse buy them at 84% down from previous closing price.
-	// Also, we are currently using $350 per trade for this. 
+	// Also, we are currently using $250 per trade for this. 
 
 	function createOrderStubRT(symbol, price, percentage)
 	{
@@ -201,7 +201,7 @@
 			newPrice = newPrice.toFixed(4);
 		}
 
-		var numShares = 350/newPrice; 
+		var numShares = 250/newPrice; 
 		numShares = Math.round(numShares/100)*100; 
 
 		// There is some kind of regulation that states that you can't place an order for more than 
@@ -365,18 +365,19 @@
 
 	
 		alert("\n - TAKE YOUR LUMBROKINASE" + 
-			"\n Do you need to make any more care packages?" + 
+			"\n\n Do you need to make any more care packages?" + 
 			"\n\n - Check Jay's days off" + 
+			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Check the $yesterdayDays variable and make sure it's right.  CHECK IT ON THE ACTUAL SERVER" + 
 			"\n\n - Unmute the websites" + 
 			"\n\n - Reset the database" + 
 			"\n\n - Run the Corporate Actions data structure, REFRESH the corporate actions page. " + 
 			"\n\n - Grab the eTrade API token" + 
 			"\n\n - Check lockup expiration dates " + 
+			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Run NetBeans" + 
 			"\n\n - Check the halts page for any company halted which might be being bought out" + 
 			"\n\n - CHECK THE PINK SHEETS AND CORPORATE ACTIONS FOR RECENTLY DELISTED STOCKS" + 
-			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Go over the index.php notes" + 
 			"\n\n - Olives & Parmesan Cheese!" + 
 			"\n\n - Eat oranges!!!"); 
@@ -888,7 +889,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"ELWS", "BNR", "TIRX", "BTOC", "ADN", "ZK", "SVCO", "PAL", "NNE", "SCCO", "SOWG", "VIK", "BWLP", "ZONE", "XTKG", "RBRK", "MRX", "LOAR", "MFAO", "NCI", "YYGH", "MFI", "TRSG", "SLSR", "SERV", "MTEN", "IBTA", "GGB", "CTRI", "CDTG", "JUNE", "TWG", "FRPH",
+"BJDX", "ATRA", "VSME", "GRI", "FORD", "WKHS", "STRR", "SPCE", "SLRX", "CATX", "TWOU", "TRNR", "TEM", "SPMC", "CZFS", "PCSC", "APH", "CNQ", "NVDA", "WAY", "RAPP", "LIF", "GAUZ", "FLYE", "BIPJ", "SMTK", "KDLY", "INBX1", "CIMN", "CIG.C", "CIG", "BOW", "KBDC",
 
 
 
@@ -915,6 +916,7 @@ const corporateActionsStocks=[
 				  "LEXX", // Dropped 46% on no news, March 12th 
 				  "EIGR", // Chapter 11 on April 1st 2024 
 				  "ANGH", // Dropped 47.22% on no news, April 3rd 2024 
+				  "CTNT", // Dropped 75% one day, then 92.89% the next, on May 21st 2024 
                 ]; 
 
 
