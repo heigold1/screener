@@ -69,7 +69,7 @@
 		if (!(symbol in pinkSheetPreviousClose))
 		{
 	   		$.ajax({
-		        url: 'http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
+		        url: 'http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
 	        	data: {symbol: symbol},
 	        	async: true, 
 	        	dataType: 'html',
@@ -111,7 +111,7 @@
 		var orerStub = ""; 
  
     	$.ajax({
-	        url: 'http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
+	        url: 'http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
         	data: {symbol: symbol, 
                    amount: "250", 
                    percentage: "84"},
@@ -367,6 +367,7 @@
 		alert("\n - TAKE YOUR LUMBROKINASE" + 
 			"\n\n Do you need to make any more care packages?" + 
 			"\n\n - Check Jay's days off" + 
+			"\n\n - Make sure your speaker is not too loud, turn it down " + 
 			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Check the $yesterdayDays variable and make sure it's right.  CHECK IT ON THE ACTUAL SERVER" + 
 			"\n\n - Unmute the websites" + 
@@ -376,6 +377,7 @@
 			"\n\n - Check lockup expiration dates " + 
 			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Run NetBeans" + 
+			"\n\n - Run PyCharm" + 
 			"\n\n - Check the halts page for any company halted which might be being bought out" + 
 			"\n\n - CHECK THE PINK SHEETS AND CORPORATE ACTIONS FOR RECENTLY DELISTED STOCKS" + 
 			"\n\n - Go over the index.php notes" + 
@@ -670,7 +672,7 @@
 
 		$(document).on('click', '#check-earnings', function (evt) {
 		    $.ajax({
-		        url: 'http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/get-earnings-stocks.php',
+		        url: 'http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/get-earnings-stocks.php',
 		        async: true, 
 		        dataType: 'json',
 		        success:  function (data) {
@@ -794,7 +796,7 @@
 
 			copyToClipboard(data);
 
-			openNewsLookupWindow("http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber  + "&check-sec=" + checkSec); 
+			openNewsLookupWindow("http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber  + "&check-sec=" + checkSec); 
 
 		});
 
@@ -889,7 +891,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"BJDX", "ATRA", "VSME", "GRI", "FORD", "WKHS", "STRR", "SPCE", "SLRX", "CATX", "TWOU", "TRNR", "TEM", "SPMC", "CZFS", "PCSC", "APH", "CNQ", "NVDA", "WAY", "RAPP", "LIF", "GAUZ", "FLYE", "BIPJ", "SMTK", "KDLY", "INBX1", "CIMN", "CIG.C", "CIG", "BOW", "KBDC",
+"EVOK", "SPGC", "CCM", "AIU", "NIPG", "ORKT", "LINE", "CON", "OS", "NVA", "BLMZ", "PGHL", "QMMM", "TWFG", "PDCC", "ARDT", "FSUN", "USLM", "ICON", "AVGO", "WRB", "TLN", "AFCG", "WSM", "SW", "SNFCA", "EHGO",
 
 
 
@@ -917,6 +919,7 @@ const corporateActionsStocks=[
 				  "EIGR", // Chapter 11 on April 1st 2024 
 				  "ANGH", // Dropped 47.22% on no news, April 3rd 2024 
 				  "CTNT", // Dropped 75% one day, then 92.89% the next, on May 21st 2024 
+				  "SLRX", // Dropped 38.79% on July 31st, 2024, on no news. 
                 ]; 
 
 
@@ -1038,7 +1041,7 @@ const corporateActionsStocks=[
 						}
 
 						tableNasdaq.row.add([
-							"<input type='text' class='symbolText' style='color: black; " + symbolBackground + " ' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type='text' class='symbolText' style='color: black; " + symbolBackground + " ' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -1137,7 +1140,7 @@ const corporateActionsStocks=[
 						}
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black; " + symbolBackground + "' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black; " + symbolBackground + "' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
@@ -1207,8 +1210,6 @@ const corporateActionsStocks=[
 
 						var changePercentagePink = value.change.toFixed(2)
 
-
-						// setting the threshold of 79%, anything lower than 79% we can impulse-buy.
 						if (totalValue > 500)
 						{
 							var orderStub = createOrderStub(jQuery.trim(key), last, change);
@@ -1219,7 +1220,7 @@ const corporateActionsStocks=[
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-35-87-50-250.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							changePercentagePink,
