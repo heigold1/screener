@@ -364,7 +364,10 @@
 	$(document).ready(function() {
 
 	
-		alert("\n - TAKE YOUR LUMBROKINASE" + 
+		alert("\n - ****************************************" + 
+			  "\n - ****************** PRAY ****************" + 
+			  "\n - ****************************************" + 
+			"\n - TAKE YOUR LUMBROKINASE" + 
 			"\n\n Do you need to make any more care packages?" + 
 			"\n\n - Check Jay's days off" + 
 			"\n\n - Make sure your speaker is not too loud, turn it down " + 
@@ -891,8 +894,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"EVOK", "SPGC", "CCM", "AIU", "NIPG", "ORKT", "LINE", "CON", "OS", "NVA", "BLMZ", "PGHL", "QMMM", "TWFG", "PDCC", "ARDT", "FSUN", "USLM", "ICON", "AVGO", "WRB", "TLN", "AFCG", "WSM", "SW", "SNFCA", "EHGO",
-
+"SCCO", "VATE", "CING", "SBFM", "MSTR", "BIVI", "XYLO", "TCBP", "GNLN", "OSTX", "HHH", "FDSB", "AOMN", "NIPG", "ORKT", "LINE", "CON", "OS", "NVA", "BLMZ", "PGHL", "QMMM", "TWFG", "PDCC", "ARDT", "FSUN", "USLM", "ICON", "AVGO", "WRB", "TLN", "AFCG", "WSM",
 
 
 				/***********************************************
@@ -903,23 +905,13 @@ const corporateActionsStocks=[
 				 ************** BLACKLISTED STOCKS *************
 				 ***********************************************/
 
-                  "RR", // Waterfall halt on JANUARY 26TH 2024
-				  "JL", // Waterfall halt on JANUARY 29TH 2024
-				  "SAVE", // Teriminated merger on JANUARY 26TH 2024
-				  "EXPR", // In talks about Restructuring, FEBRUARY 1st, 2024 
-				  "POL", // Bankruptcy threatened on Feb 12 2024 
-				  "CREV", // Major low-volume stock, halted on Feb 13th 2024 
-				  "LBBB", // Halted twice on Feb 14th 
-				  "GCT", // Waterfall halt on Feb 20th 
-				  "VERO", // Close call on February 26th.  Set off send trade on the two-tier 
 				  "IAS", // Horrible earnings net income.  Took a bad loss on it. 
-				  "BIAF", // Waterfall halt on March 6th 
-				  "COCH", // Waterfall halt on March 7th 
 				  "LEXX", // Dropped 46% on no news, March 12th 
 				  "EIGR", // Chapter 11 on April 1st 2024 
 				  "ANGH", // Dropped 47.22% on no news, April 3rd 2024 
 				  "CTNT", // Dropped 75% one day, then 92.89% the next, on May 21st 2024 
 				  "SLRX", // Dropped 38.79% on July 31st, 2024, on no news. 
+				  "RR", // Dropped 75% on no news on August 6th, 2024 
                 ]; 
 
 
