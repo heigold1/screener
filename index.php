@@ -371,16 +371,16 @@
 			"\n\n Do you need to make any more care packages?" + 
 			"\n\n - Check Jay's days off" + 
 			"\n\n - Make sure your speaker is not too loud, turn it down " + 
-			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Check the $yesterdayDays variable and make sure it's right.  CHECK IT ON THE ACTUAL SERVER" + 
 			"\n\n - Unmute the websites" + 
 			"\n\n - Reset the database" + 
 			"\n\n - Run the Corporate Actions data structure, REFRESH the corporate actions page. " + 
 			"\n\n - Grab the eTrade API token" + 
-			"\n\n - Check lockup expiration dates " + 
-			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Run NetBeans" + 
 			"\n\n - Run PyCharm" + 
+			"\n\n - Check lockup expiration dates " + 
+			"\n\n - Check https://www.briefing.com/calendars/splits for any upcoming reverse splits " + 
+			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Check the halts page for any company halted which might be being bought out" + 
 			"\n\n - CHECK THE PINK SHEETS AND CORPORATE ACTIONS FOR RECENTLY DELISTED STOCKS" + 
 			"\n\n - Go over the index.php notes" + 
@@ -894,7 +894,7 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"SCCO", "VATE", "CING", "SBFM", "MSTR", "BIVI", "XYLO", "TCBP", "GNLN", "OSTX", "HHH", "FDSB", "AOMN", "NIPG", "ORKT", "LINE", "CON", "OS", "NVA", "BLMZ", "PGHL", "QMMM", "TWFG", "PDCC", "ARDT", "FSUN", "USLM", "ICON", "AVGO", "WRB", "TLN", "AFCG", "WSM",
+
 
 
 				/***********************************************
@@ -912,6 +912,8 @@ const corporateActionsStocks=[
 				  "CTNT", // Dropped 75% one day, then 92.89% the next, on May 21st 2024 
 				  "SLRX", // Dropped 38.79% on July 31st, 2024, on no news. 
 				  "RR", // Dropped 75% on no news on August 6th, 2024 
+				  "GDC", // Dropped 42% on no news on August 20, 2024 
+				  "NDRA", // Reverse split on August 20, 2024, dropped 53% and never recovered 
                 ]; 
 
 
