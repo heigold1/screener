@@ -380,6 +380,7 @@
 			"\n\n - Run PyCharm" + 
 			"\n\n - Check lockup expiration dates " + 
 			"\n\n - Check https://www.briefing.com/calendars/splits for any upcoming reverse splits " + 
+			"\n\n - Check https://capedge.com/stock-split-calendar for any upcoming reverse splits" + 
 			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Check the halts page for any company halted which might be being bought out" + 
 			"\n\n - CHECK THE PINK SHEETS AND CORPORATE ACTIONS FOR RECENTLY DELISTED STOCKS" + 
