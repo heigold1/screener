@@ -378,6 +378,7 @@
 			"\n\n - Check https://www.briefing.com/calendars/splits for any upcoming reverse splits " + 
 			"\n\n - Check https://capedge.com/stock-split-calendar for any upcoming reverse splits" + 
 			"\n\n - Grab the eTrade API token" + 
+			"\n\n - If it's looking like a slow day then bump up your percentage alert (for dollar stocks)" + 
 			"\n\n - Run NetBeans" + 
 			"\n\n - Run PyCharm" + 
 			"\n\n - Check lockup expiration dates " + 
@@ -896,11 +897,12 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"AIXI", "VMAR", "SPCB", "RDHL", "NDRA", "DNA", "CVKD", "SRFM", "SITC", "FFIE", "BETR", "ALGS",
+"GDEV", "TOVX", "PHGE", "OBLG", "AIXI", "VMAR", "SPCB",
+
 
 // Other stocks to ignore that aren't on the usual https://stockanalysis.com/actions/ page: 
 
-"OBLG", "TOVX", "QMCO", "PHGE", "BCAN", "GDEV", 
+"QMCO", "BCAN", "ABIO", "MTNB", "WRIV", 
 
 
 
