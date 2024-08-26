@@ -375,13 +375,14 @@
 			"\n\n - Unmute the websites" + 
 			"\n\n - Reset the database" + 
 			"\n\n - Run the Corporate Actions data structure, REFRESH the corporate actions page. " + 
+			"\n\n - Check https://www.briefing.com/calendars/splits for any upcoming reverse splits " + 
+			"\n\n - Check https://capedge.com/stock-split-calendar for any upcoming reverse splits" + 
 			"\n\n - Grab the eTrade API token" + 
 			"\n\n - Run NetBeans" + 
 			"\n\n - Run PyCharm" + 
 			"\n\n - Check lockup expiration dates " + 
-			"\n\n - Check https://www.briefing.com/calendars/splits for any upcoming reverse splits " + 
-			"\n\n - Check https://capedge.com/stock-split-calendar for any upcoming reverse splits" + 
 			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
+			"\n\n - Check https://financialmodelingprep.com/api/v3/delisted-companies?page=0&apikey=EdahmOwRgQ6xcbs6j37SESSCrCIhcoa9 for delistings" + 
 			"\n\n - Check the halts page for any company halted which might be being bought out" + 
 			"\n\n - CHECK THE PINK SHEETS AND CORPORATE ACTIONS FOR RECENTLY DELISTED STOCKS" + 
 			"\n\n - Go over the index.php notes" + 
@@ -895,6 +896,12 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
+"AIXI", "VMAR", "SPCB", "RDHL", "NDRA", "DNA", "CVKD", "SRFM", "SITC", "FFIE", "BETR", "ALGS",
+
+// Other stocks to ignore that aren't on the usual https://stockanalysis.com/actions/ page: 
+
+"OBLG", "TOVX", "QMCO", "PHGE", "BCAN", "GDEV", 
+
 
 
 
