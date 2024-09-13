@@ -379,16 +379,16 @@
 			"\n\n - Check https://capedge.com/stock-split-calendar for any upcoming reverse splits" + 
 			"\n\n - Grab the eTrade API token" + 
 			"\n\n - If it's looking like a slow day then bump up your percentage alert (for dollar stocks)" + 
+			"\n\n - If it dropped from around 23-35% the previous day, go in at 19-20% and use the two-tier approach" + 
+			"\n\n - If there was a recent reverse split, use 17.5% but use the two-tier approach" + 
 			"\n\n - Run NetBeans" + 
 			"\n\n - Run PyCharm" + 
 			"\n\n - Check lockup expiration dates " + 
 			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
-			"\n\n - Check https://financialmodelingprep.com/api/v3/delisted-companies?page=0&apikey=EdahmOwRgQ6xcbs6j37SESSCrCIhcoa9 for delistings" + 
 			"\n\n - Check the halts page for any company halted which might be being bought out" + 
-			"\n\n - CHECK THE PINK SHEETS AND CORPORATE ACTIONS FOR RECENTLY DELISTED STOCKS" + 
-			"\n\n - Go over the index.php notes" + 
-			"\n\n - Olives & Parmesan Cheese!" + 
-			"\n\n - Eat oranges!!!"); 
+			"\n\n - CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS" + 
+			"\n\n - Go over the index.php notes"); 
+
 
 // TO DO list - 
 // 1) Make a Javascript reminder alert if there is a "to report" or "to highlight" in the news. 
@@ -897,13 +897,13 @@
 				 ********************************************/
 
 const corporateActionsStocks=[
-"GDEV", "TOVX", "PHGE", "OBLG", "AIXI", "VMAR", "SPCB",
+"WTO", "HYZN", "ALLR", "SIRI", "PRFX", "BKSY", "ALLGF",
+
 
 
 // Other stocks to ignore that aren't on the usual https://stockanalysis.com/actions/ page: 
 
-"QMCO", "BCAN", "ABIO", "MTNB", "WRIV", 
-
+"QMCO", "ABIO", "MTNB", "XCUR", "SPCB", "RDHL", "VMAR", "DPRO", "LITB", "GLTO", "ATPC", "SNOA", "TCS", "FAX", "GLMD", "BIRD", "BKSY", "TNON", "HYZN", "CYBN", "ZEPP", "WTO", "MKFG", "MPLN", "ALLR", "YJ", "KSCP", "PPBT", "ISPC", "LKCO", "NVVE", "ALLR", 
 
 
 
@@ -924,6 +924,7 @@ const corporateActionsStocks=[
 				  "RR", // Dropped 75% on no news on August 6th, 2024 
 				  "GDC", // Dropped 42% on no news on August 20, 2024 
 				  "NDRA", // Reverse split on August 20, 2024, dropped 53% and never recovered 
+				  "SMXT", // Dropped 68.62% on no news, on August 28th 2024 
                 ]; 
 
 
