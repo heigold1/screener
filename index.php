@@ -367,23 +367,45 @@
 		alert("\n - ****************************************" + 
 			  "\n - ****************** PRAY ****************" + 
 			  "\n - ****************************************" + 
+
 			"\n - TAKE YOUR LUMBROKINASE" + 
+
 			"\n\n Do you need to make any more care packages?" + 
+
 			"\n\n - Check Jay's days off" + 
+
 			"\n\n - Make sure your speaker is not too loud, turn it down " + 
+
 			"\n\n - Check the $yesterdayDays variable and make sure it's right.  CHECK IT ON THE ACTUAL SERVER" + 
+
 			"\n\n - Unmute the websites" + 
+
 			"\n\n - Reset the database" + 
+
 			"\n\n - Run the Corporate Actions data structure, REFRESH the corporate actions page. " + 
-			"\n\n - Check https://www.briefing.com/calendars/splits for any upcoming reverse splits " + 
+
+			"\n\n - Check https://www.tipranks.com/calendars/stock-splits/upcoming for any upcoming reverse splits " + 
+
 			"\n\n - Check https://capedge.com/stock-split-calendar for any upcoming reverse splits" + 
+
 			"\n\n - Grab the eTrade API token" + 
+
 			"\n\n - If it's looking like a slow day then bump up your percentage alert (for dollar stocks)" + 
-			"\n\n - If it dropped from around 23-35% the previous day, go in at 19-20% and use the two-tier approach" + 
-			"\n\n - If there was a recent reverse split, use 17.5% but use the two-tier approach" + 
+
+			"\n\n - If it dropped from around 23-35% the previous day, you can still use 19.5%% but just use the two-tier approach" + 
+
+			"\n\n - If it dropped 35-40% the previous day, go lower, treat it like a high-risk stock, so 22.5%" + 
+
+			"\n\n - If there was a recent reverse split, use 19.5% but use the two-tier approach.  HOWEVER if the reverse split was yesterday (or the day before), it's 27.5%" + 
+
+			"\n\n - GO OVER THE NOTES ON INDEX.PHP" + 
+
 			"\n\n - Run NetBeans" + 
+
 			"\n\n - Run PyCharm" + 
+
 			"\n\n - Check lockup expiration dates " + 
+
 			"\n\n - Check https://www.otcmarkets.com/market-activity/corporate-actions for any symbols that are going to the Pink Sheets for the first day, you can tell by checking big charts.  Put in your entry at 85%" +  
 			"\n\n - Check the halts page for any company halted which might be being bought out" + 
 			"\n\n - CHECK THE PINK SHEETS FOR RECENTLY DELISTED STOCKS" + 
@@ -896,15 +918,21 @@
 				 ***** CORPORATE ACTIONS DATA STRUCTURE *****
 				 ********************************************/
 
-const corporateActionsStocks=[
-"WTO", "HYZN", "ALLR", "SIRI", "PRFX", "BKSY", "ALLGF",
+const corporateActionsStocks=["APVO", "RNAZ", "AGRI", "CERO", "HUIZ", "JL", "THCH", "CDIO", 
+
+
+
 
 
 
 // Other stocks to ignore that aren't on the usual https://stockanalysis.com/actions/ page: 
 
-"QMCO", "ABIO", "MTNB", "XCUR", "SPCB", "RDHL", "VMAR", "DPRO", "LITB", "GLTO", "ATPC", "SNOA", "TCS", "FAX", "GLMD", "BIRD", "BKSY", "TNON", "HYZN", "CYBN", "ZEPP", "WTO", "MKFG", "MPLN", "ALLR", "YJ", "KSCP", "PPBT", "ISPC", "LKCO", "NVVE", "ALLR", 
 
+
+
+
+
+// END OF stocks to ignore that aren't on the usual https://stockanalysis.com/actions/ page: 
 
 
 				/***********************************************
@@ -917,14 +945,15 @@ const corporateActionsStocks=[
 
 				  "IAS", // Horrible earnings net income.  Took a bad loss on it. 
 				  "LEXX", // Dropped 46% on no news, March 12th 
-				  "EIGR", // Chapter 11 on April 1st 2024 
 				  "ANGH", // Dropped 47.22% on no news, April 3rd 2024 
 				  "CTNT", // Dropped 75% one day, then 92.89% the next, on May 21st 2024 
 				  "SLRX", // Dropped 38.79% on July 31st, 2024, on no news. 
 				  "RR", // Dropped 75% on no news on August 6th, 2024 
-				  "GDC", // Dropped 42% on no news on August 20, 2024 
 				  "NDRA", // Reverse split on August 20, 2024, dropped 53% and never recovered 
 				  "SMXT", // Dropped 68.62% on no news, on August 28th 2024 
+				  "TCBP", // Biotech stock, Dropped 62.65% on no news starting at 11:42 AM Pacific time (so 8:42 AM my time), on October 21st, 2024 
+				  "EFSH", // dropped to $0.3412 (72.92%) on an offering that was at $1.26/share on October 29th, 2024. I stayed away from this one and it was a good idea.
+				  "TFFP", // Winding down operations, news came out on November 15th, 2024 
                 ]; 
 
 
@@ -1513,7 +1542,7 @@ const corporateActionsStocks=[
 			</div>
 			<br>
 			<div>
-				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="13" style="width: 35px; font-size: 18px"><br>
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="15" style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="8" style="width: 35px; font-size: 18px">
 			</div>
 
