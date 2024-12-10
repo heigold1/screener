@@ -918,7 +918,7 @@
 				 ***** CORPORATE ACTIONS DATA STRUCTURE *****
 				 ********************************************/
 
-const corporateActionsStocks=["APVO", "RNAZ", "AGRI", "CERO", "HUIZ", "JL", "THCH", "CDIO", 
+const corporateActionsStocks=["JL", "MLGO", "CDIO", "BLUE", "MNTS",
 
 
 
@@ -1542,7 +1542,7 @@ const corporateActionsStocks=["APVO", "RNAZ", "AGRI", "CERO", "HUIZ", "JL", "THC
 			</div>
 			<br>
 			<div>
-				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="15" style="width: 35px; font-size: 18px"><br>
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="18" style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="8" style="width: 35px; font-size: 18px">
 			</div>
 
