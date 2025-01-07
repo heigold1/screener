@@ -394,9 +394,7 @@
 
 			"\n\n - If it dropped from around 23-35% the previous day, you can still use 19.5%% but just use the two-tier approach" + 
 
-			"\n\n - If it dropped 35-40% the previous day, go lower, treat it like a high-risk stock, so 22.5%" + 
-
-			"\n\n - If there was a recent reverse split, use 19.5% but use the two-tier approach.  HOWEVER if the reverse split was yesterday (or the day before), it's 27.5%" + 
+			"\n\n - If it dropped significantly the previous day (i.e. 35-40% and beyond), you need to see how it RECOVERED before making any decisions" + 
 
 			"\n\n - GO OVER THE NOTES ON INDEX.PHP" + 
 
@@ -918,11 +916,8 @@
 				 ***** CORPORATE ACTIONS DATA STRUCTURE *****
 				 ********************************************/
 
-const corporateActionsStocks=["JL", "MLGO", "CDIO", "BLUE", "MNTS",
 
-
-
-
+const corporateActionsStocks=["ALUR", "ELBM", "CISS", "ATCH", "OST", "OPTN", "COEP", "CARA", "JNVR", "SYTA", "GOEV", "CLEU", "ICCT", "RGF", "IDAI", "CMCT", "EVAX", 
 
 
 // Other stocks to ignore that aren't on the usual https://stockanalysis.com/actions/ page: 
