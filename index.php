@@ -113,7 +113,7 @@
     	$.ajax({
 	        url: 'http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
         	data: {symbol: symbol, 
-                   amount: "250", 
+                   amount: "100", 
                    percentage: "84"},
         	async: true, 
         	dataType: 'html',
@@ -143,7 +143,8 @@
 
 				+ orderStub + "</span><br><br><span style='font-size:30px;" + backgroundColor + "'>Change is " + change + "</span><button class='closeModal' style='font-size: 35px !important; height: 45px; display: inline-block; ' onclick='closeModalWindow();'>Close</button>" + 
 
-				"&nbsp;&nbsp;<input type='text' class='impulseBuyText' style='color: black; font-size: 35px !important; height: 45px; width: 75px; display: inline-block; '  onclick='console.log($(this)); copyToClipboard($(this)); ' value='" + orderStub + "' readonly>"
+				"&nbsp;&nbsp;<input type='text' class='impulseBuyText' style='color: black; font-size: 35px !important; height: 45px; width: 75px; display: inline-block; '  onclick='console.log($(this)); copyToClipboard($(this)); ' value='" + orderStub + "' readonly>"  +
+    			"<br><br><br><button class='placeOrderButton' style='font-size: 20px; padding: 10px;' onclick='placeEtradeOrder(\"" + orderStub + "\")'>Place E*TRADE Order</button>"
 
 				);
 
@@ -360,6 +361,38 @@
 
 	}
 
+
+	function placeEtradeOrder(orderStub) {
+	    // Parse the orderStub string (e.g., "BHILQ BUY 10300 $0.0241 (84%)")
+	    var parts = orderStub.match(/^(\S+)\s+BUY\s+(\d+)\s+\$(\d+\.\d+)\s+\(\d+\%\)$/);
+
+	    if (parts) {
+        	var symbol = parts[1]; // Extract the symbol (e.g., "BHILQ")
+        	var shares = parts[2];  // Extract the number of shares (e.g., "10300")
+        	var price = parts[3];   // Extract the price (e.g., "0.0241")
+
+        	// Send AJAX request to PHP file
+        	$.ajax({
+	            url: 'etrade-order-chat-gpt.php', // Your PHP file URL
+            	type: 'POST',
+            	data: {
+	                symbol: symbol,
+                	shares: shares,
+                	price: price
+            	},
+            	success: function(response) {
+	                console.log("Order placed successfully:", response);
+                	alert("Order placed successfully!");
+            	},
+            	error: function(xhr, status, error) {
+                	console.error("Error placing order:", error);
+                	alert("Failed to place order.");
+            	}
+        	});
+    	} else {
+	        alert("Invalid order format.");
+    	}
+	}
 
 	$(document).ready(function() {
 
@@ -917,7 +950,12 @@
 				 ********************************************/
 
 
-const corporateActionsStocks=["ALUR", "ELBM", "CISS", "ATCH", "OST", "OPTN", "COEP", "CARA", "JNVR", "SYTA", "GOEV", "CLEU", "ICCT", "RGF", "IDAI", "CMCT", "EVAX", 
+const corporateActionsStocks=["LGHL", "GRFX", "XELB", "ZCAR", "UPC", "SHFS", "JAGX", "ANGI", "VRPX", "ONVO", "OM", "WKSP", "ULY", "NAYA", "HEPA", "WLDS", "WKHS", "SAIH", "FAMI", "BHAT", "ADTX", "NAOV", "APDN", "WHLR", "ACON", "SBEV", "AREB", "WTO", "NEGG", "VBIX", "CSSI", "NWTG", "KZIA", "VS", "IPDN", "BLNE", 
+
+// Lockup expirations: 
+
+
+
 
 
 // Other stocks to ignore that aren't on the usual https://stockanalysis.com/actions/ page: 
@@ -943,12 +981,13 @@ const corporateActionsStocks=["ALUR", "ELBM", "CISS", "ATCH", "OST", "OPTN", "CO
 				  "ANGH", // Dropped 47.22% on no news, April 3rd 2024 
 				  "CTNT", // Dropped 75% one day, then 92.89% the next, on May 21st 2024 
 				  "SLRX", // Dropped 38.79% on July 31st, 2024, on no news. 
-				  "RR", // Dropped 75% on no news on August 6th, 2024 
+				  "RR", // Droped 75% on no news on August 6th, 2024 
 				  "NDRA", // Reverse split on August 20, 2024, dropped 53% and never recovered 
 				  "SMXT", // Dropped 68.62% on no news, on August 28th 2024 
 				  "TCBP", // Biotech stock, Dropped 62.65% on no news starting at 11:42 AM Pacific time (so 8:42 AM my time), on October 21st, 2024 
 				  "EFSH", // dropped to $0.3412 (72.92%) on an offering that was at $1.26/share on October 29th, 2024. I stayed away from this one and it was a good idea.
 				  "TFFP", // Winding down operations, news came out on November 15th, 2024 
+				  "YHC", // Dropped 77% on mere purchase order news on March 21s, 2025 
                 ]; 
 
 
@@ -1677,7 +1716,7 @@ const corporateActionsStocks=["ALUR", "ELBM", "CISS", "ATCH", "OST", "OPTN", "CO
 
 </tr>
 
-<div id="myModal" class="modal" style="display: none">
+<div id="myModal" class="modal" style="display: none; height: 550px; ">
 
   <!-- Modal content -->
 
