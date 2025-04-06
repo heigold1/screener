@@ -38,26 +38,45 @@
 
 	function createOrderStub(symbol, price, percentage)
 	{
-		var rawNumShares = 250/price;
+
+		var prevClose = price/(1-(percentage/100)); 
+
+		if (prevClose > 1.00)
+		{
+			prevClose = prevClose.toFixed(2);
+		}
+		else
+		{
+			prevClose = prevClose.toFixed(4);
+		}
+
+		if (percentage < 84.00)
+		{
+			percentage = 84.00; 
+			price = prevClose*(1-(percentage/100));
+		}
+
 		percentage = percentage.toFixed(2);
+
 
 		if (price > 1.00)
 		{
-			price = price + 0.01; 
+// 			price = price + 0.01; 
 			price = price.toFixed(2);
 		}
 		else
 		{
-			price = price + 0.0001; 
+// 			price = price + 0.0001; 
 			price = price.toFixed(4);
 		}
 
+		var rawNumShares = 100/price;
 		var numShares = parseInt(Math.ceil(rawNumShares/100)*100);
 		if (numShares > 500000)
 		{
 			numShares = 500000;
 		}
-		var orderStub = symbol + " BUY " + numShares + " $" + price + " (" + percentage + "%)"; 
+		var orderStub = symbol + " BUY " + numShares + " $" + price + " (" + percentage + "%) -- $" + prevClose + " CIK_NOT_FOUND"; 
 		return orderStub; 
 	}
 
@@ -364,7 +383,7 @@
 
 	function placeEtradeOrder(orderStub) {
 	    // Parse the orderStub string (e.g., "BHILQ BUY 10300 $0.0241 (84%)")
-	    var parts = orderStub.match(/^(\S+)\s+BUY\s+(\d+)\s+\$(\d+\.\d+)\s+\(\d+\%\)$/);
+	    var parts = orderStub.match(/(\w+)\s+BUY\s+(\d+)\s+\$(\d+\.\d+)/);
 
 	    if (parts) {
         	var symbol = parts[1]; // Extract the symbol (e.g., "BHILQ")
@@ -949,18 +968,23 @@
 				 ***** CORPORATE ACTIONS DATA STRUCTURE *****
 				 ********************************************/
 
+// stockanalysis.com 
 
-const corporateActionsStocks=["LGHL", "GRFX", "XELB", "ZCAR", "UPC", "SHFS", "JAGX", "ANGI", "VRPX", "ONVO", "OM", "WKSP", "ULY", "NAYA", "HEPA", "WLDS", "WKHS", "SAIH", "FAMI", "BHAT", "ADTX", "NAOV", "APDN", "WHLR", "ACON", "SBEV", "AREB", "WTO", "NEGG", "VBIX", "CSSI", "NWTG", "KZIA", "VS", "IPDN", "BLNE", 
+const corporateActionsStocks=["MKTW", "VCIG", "WNW", "ICON", "WTO", "VMAR", "VBFC", "NXU", "HUBC", "AUUD", "AREB", "SBEV", "ACON", "LGHL", "GRFX", "XELB", "ZCAR", "UPC", "SHFS", "JAGX", "ANGI", "VRPX", "ONVO", "VCIG", "CISS", "FTFT", "SOBR", "AEHL", "NEGG", "QNRX", "AMRN", "HCWB", "HPH", "FRGE", "KZIA", "OM", "HWNI", "WHLR", "VS", "TGL", 
+
+// tipranks.com reverse splits 
+
+
+// capedge.com reverse splits 
+
+
 
 // Lockup expirations: 
 
 
 
 
-
 // Other stocks to ignore that aren't on the usual https://stockanalysis.com/actions/ page: 
-
-
 
 
 
