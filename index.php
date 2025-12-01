@@ -436,16 +436,6 @@
 
 			"\n\n - Run the Corporate Actions data structure, REFRESH the corporate actions page. " + 
 
-			"\n\n - Check https://www.tipranks.com/calendars/stock-splits/upcoming for any upcoming reverse splits " + 
-
-			"\n\n - Check https://capedge.com/stock-split-calendar for any upcoming reverse splits" + 
-
-			"\n\n - Grab the eTrade API token" + 
-
-			"\n\n - If it's looking like a slow day then bump up your percentage alert (for dollar stocks)" + 
-
-			"\n\n - If it dropped from around 23-35% the previous day, you can still use 19.5%% but just use the two-tier approach" + 
-
 			"\n\n - If it dropped significantly the previous day (i.e. 35-40% and beyond), you need to see how it RECOVERED before making any decisions" + 
 
 			"\n\n - GO OVER THE NOTES ON INDEX.PHP" + 
@@ -970,16 +960,30 @@
 
 // stockanalysis.com 
 
-const corporateActionsStocks=["MKTW", "VCIG", "WNW", "ICON", "WTO", "VMAR", "VBFC", "NXU", "HUBC", "AUUD", "AREB", "SBEV", "ACON", "LGHL", "GRFX", "XELB", "ZCAR", "UPC", "SHFS", "JAGX", "ANGI", "VRPX", "ONVO", "VCIG", "CISS", "FTFT", "SOBR", "AEHL", "NEGG", "QNRX", "AMRN", "HCWB", "HPH", "FRGE", "KZIA", "OM", "HWNI", "WHLR", "VS", "TGL", 
+	const corporateActionsStocks=["XHLD", "TLRY", "SPHL", "RUBI", "HPP", "NIVF", "MBRX", "KXIN", "PMN", "PLRZ", "IVF", "LGHL", "PHGE", "MHUA", "WTO", "MIGI", "JXG", "EZGO", "BLMZ", "SMX", "ASNS", "EPWK", 
+
+
+
 
 // tipranks.com reverse splits 
+
+	"KXIN", "WHLR", "NIVF", "MBRX", "GRYCF", "SPHL", "RUBI", "TLRY", "XHLD", "HPP", "SVRE", "ARBK", 
+
+
+
 
 
 // capedge.com reverse splits 
 
+	"EPWK", "SMX", "ASNS", "SQQQ", "ZSL", "SQQQ", "GTEH", "BLMZ", "WTO", "EZGO", "MIGI", "JXG", "MHUA", "CORN", "PHGE", "MESA", "LGHL", "IVF", "PMN", "PLRZ", 
+
+	"MBRX", "XYZY", "WHLR", "KXIN", "RUBI", "SPHL", "XHLD", "TLRY", "HPP", "NIVF", "SVRE", "ARBK", 
+
+
 
 
 // Lockup expirations: 
+
 
 
 
@@ -996,7 +1000,7 @@ const corporateActionsStocks=["MKTW", "VCIG", "WNW", "ICON", "WTO", "VMAR", "VBF
 				 *** END OF CORPORATE ACTIONS DATA STRUCTURE ***
 				 ***********************************************/
 
-				/***********************************************
+				/**********************************************
 				 ************** BLACKLISTED STOCKS *************
 				 ***********************************************/
 
@@ -1012,6 +1016,8 @@ const corporateActionsStocks=["MKTW", "VCIG", "WNW", "ICON", "WTO", "VMAR", "VBF
 				  "EFSH", // dropped to $0.3412 (72.92%) on an offering that was at $1.26/share on October 29th, 2024. I stayed away from this one and it was a good idea.
 				  "TFFP", // Winding down operations, news came out on November 15th, 2024 
 				  "YHC", // Dropped 77% on mere purchase order news on March 21s, 2025 
+				  "WOLF", // At risk of declaring bankruptcy, May 21st, 2025 
+				  "YYAI", // Dropped like 85% on barely any news, October 7th, 2025 
                 ]; 
 
 
@@ -1601,7 +1607,7 @@ const corporateActionsStocks=["MKTW", "VCIG", "WNW", "ICON", "WTO", "VMAR", "VBF
 			<br>
 			<div>
 				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="18" style="width: 35px; font-size: 18px"><br>
-  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="8" style="width: 35px; font-size: 18px">
+  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="11" style="width: 35px; font-size: 18px">
 			</div>
 
 		</div>
