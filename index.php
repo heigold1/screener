@@ -24,6 +24,7 @@
 	var lowCurrHash = new Object();
 	const MINIMUM_LOW_DIFF = 9; 
 	var pinkSheetPreviousClose = []; 
+	var pinkSheetOrderPlaced = []; 
 
 
 	function openNewsLookupWindow(link){
@@ -960,14 +961,15 @@
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["XHLD", "TLRY", "SPHL", "RUBI", "HPP", "NIVF", "MBRX", "KXIN", "PMN", "PLRZ", "IVF", "LGHL", "PHGE", "MHUA", "WTO", "MIGI", "JXG", "EZGO", "BLMZ", "SMX", "ASNS", "EPWK", 
+	const corporateActionsStocks=["XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", "RBNE", "TNMG", "CHR", "BOXL", "VSA", "PRPH", "INHD", "PAVS", "MNTS", "DFLI", "PCSA", "STAI", "INBS", 
+
 
 
 
 
 // tipranks.com reverse splits 
 
-	"KXIN", "WHLR", "NIVF", "MBRX", "GRYCF", "SPHL", "RUBI", "TLRY", "XHLD", "HPP", "SVRE", "ARBK", 
+	"BIYA", "GFTRF", "ORIS", "APVO", "ACET", "XTKG", "ILAG", "BCHT", "RPT", "CANF", "ICU", "QGEN", 
 
 
 
@@ -975,15 +977,16 @@
 
 // capedge.com reverse splits 
 
-	"EPWK", "SMX", "ASNS", "SQQQ", "ZSL", "SQQQ", "GTEH", "BLMZ", "WTO", "EZGO", "MIGI", "JXG", "MHUA", "CORN", "PHGE", "MESA", "LGHL", "IVF", "PMN", "PLRZ", 
+	"STAI", "INBS", "WTER", "VNUE", "MNTS", "PCSA", "DFLI", "PAVS", "ABQQ", "MNTS", "INHD", "GRLF", "SONG", "VSA", "PRPH", "CHR", "BOXL", "TNMG", "SHAZ", "XTLB", "RBNE", "BCHT", "SCWO", "ASRT", "ECDA", "ELPW", "GRNL", "WOK", "BIYA", "ACET", "RPT", 
 
-	"MBRX", "XYZY", "WHLR", "KXIN", "RUBI", "SPHL", "XHLD", "TLRY", "HPP", "NIVF", "SVRE", "ARBK", 
+	"ICU", "CANF", "MLEC", 
 
 
 
 
 // Lockup expirations: 
 
+	
 
 
 
@@ -1286,7 +1289,7 @@
 								(
 									(
 									 ((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-									 ((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
+									 ((change > parseFloat( $("#pink-dollar").val())) && (last >= 1.00))
 									 ) 
 									&& (totalValue > 500)
 								)  /* ||
