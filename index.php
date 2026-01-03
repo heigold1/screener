@@ -24,7 +24,9 @@
 	var lowCurrHash = new Object();
 	const MINIMUM_LOW_DIFF = 9; 
 	var pinkSheetPreviousClose = []; 
-	var pinkSheetOrderPlaced = []; 
+	var pinkSheetExamined = new Set(); 
+	var pinkSheetOrderPlaced = new Set(); 
+	var pinkSheetOrderNotPlaced = new Set(); 
 
 
 	function openNewsLookupWindow(link){
@@ -57,7 +59,7 @@
 			price = prevClose*(1-(percentage/100));
 		}
 
-		percentage = percentage.toFixed(2);
+		percentage = parseFloat(percentage).toFixed(2);
 
 
 		if (price > 1.00)
@@ -94,9 +96,6 @@
 	        	async: true, 
 	        	dataType: 'html',
 	        	success:  function (data) {
-
-	        	console.log("Returned JASON object is:");
-	        	console.log(data); 
 
 	        	var responseData = JSON.parse(data); 
 
@@ -267,6 +266,174 @@
 		var orderStub = symbol + " BUY " + numShares + " $" + price + " (" + percentage + "%)"; 
 		return orderStub; 
 	}
+
+
+function getYMDTradeDate(daysBack) {
+    const today = new Date();
+    today.setDate(today.getDate() - daysBack); // subtract daysBack days
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // months are 0-based
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// Example usage:
+console.log(getYMDTradeDate(5)); // e.g., "2025-12-27" if today is 2026-01-01
+
+
+
+function fetchOHLCJson(symbol, fromDate, toDate, callback) {
+    var xhr = new XMLHttpRequest();
+
+    var url =
+        "https://api.marketstack.com/v2/eod" +
+        "?access_key=d36ab142bed5a1430fcde797063f6b9a" +
+        "&symbols=" + encodeURIComponent(symbol) +
+        "&date_from=" + fromDate +
+        "&date_to=" + toDate;
+
+    xhr.open("GET", url, true); // async = true (normal AJAX)
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    var json = JSON.parse(xhr.responseText);
+                    callback(json);
+                } catch (e) {
+                    callback({ error: true });
+                }
+            } else {
+                callback({ error: true });
+            }
+        }
+    };
+
+    xhr.send();
+}
+
+
+/* -------------------------------
+   Helper function to calculate median
+------------------------------- */
+function median(arr) {
+    if (!arr.length) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 !== 0
+        ? sorted[mid]
+        : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+function examinePinkSheet(symbol) {
+
+    /* -------------------------------
+       CONFIG
+    ------------------------------- */
+    const LOOKBACK_DAYS = 10;
+    const DATE_BUFFER_DAYS = 4;
+    const MIN_NONZERO_VOLUME_DAYS = 4;
+    const MIN_MEDIAN_VOLUME = 150000;
+    const MIN_MEDIAN_VOLATILITY = 0.08;
+
+    /* -------------------------------
+       DATE WINDOW
+    ------------------------------- */
+    const fromDate = getYMDTradeDate(LOOKBACK_DAYS + DATE_BUFFER_DAYS);
+    const toDate = getYMDTradeDate(1);
+    let modifiedSymbol = symbol; 
+
+    /* -------------------------------
+       FETCH DATA (ATTEMPT 1)
+    ------------------------------- */
+
+	if (symbol.length === 5) 
+	{
+		modifiedSymbol = symbol.slice(0, 4);
+	}
+
+    let json = fetchOHLCJson(modifiedSymbol, fromDate, toDate, function(json){
+
+	    /* -------------------------------
+	       HANDLE NO DATA RESPONSE
+	    ------------------------------- */
+	    if (json.error || !json.data) {
+			pinkSheetExamined.add(symbol); 
+			pinkSheetOrderNotPlaced.add(symbol); 
+
+	    	return false; 
+	    }
+
+	    /* -------------------------------
+	       USE DATA AS-IS (NO SORTING)
+	       index 0 = yesterday, 1 = day before, etc.
+	    ------------------------------- */
+	    const recent = json.data.slice(0, LOOKBACK_DAYS);
+
+	    /* -------------------------------
+	       METRIC COLLECTION
+	    ------------------------------- */
+	    const volumes = [];
+	    const volatility = [];
+	    const closePrices = [];
+	    let nonZeroDays = 0;
+
+	    for (const day of recent) {
+	        if (!('high' in day && 'low' in day && 'close' in day && 'volume' in day)) {
+	            continue;
+	        }
+
+	        const close = parseFloat(day.close);
+	        const high = parseFloat(day.high);
+	        const low = parseFloat(day.low);
+	        const vol = parseFloat(day.volume);
+
+	        if (vol > 0) {
+	            nonZeroDays++;
+	            volumes.push(vol);
+	        }
+
+	        if (close > 0) {
+	            volatility.push((high - low) / close);
+	        }
+
+	        closePrices.push(parseFloat(close.toFixed(4)));
+	    }
+
+	    /* -------------------------------
+	       VALIDATION CHECKS
+	    ------------------------------- */
+
+	    if (nonZeroDays < MIN_NONZERO_VOLUME_DAYS) {
+			pinkSheetExamined.add(symbol); 
+			pinkSheetOrderNotPlaced.add(symbol); 
+	        return false;
+	    }
+
+	    if (median(volumes) < MIN_MEDIAN_VOLUME) {
+			pinkSheetExamined.add(symbol); 
+			pinkSheetOrderNotPlaced.add(symbol); 
+	        return false;
+	    }
+
+	    if (median(volatility) < MIN_MEDIAN_VOLATILITY) {
+			pinkSheetExamined.add(symbol); 
+			pinkSheetOrderNotPlaced.add(symbol); 
+	        return false;
+	    }
+
+	    // Detect price pinning / wash trading
+	    if (new Set(closePrices).size <= 2) {
+			pinkSheetExamined.add(symbol); 
+			pinkSheetOrderNotPlaced.add(symbol); 
+	        return false;
+	    }
+
+		pinkSheetExamined.add(symbol); 
+		pinkSheetOrderPlaced.add(symbol); 
+
+	});
+}
 
 
 	function copyToClipboard(object){
@@ -506,6 +673,16 @@
          				{
         					$('td', row).eq(3).addClass('greenClass');
          				}
+
+						if (pinkSheetOrderNotPlaced.has(symbol))
+						{
+        					$('td', row).eq(0).addClass('lightRedClass');
+						}
+
+						if (pinkSheetOrderPlaced.has(symbol)) 
+						{
+        					$('td', row).eq(0).addClass('greenClass');
+						}
 					}
 					else
 					{
@@ -940,7 +1117,6 @@
 		}
 
 		$.get('http://localhost/screener/percent-decliners.json', function(){
-			console.log( "Grabbed decliners.json successfully 2" );
 			})
 			.done(function(data){
 
@@ -961,25 +1137,24 @@
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", "RBNE", "TNMG", "CHR", "BOXL", "VSA", "PRPH", "INHD", "PAVS", "MNTS", "DFLI", "PCSA", "STAI", "INBS", 
-
+	const corporateActionsStocks=["XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", "RBNE", "TNMG", "CHR", "BOXL", "VSA", "PRPH", "INHD", "PAVS", "MNTS", "DFLI", "PCSA", 
 
 
 
 
 // tipranks.com reverse splits 
 
-	"BIYA", "GFTRF", "ORIS", "APVO", "ACET", "XTKG", "ILAG", "BCHT", "RPT", "CANF", "ICU", "QGEN", 
-
+	"RPT", "BCHT", "CANF", "ICU", "QGEN", "SOLCF", 
 
 
 
 
 // capedge.com reverse splits 
 
-	"STAI", "INBS", "WTER", "VNUE", "MNTS", "PCSA", "DFLI", "PAVS", "ABQQ", "MNTS", "INHD", "GRLF", "SONG", "VSA", "PRPH", "CHR", "BOXL", "TNMG", "SHAZ", "XTLB", "RBNE", "BCHT", "SCWO", "ASRT", "ECDA", "ELPW", "GRNL", "WOK", "BIYA", "ACET", "RPT", 
+	"MNTS", "PCSA", "DFLI", "PAVS", "ABQQ", "MNTS", "INHD", "GRLF", "SONG", "VSA", "PRPH", "TNMG", "CHR", "BOXL", "XTLB", "RBNE", "SHAZ", "ELPW", "ECDA", "ASRT", "SCWO", "BCHT", "GRNL", "WOK", "BIYA", "NUGN", "RPT", "ACET", "APVO", "XTKG", 
+	"CODX", "PAVM", "ICU", "CANF", "MLEC", 
 
-	"ICU", "CANF", "MLEC", 
+
 
 
 
@@ -1281,9 +1456,26 @@
 
 						var volumeString = value.volume.toString() + "00"; 
 						var volume = parseFloat(volumeString);
-						var last = value.last;
-						var totalValue = volume*last; 
-						var change = value.change;
+						var last = parseFloat(value.last);
+						var totalValue = parseFloat(volume*last); 
+						var change = parseFloat(value.change).toFixed(2);
+						var symbol = key; 
+
+						if (symbol in pinkSheetPreviousClose) 
+						{
+
+							prevClose = pinkSheetPreviousClose[symbol]; 				
+							change = parseFloat((prevClose - last)*100/prevClose).toFixed(2); 
+						}
+
+						// if it's down greater than 60% and there's at least $500 in trading, 
+						// and it's been examined for proper previous close value, and it hasn't been examined yet, 
+						// then we examine it (for automated trade)
+
+						if ((change > 50) && (totalValue > 500) && (symbol in pinkSheetPreviousClose) && (!pinkSheetExamined.has(symbol)) && (last < 1.00) && ($('#auto-pink-sheet-buy').is(":checked")) )
+						{
+							examinePinkSheet(symbol); 
+						}
 
 						if (
 								(
@@ -1292,14 +1484,7 @@
 									 ((change > parseFloat( $("#pink-dollar").val())) && (last >= 1.00))
 									 ) 
 									&& (totalValue > 500)
-								)  /* ||
-								(
-									(change >  parseFloat($("#pink-penny").val())) && 
-									(last < 0.01) && 
-									(last > 0.001) &&
-									(volume > 110000)
-								) */
-
+								)  
 							)
 							{
 								playSound = 1;
@@ -1309,7 +1494,7 @@
 						// just put in the buy order.
 						var impulseBuy = "";
 
-						var changePercentagePink = value.change.toFixed(2)
+						var changePercentagePink = parseFloat(change).toFixed(2)
 
 						if (totalValue > 500)
 						{
@@ -1634,6 +1819,10 @@
 		<div>
 			<input type="checkbox" id="check-sec" checked>
 			<label for="check-sec">Check SEC</label>
+		</div>
+		<div>
+			<input type="checkbox" id="auto-pink-sheet-buy" checked>
+			<label for="check-sec">Auto Pink Sheet Buy</label>
 		</div>
 		<br>
 
