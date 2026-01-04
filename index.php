@@ -430,9 +430,56 @@ function examinePinkSheet(symbol) {
 	    }
 
 		pinkSheetExamined.add(symbol); 
-		pinkSheetOrderPlaced.add(symbol); 
 
-	});
+
+		// Now we know that the order has passed the fitness test, 
+		// we send the order to Python, to send it to Trader Workstation 
+
+		const lastClose = pinkSheetPreviousClose[symbol]; // pull from your cached array
+		if (!lastClose) {
+		    console.warn(`No previous close stored for ${symbol}, cannot calculate 85% drop target`);
+		    pinkSheetOrderNotPlaced.add(symbol);
+		    return false;
+		}
+
+		// Calculate 85% drop price, let's use $70 per trade/batch 
+		const targetPrice = parseFloat((lastClose * (1 - 0.85)).toFixed(4));
+		let numShares = Math.floor(5 / targetPrice / 100) * 100;
+		if (numShares < 100) numShares = 100; // Minimum 100 shares, in case price is high
+
+		const orderData = {
+		    symbol: symbol,
+		    action: "BUY",
+		    shares: numShares,
+		    price: targetPrice
+		};
+
+		// Send order to Python script
+		fetch('http://localhost:5000/api/pink-sheet-order', {
+		    method: 'POST',
+		    headers: { 'Content-Type': 'application/json' },
+		    body: JSON.stringify(orderData)
+		})
+		.then(response => response.json())
+		.then(data => {
+		    if (data.success) {
+		        console.log(symbol + " order response:", data.orders);
+				pinkSheetOrderPlaced.add(symbol); 
+		        /* data.orders.forEach(o => {
+		            alert(`${o.symbol} limit order at $${o.limit_price}: ${o.status} (${o.filled}/${o.remaining} filled)`);
+		        }); */ 
+		    } else {
+				pinkSheetOrderNotPlaced.add(symbol); 
+		        // alert(`${symbol} order failed: ${data.message}`);
+		    }
+		})
+		.catch(error => {
+		    console.error("Error sending order to Python:", error);
+		    alert(`${symbol} order could not be sent!`);
+		});
+
+	});   // fetching the OHLC data, callback function 
+
 }
 
 
@@ -1821,7 +1868,7 @@ function examinePinkSheet(symbol) {
 			<label for="check-sec">Check SEC</label>
 		</div>
 		<div>
-			<input type="checkbox" id="auto-pink-sheet-buy" checked>
+			<input type="checkbox" id="auto-pink-sheet-buy">
 			<label for="check-sec">Auto Pink Sheet Buy</label>
 		</div>
 		<br>
