@@ -444,7 +444,7 @@ function examinePinkSheet(symbol) {
 
 		// Calculate 85% drop price, let's use $70 per trade/batch 
 		const targetPrice = parseFloat((lastClose * (1 - 0.85)).toFixed(4));
-		let numShares = Math.floor(5 / targetPrice / 100) * 100;
+		let numShares = Math.floor(50 / targetPrice / 100) * 100;
 		if (numShares < 100) numShares = 100; // Minimum 100 shares, in case price is high
 
 		const orderData = {
