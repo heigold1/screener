@@ -29,6 +29,9 @@
 	var pinkSheetOrderNotPlaced = new Set(); 
 	var pinkSheetOrderFailed = new Set(); 
 
+	var pinkSheetOrderPlacedMP3 = new Audio('./wav/pink-sheet-order-placed.mp3'); 
+	var pinkSheetOrderFailedMP3 = new Audio('./wav/pink-sheet-order-failed.mp3'); 
+
 
 	function openNewsLookupWindow(link){
 		newsLookupWindow = window.open(link, "newslookup-window"); 
@@ -1183,8 +1186,6 @@ function examinePinkSheet(symbol) {
 				var audioAlert = new Audio('./wav/text-alert.wav');
 				var audioEmergency = new Audio('./wav/fire-truck-air-horn_daniel-simion.wav');
 				var audioEqual = new Audio('./wav/equal.wav');
-				var pinkSheetOrderPlacedMP3 = new Audio('./wav/pink-sheet-order-placed.mp3'); 
-				var pinkSheetOrderFailedMP3 = new Audio('./wav/pink-sheet-order-failed.mp3'); 
 				var playSound = 0; 
 				var tableNasdaq = $('#nasdaq').DataTable();
 				var symbol = ""; 
