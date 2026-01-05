@@ -27,6 +27,7 @@
 	var pinkSheetExamined = new Set(); 
 	var pinkSheetOrderPlaced = new Set(); 
 	var pinkSheetOrderNotPlaced = new Set(); 
+	var pinkSheetOrderFailed = new Set(); 
 
 
 	function openNewsLookupWindow(link){
@@ -429,18 +430,18 @@ function examinePinkSheet(symbol) {
 	        return false;
 	    }
 
-		pinkSheetExamined.add(symbol); 
-
-
 		// Now we know that the order has passed the fitness test, 
 		// we send the order to Python, to send it to Trader Workstation 
 
 		const lastClose = pinkSheetPreviousClose[symbol]; // pull from your cached array
 		if (!lastClose) {
 		    console.warn(`No previous close stored for ${symbol}, cannot calculate 85% drop target`);
+			pinkSheetExamined.add(symbol); 
 		    pinkSheetOrderNotPlaced.add(symbol);
 		    return false;
 		}
+
+		pinkSheetExamined.add(symbol); 
 
 		// Calculate 85% drop price, let's use $70 per trade/batch 
 		const targetPrice = parseFloat((lastClose * (1 - 0.85)).toFixed(4));
@@ -465,17 +466,22 @@ function examinePinkSheet(symbol) {
 		    if (data.success) {
 		        console.log(symbol + " order response:", data.orders);
 				pinkSheetOrderPlaced.add(symbol); 
+				pinkSheetOrderPlacedMP3.play(); 
 		        /* data.orders.forEach(o => {
 		            alert(`${o.symbol} limit order at $${o.limit_price}: ${o.status} (${o.filled}/${o.remaining} filled)`);
 		        }); */ 
 		    } else {
-				pinkSheetOrderNotPlaced.add(symbol); 
-		        // alert(`${symbol} order failed: ${data.message}`);
+				pinkSheetOrderFailed.add(symbol); 
+				pinkSheetOrderFailedMP3.play(); 
+		        console.log(alert(`${symbol} order failed: ${data.message}`));
 		    }
 		})
 		.catch(error => {
 		    console.error("Error sending order to Python:", error);
-		    alert(`${symbol} order could not be sent!`);
+				pinkSheetOrderFailed.add(symbol); 
+				pinkSheetOrderFailedMP3.play(); 
+
+ 		    alert(`${symbol} order could not be sent!`);
 		});
 
 	});   // fetching the OHLC data, callback function 
@@ -721,15 +727,22 @@ function examinePinkSheet(symbol) {
         					$('td', row).eq(3).addClass('greenClass');
          				}
 
-						if (pinkSheetOrderNotPlaced.has(symbol))
-						{
-        					$('td', row).eq(0).addClass('lightRedClass');
-						}
-
 						if (pinkSheetOrderPlaced.has(symbol)) 
 						{
         					$('td', row).eq(0).addClass('greenClass');
 						}
+						
+						if (pinkSheetOrderNotPlaced.has(symbol))
+						{
+        					$('td', row).eq(0).addClass('pinkClass');
+						}
+
+						if (pinkSheetOrderFailed.has(symbol))
+						{
+        					$('td', row).eq(0).addClass('lightRedClass');
+						}
+
+
 					}
 					else
 					{
@@ -1006,7 +1019,7 @@ function examinePinkSheet(symbol) {
 		$(document).on('click', '.pink', function (evt) {
 			evt.stopPropagation();
 			evt.preventDefault();
-			removePink($(this));
+			// removePink($(this));
 		});
 
 		/** Clicking on the "X" of a nyse-amex row **/
@@ -1170,6 +1183,8 @@ function examinePinkSheet(symbol) {
 				var audioAlert = new Audio('./wav/text-alert.wav');
 				var audioEmergency = new Audio('./wav/fire-truck-air-horn_daniel-simion.wav');
 				var audioEqual = new Audio('./wav/equal.wav');
+				var pinkSheetOrderPlacedMP3 = new Audio('./wav/pink-sheet-order-placed.mp3'); 
+				var pinkSheetOrderFailedMP3 = new Audio('./wav/pink-sheet-order-failed.mp3'); 
 				var playSound = 0; 
 				var tableNasdaq = $('#nasdaq').DataTable();
 				var symbol = ""; 
@@ -1547,13 +1562,13 @@ function examinePinkSheet(symbol) {
 						{
 							var orderStub = createOrderStub(jQuery.trim(key), last, change);
 
-							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuyPink(\"" + jQuery.trim(key) + "\"); removePink($(this));' value=\"" + orderStub + "\" readonly>";
+							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuyPink(\"" + jQuery.trim(key) + "\"); ' value=\"" + orderStub + "\" readonly>";
 						}
 
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removePink($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); ' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							changePercentagePink,
