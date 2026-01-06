@@ -933,7 +933,7 @@ function examinePinkSheet(symbol) {
 		});
 
 		//PINK List
-		var tablePink = $('#pink-list').DataTable( {
+		var tablePinkList = $('#pink-list').DataTable( {
 	  		"paging":   false,
 	        "ordering": false,
 	        "info":     false, 
@@ -1135,6 +1135,31 @@ function examinePinkSheet(symbol) {
 			tableNYSEAmexList.draw();
 		}); 
 
+		$("#btnManualAddPink").click(function(){
+
+			var today = new Date(); 
+			var hours = today.getHours(); 
+			var minutes = today.getMinutes();
+			if (minutes < 10) 
+			{
+				minutes = "0" + minutes; 
+			}
+
+			tablePinkList.row.add([
+			$.trim($("#manualAddPink").val()), 
+			((hours + 24)%12 || 12) + ":" + minutes + " " + ((hours >= 12) ? "PM" : "AM"), 
+			'<input type="text" class="newsText">',
+			'<input type="checkbox" checked>',
+			'',
+			"<div class='pink-list'><i class='icon-remove'></i></div>"
+			] ); 
+
+			$("#manualAddPink").val("");
+
+			tablePinkList.draw();
+		}); 
+
+
 		$( "#clear-tables" ).click(function() {
 			var tableNasdaq = $('#nasdaq').DataTable();
  
@@ -1200,31 +1225,36 @@ function examinePinkSheet(symbol) {
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", "RBNE", "TNMG", "CHR", "BOXL", "VSA", "PRPH", "INHD", "PAVS", "MNTS", "DFLI", "PCSA", 
+	const corporateActionsStocks=["ELAB", "MLEC", "ICU", "RVYL", "PAVM", "CODX", "XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", "RBNE", "TNMG", "CHR", "BOXL", "VSA", "PRPH", "INHD", 
+
 
 
 
 
 // tipranks.com reverse splits 
 
-	"RPT", "BCHT", "CANF", "ICU", "QGEN", "SOLCF", 
+	"MLEC", "ICU", "CANF", "AZULQ", "ELAB", "QGEN", "VSME", "SOLCF", "AMCR", 
+
 
 
 
 
 // capedge.com reverse splits 
 
-	"MNTS", "PCSA", "DFLI", "PAVS", "ABQQ", "MNTS", "INHD", "GRLF", "SONG", "VSA", "PRPH", "TNMG", "CHR", "BOXL", "XTLB", "RBNE", "SHAZ", "ELPW", "ECDA", "ASRT", "SCWO", "BCHT", "GRNL", "WOK", "BIYA", "NUGN", "RPT", "ACET", "APVO", "XTKG", 
-	"CODX", "PAVM", "ICU", "CANF", "MLEC", 
+	"SNBH", "RVYL", "PAVM", "CODX", "CANF", "ICU", "MLEC", "AMCR", 
 
-
+	"INHD", "GRLF", "SONG", "VSA", "PRPH", "TNMG", "CHR", "BOXL", "XTLB", "RBNE", "ELPW", "ECDA", "ASRT", "SCWO", "GRNL", "WOK", "BIYA", "NUGN", "ACET", "APVO", "XTKG", "ILAG", "ORIS", "RPT", 
 
 
 
 
 // Lockup expirations: 
 
-	
+	"DLXY", "MSGY", "MAMK", "ANPA", "TLIH", 
+
+// pink sheet stocks that haven't shown up yet 
+
+	"PTIX", "PRPH", 
 
 
 
@@ -1535,7 +1565,7 @@ function examinePinkSheet(symbol) {
 						// and it's been examined for proper previous close value, and it hasn't been examined yet, 
 						// then we examine it (for automated trade)
 
-						if ((change > 50) && (totalValue > 500) && (symbol in pinkSheetPreviousClose) && (!pinkSheetExamined.has(symbol)) && (last < 1.00) && ($('#auto-pink-sheet-buy').is(":checked")) )
+						if ((change > 50) && (totalValue > 500) && (symbol in pinkSheetPreviousClose) && (!pinkSheetExamined.has(symbol)) && ($('#auto-pink-sheet-buy').is(":checked")) )
 						{
 							examinePinkSheet(symbol); 
 						}
@@ -1569,12 +1599,12 @@ function examinePinkSheet(symbol) {
 						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
 						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); ' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removePink ($(this)) ' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							changePercentagePink,
 							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-							"<div class='pink'><i class='icon-remove'></i></div>", 
+							"<div class='pink' onclick='removePink($(this));'><i class='icon-remove'></i></div>", 
 							impulseBuy
 		        			] ); 
 
@@ -1902,7 +1932,7 @@ function examinePinkSheet(symbol) {
 			<thead>
 				<tr>
 					<th colspan=6>
-					PINK
+					PINK <input id="manualAddPink" type="text" class="manualAddText"> <button id="btnManualAddPink" type="button">Add Symbol</button> 
 					</th>
 				</tr>
 				<tr height = "15px;">
