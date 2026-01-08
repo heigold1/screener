@@ -411,18 +411,21 @@ function examinePinkSheet(symbol) {
 	    if (nonZeroDays < MIN_NONZERO_VOLUME_DAYS) {
 			pinkSheetExamined.add(symbol); 
 			pinkSheetOrderNotPlaced.add(symbol); 
+alert("nonZeroDays < MIN_NONZERO_VOLUME_DAYS"); 
 	        return false;
 	    }
 
 	    if (median(volumes) < MIN_MEDIAN_VOLUME) {
 			pinkSheetExamined.add(symbol); 
 			pinkSheetOrderNotPlaced.add(symbol); 
+alert("median(volumes) < MIN_MEDIAN_VOLUME"); 
 	        return false;
 	    }
 
 	    if (median(volatility) < MIN_MEDIAN_VOLATILITY) {
 			pinkSheetExamined.add(symbol); 
 			pinkSheetOrderNotPlaced.add(symbol); 
+alert("median(volatility) < MIN_MEDIAN_VOLATILITY"); 
 	        return false;
 	    }
 
@@ -430,6 +433,7 @@ function examinePinkSheet(symbol) {
 	    if (new Set(closePrices).size <= 2) {
 			pinkSheetExamined.add(symbol); 
 			pinkSheetOrderNotPlaced.add(symbol); 
+alert("new Set(closePrices).size <= 2"); 
 	        return false;
 	    }
 
@@ -468,12 +472,14 @@ function examinePinkSheet(symbol) {
 		.then(data => {
 		    if (data.success) {
 		        console.log(symbol + " order response:", data.orders);
+alert("data.success"); 
 				pinkSheetOrderPlaced.add(symbol); 
 				pinkSheetOrderPlacedMP3.play(); 
 		        /* data.orders.forEach(o => {
 		            alert(`${o.symbol} limit order at $${o.limit_price}: ${o.status} (${o.filled}/${o.remaining} filled)`);
 		        }); */ 
 		    } else {
+alert("order failed"); 
 				pinkSheetOrderFailed.add(symbol); 
 				pinkSheetOrderFailedMP3.play(); 
 		        console.log(alert(`${symbol} order failed: ${data.message}`));
@@ -484,7 +490,7 @@ function examinePinkSheet(symbol) {
 				pinkSheetOrderFailed.add(symbol); 
 				pinkSheetOrderFailedMP3.play(); 
 
- 		    alert(`${symbol} order could not be sent!`);
+alert(`${symbol} order could not be sent!`);
 		});
 
 	});   // fetching the OHLC data, callback function 
@@ -721,11 +727,31 @@ function examinePinkSheet(symbol) {
 				{
 					if (last < 1.00)
 					{
+
+
+
+
          				$(row).addClass('yellowClass');		
 
          				var actualChange = checkPinkSheetChange(symbol, last); 
 
-         				if (actualChange > 50)
+						// if it's down greater than 60% and there's at least $500 in trading, 
+						// and it's been examined for proper previous close value, and it hasn't been examined yet, 
+						// then we examine it (for automated trade)
+/*
+						if ((change > 50) && (totalValue > 500) && (symbol in pinkSheetPreviousClose) && (!pinkSheetExamined.has(symbol)) && ($('#auto-pink-sheet-buy').is(":checked")) )
+						{
+							examinePinkSheet(symbol); 
+						}
+*/
+
+         				if ((!pinkSheetExamined.has(symbol)) && ($('#auto-pink-sheet-buy').is(":checked")))
+						{
+							examinePinkSheet(symbol); 
+						}
+
+
+         				if (actualChange > 20)
          				{
         					$('td', row).eq(3).addClass('greenClass');
          				}
@@ -1225,15 +1251,14 @@ function examinePinkSheet(symbol) {
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["ELAB", "MLEC", "ICU", "RVYL", "PAVM", "CODX", "XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", "RBNE", "TNMG", "CHR", "BOXL", "VSA", "PRPH", "INHD", 
-
+	const corporateActionsStocks=["ELAB", "MLEC", "ICU", "CANF", "RVYL", "PAVM", "CODX", "XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", "RBNE", 
 
 
 
 
 // tipranks.com reverse splits 
 
-	"MLEC", "ICU", "CANF", "AZULQ", "ELAB", "QGEN", "VSME", "SOLCF", "AMCR", 
+	"DGLY", "QGEN", "VSME", "SOLCF", "AMCR", 
 
 
 
@@ -1241,20 +1266,16 @@ function examinePinkSheet(symbol) {
 
 // capedge.com reverse splits 
 
-	"SNBH", "RVYL", "PAVM", "CODX", "CANF", "ICU", "MLEC", "AMCR", 
+	"ELAB", "SNBH", "RVYL", "PAVM", "CODX", "CANF", "ICU", "MLEC", "ELAB", "AMCR", 
 
-	"INHD", "GRLF", "SONG", "VSA", "PRPH", "TNMG", "CHR", "BOXL", "XTLB", "RBNE", "ELPW", "ECDA", "ASRT", "SCWO", "GRNL", "WOK", "BIYA", "NUGN", "ACET", "APVO", "XTKG", "ILAG", "ORIS", "RPT", 
+	"XTLB", "RBNE", "ELPW", "ECDA", "ASRT", "SCWO", "GRNL", "WOK", "BIYA", "ORIS", "ILAG", "XTKG", "APVO", "ACET", "NUGN", "RPT", 
 
 
 
 
 // Lockup expirations: 
 
-	"DLXY", "MSGY", "MAMK", "ANPA", "TLIH", 
-
-// pink sheet stocks that haven't shown up yet 
-
-	"PTIX", "PRPH", 
+	"BMHL", 
 
 
 
@@ -1556,18 +1577,8 @@ function examinePinkSheet(symbol) {
 
 						if (symbol in pinkSheetPreviousClose) 
 						{
-
 							prevClose = pinkSheetPreviousClose[symbol]; 				
 							change = parseFloat((prevClose - last)*100/prevClose).toFixed(2); 
-						}
-
-						// if it's down greater than 60% and there's at least $500 in trading, 
-						// and it's been examined for proper previous close value, and it hasn't been examined yet, 
-						// then we examine it (for automated trade)
-
-						if ((change > 50) && (totalValue > 500) && (symbol in pinkSheetPreviousClose) && (!pinkSheetExamined.has(symbol)) && ($('#auto-pink-sheet-buy').is(":checked")) )
-						{
-							examinePinkSheet(symbol); 
 						}
 
 						if (
@@ -1877,7 +1888,7 @@ function examinePinkSheet(symbol) {
 			</div>
 			<br>
 			<div>
-				Penny: <input id="pink-penny" type="text" name="fname" value="50"  style="width: 35px; font-size: 18px"><br>
+				Penny: <input id="pink-penny" type="text" name="fname" value="35"  style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="pink-dollar" type="text" name="lname" value="25" style="width: 35px; font-size: 18px">
 			</div>
 		</div>

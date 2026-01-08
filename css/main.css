@@ -15,7 +15,7 @@ min-height: 20px; /* or whatever height you need to make them all consistent */
 }
 
 .pinkClass{
-	background-color: red !important;
+	background-color: pink !important;
 }
 
 .lightRedClass{
