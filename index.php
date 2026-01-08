@@ -109,7 +109,6 @@
 	        },
         		error: function (xhr, ajaxOptions, thrownError) {
           		console.log("there was an error in calling pink-sheet-prev-close.php");
-          		alert("ERROR in preparing order for " + symbol + ", message is " + xhr.statusText);
           		console.log(thrownError); 
 	        	}
     		});
@@ -176,7 +175,6 @@
         	},
         	error: function (xhr, ajaxOptions, thrownError) {
           	console.log("there was an error in calling prepare-order.php");
-          	alert("ERROR in preparing order for " + symbol + ".");
         	}
     	});
 
@@ -411,21 +409,18 @@ function examinePinkSheet(symbol) {
 	    if (nonZeroDays < MIN_NONZERO_VOLUME_DAYS) {
 			pinkSheetExamined.add(symbol); 
 			pinkSheetOrderNotPlaced.add(symbol); 
-alert("nonZeroDays < MIN_NONZERO_VOLUME_DAYS"); 
 	        return false;
 	    }
 
 	    if (median(volumes) < MIN_MEDIAN_VOLUME) {
 			pinkSheetExamined.add(symbol); 
 			pinkSheetOrderNotPlaced.add(symbol); 
-alert("median(volumes) < MIN_MEDIAN_VOLUME"); 
 	        return false;
 	    }
 
 	    if (median(volatility) < MIN_MEDIAN_VOLATILITY) {
 			pinkSheetExamined.add(symbol); 
 			pinkSheetOrderNotPlaced.add(symbol); 
-alert("median(volatility) < MIN_MEDIAN_VOLATILITY"); 
 	        return false;
 	    }
 
@@ -433,7 +428,6 @@ alert("median(volatility) < MIN_MEDIAN_VOLATILITY");
 	    if (new Set(closePrices).size <= 2) {
 			pinkSheetExamined.add(symbol); 
 			pinkSheetOrderNotPlaced.add(symbol); 
-alert("new Set(closePrices).size <= 2"); 
 	        return false;
 	    }
 
@@ -472,25 +466,21 @@ alert("new Set(closePrices).size <= 2");
 		.then(data => {
 		    if (data.success) {
 		        console.log(symbol + " order response:", data.orders);
-alert("data.success"); 
 				pinkSheetOrderPlaced.add(symbol); 
 				pinkSheetOrderPlacedMP3.play(); 
 		        /* data.orders.forEach(o => {
 		            alert(`${o.symbol} limit order at $${o.limit_price}: ${o.status} (${o.filled}/${o.remaining} filled)`);
 		        }); */ 
 		    } else {
-alert("order failed"); 
 				pinkSheetOrderFailed.add(symbol); 
 				pinkSheetOrderFailedMP3.play(); 
-		        console.log(alert(`${symbol} order failed: ${data.message}`));
+		        console.log(`${symbol} order failed: ${data.message}`);
 		    }
 		})
 		.catch(error => {
 		    console.error("Error sending order to Python:", error);
 				pinkSheetOrderFailed.add(symbol); 
 				pinkSheetOrderFailedMP3.play(); 
-
-alert(`${symbol} order could not be sent!`);
 		});
 
 	});   // fetching the OHLC data, callback function 
@@ -631,15 +621,13 @@ alert(`${symbol} order could not be sent!`);
             	},
             	success: function(response) {
 	                console.log("Order placed successfully:", response);
-                	alert("Order placed successfully!");
             	},
             	error: function(xhr, status, error) {
                 	console.error("Error placing order:", error);
-                	alert("Failed to place order.");
             	}
         	});
     	} else {
-	        alert("Invalid order format.");
+	        console.log("Invalid order format.");
     	}
 	}
 
@@ -1251,14 +1239,15 @@ alert(`${symbol} order could not be sent!`);
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["ELAB", "MLEC", "ICU", "CANF", "RVYL", "PAVM", "CODX", "XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", "RBNE", 
+	const corporateActionsStocks=["ELAB", "MLEC", "ICU", "CANF", "RVYL", "PAVM", "CODX", "XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", 
 
 
 
 
 // tipranks.com reverse splits 
 
-	"DGLY", "QGEN", "VSME", "SOLCF", "AMCR", 
+	"ICON", "FTEL", "DGLY", "QGEN", "VSME", "SOLCF", "AMCR", 
+
 
 
 
@@ -1266,16 +1255,16 @@ alert(`${symbol} order could not be sent!`);
 
 // capedge.com reverse splits 
 
-	"ELAB", "SNBH", "RVYL", "PAVM", "CODX", "CANF", "ICU", "MLEC", "ELAB", "AMCR", 
+	"SNBH", "CODX", "PAVM", "RVYL", "MLEC", "ICU", "CANF", "ELAB", "ICON", "FTEL", "DGLY", "AMCR", 
 
-	"XTLB", "RBNE", "ELPW", "ECDA", "ASRT", "SCWO", "GRNL", "WOK", "BIYA", "ORIS", "ILAG", "XTKG", "APVO", "ACET", "NUGN", "RPT", 
+	"ELPW", "ECDA", "ASRT", "SCWO", "WOK", "GRNL", "BIYA", "ORIS", "ILAG", "XTKG", "APVO", "ACET", "NUGN", "RPT", 
 
 
 
 
 // Lockup expirations: 
 
-	"BMHL", 
+
 
 
 

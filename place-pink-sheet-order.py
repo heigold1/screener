@@ -59,6 +59,9 @@ def ib_worker():
             )
 
             orders = []
+            any_accepted = False
+            errors = []
+
             for price in prices:
                 order = LimitOrder(action, shares, price)
                 order.tif = 'DAY'
@@ -66,29 +69,48 @@ def ib_worker():
 
                 trade = ib.placeOrder(contract, order)
 
+                # 🔴 CRITICAL: wait for IB to respond
+                ib.sleep(1.0)
+
+                status = trade.orderStatus.status
+
+                # Collect IB errors
+                trade_errors = [
+                    log.message for log in trade.log if log.errorCode != 0
+                ]
+
                 print(
-                    f">>> Placed {action} {symbol} @ {price} "
-                    f"| exch={contract.primaryExchange} "
-                    f"| status={trade.orderStatus.status}"
+                    f">>> {action} {symbol} @ {price} "
+                    f"| status={status}"
                 )
+
+                if trade_errors:
+                    for err in trade_errors:
+                        print(">>> IB ERROR:", err)
+                        errors.append(err)
+
+                if status not in ("Cancelled", "Inactive"):
+                    any_accepted = True
 
                 orders.append({
                     "symbol": symbol,
                     "exchange": contract.primaryExchange,
                     "price": price,
                     "orderId": trade.order.orderId,
-                    "status": trade.orderStatus.status
+                    "status": status,
+                    "errors": trade_errors
                 })
 
-                ib.sleep(0.1)
-
             result_holder["orders"] = orders
+            result_holder["any_accepted"] = any_accepted
+            result_holder["errors"] = errors
 
         except Exception as e:
             print(">>> IB WORKER ERROR:", e)
             result_holder["error"] = str(e)
 
         task_queue.task_done()
+
 
 # -------------------------------
 # Start IB worker thread
@@ -122,11 +144,21 @@ def place_order():
         if "error" in result_holder:
             return jsonify({"success": False, "error": result_holder["error"]}), 500
 
+        if not result_holder.get("any_accepted"):
+            return jsonify({
+                "success": False,
+                "symbol": symbol,
+                "orders": result_holder["orders"],
+                "message": "All orders were rejected by IB",
+                "errors": result_holder.get("errors", [])
+            })
+
         return jsonify({
             "success": True,
             "symbol": symbol,
             "orders": result_holder["orders"]
         })
+
 
     except Exception as e:
         print(">>> FLASK ERROR:", e)
