@@ -26,8 +26,12 @@
 	var pinkSheetPreviousClose = []; 
 	var pinkSheetExamined = new Set(); 
 	var pinkSheetOrderPlaced = new Set(); 
-	var pinkSheetOrderNotPlaced = new Set(); 
-	var pinkSheetOrderFailed = new Set(); 
+	var pinkSheetOrderNotPlaced = {}; 
+	var pinkSheetOrderFailed = {}; 
+
+	const pinkSheetQueue = [];
+	const pinkSheetInProgress = new Set();
+	let ohlcTokens = 5;
 
 	var pinkSheetOrderPlacedMP3 = new Audio('./wav/pink-sheet-order-placed.mp3'); 
 	var pinkSheetOrderFailedMP3 = new Audio('./wav/pink-sheet-order-failed.mp3'); 
@@ -87,42 +91,46 @@
 		return orderStub; 
 	}
 
-	function checkPinkSheetChange(symbol, last) 
-	{
-		var prevClose; 
-		var change; 
+	function checkPinkSheetChange(symbol, last, callback) {
+	    // If we already have the previous close cached
+	    if (symbol in pinkSheetPreviousClose) {
+	        const prevClose = pinkSheetPreviousClose[symbol];
+	        const change = ((prevClose - last) / prevClose) * 100;
+	        callback(change); // call the callback immediately
+	    } else {
+	        // Fetch previous close from server
+	        $.ajax({
+	            url: 'http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
+	            data: { symbol: symbol },
+	            async: true,
+	            dataType: 'html',
+	            success: function(data) {
+	                try {
+	                    const responseData = JSON.parse(data);
+	                    const prevClose = parseFloat(responseData.prevClose);
 
-		if (!(symbol in pinkSheetPreviousClose))
-		{
-	   		$.ajax({
-		        url: 'http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
-	        	data: {symbol: symbol},
-	        	async: true, 
-	        	dataType: 'html',
-	        	success:  function (data) {
+	                    // Cache it
+	                    pinkSheetPreviousClose[symbol] = prevClose;
 
-	        	var responseData = JSON.parse(data); 
+	                    // Calculate change
+	                    const change = ((prevClose - last) / prevClose) * 100;
 
-	        	prevClose = responseData.prevClose; 
-
-	        	pinkSheetPreviousClose[symbol] = prevClose; 
-	        },
-        		error: function (xhr, ajaxOptions, thrownError) {
-          		console.log("there was an error in calling pink-sheet-prev-close.php");
-          		console.log(thrownError); 
-	        	}
-    		});
-		}
-		else 
-		{
-			prevClose = pinkSheetPreviousClose[symbol]; 
-		}
-
-		change = (prevClose - last)*100/prevClose; 
-
-		return change; 
-
+	                    // Call the callback with both change and prevClose
+	                    callback(change);
+	                } catch (err) {
+	                    console.error("Failed to parse prevClose for", symbol, err);
+	                    callback(null); // signal failure
+	                }
+	            },
+	            error: function(xhr, ajaxOptions, thrownError) {
+	                console.error("Error fetching prevClose for", symbol, thrownError);
+	                alert("ERROR in preparing order for " + symbol + ", message is " + xhr.statusText);
+	                callback(null); // signal failure
+	            }
+	        });
+	    }
 	}
+
 
 	// unlike the other prepareImpulseBuy, we are building the order string from within the function because 
 	// we have to grab the previous close via API. 
@@ -140,9 +148,6 @@
         	async: true, 
         	dataType: 'html',
         	success:  function (data) {
-
-        	console.log("Returned JASON object is:");
-        	console.log(data); 
 
         	var responseData = JSON.parse(data); 
 
@@ -175,6 +180,7 @@
         	},
         	error: function (xhr, ajaxOptions, thrownError) {
           	console.log("there was an error in calling prepare-order.php");
+          	alert("ERROR in preparing order for " + symbol + ".");
         	}
     	});
 
@@ -197,7 +203,6 @@
   			try {
     			var successful = document.execCommand('copy');
     			var msg = successful ? 'successful' : 'unsuccessful';
-    			console.log('Copying text command was ' + msg);
   			} catch (err) {
     			console.log('Oops, unable to copy');
   			}
@@ -279,9 +284,6 @@ function getYMDTradeDate(daysBack) {
     return `${year}-${month}-${day}`;
 }
 
-// Example usage:
-console.log(getYMDTradeDate(5)); // e.g., "2025-12-27" if today is 2026-01-01
-
 
 
 function fetchOHLCJson(symbol, fromDate, toDate, callback) {
@@ -335,8 +337,14 @@ function examinePinkSheet(symbol) {
     const LOOKBACK_DAYS = 10;
     const DATE_BUFFER_DAYS = 4;
     const MIN_NONZERO_VOLUME_DAYS = 4;
-    const MIN_MEDIAN_VOLUME = 150000;
     const MIN_MEDIAN_VOLATILITY = 0.08;
+
+    // NEW: Recent volume check
+    const RECENT_DAYS_TO_CHECK = 2;      // last 2 days
+    const MIN_VOLUME_RECENT = 200000;    // minimum volume per recent day
+
+    // NEW: Price variance threshold for pinning detection
+    const MIN_PRICE_VARIANCE = 0.005;    // 0.5% price movement
 
     /* -------------------------------
        DATE WINDOW
@@ -345,148 +353,177 @@ function examinePinkSheet(symbol) {
     const toDate = getYMDTradeDate(1);
     let modifiedSymbol = symbol; 
 
-    /* -------------------------------
-       FETCH DATA (ATTEMPT 1)
-    ------------------------------- */
+    if (symbol.length === 5) {
+        modifiedSymbol = symbol.slice(0, 4);
+    }
 
-	if (symbol.length === 5) 
-	{
-		modifiedSymbol = symbol.slice(0, 4);
-	}
+    try {
+        fetchOHLCJson(modifiedSymbol, fromDate, toDate, function(json){
 
-    let json = fetchOHLCJson(modifiedSymbol, fromDate, toDate, function(json){
+            /* -------------------------------
+               HANDLE NO DATA RESPONSE
+            ------------------------------- */
+            if (json.error || !json.data) {
+                pinkSheetExamined.add(symbol); 
+                pinkSheetInProgress.delete(symbol);
+                pinkSheetOrderNotPlaced[symbol] = "No OHLC data returned";
+                return false; 
+            }
 
-	    /* -------------------------------
-	       HANDLE NO DATA RESPONSE
-	    ------------------------------- */
-	    if (json.error || !json.data) {
-			pinkSheetExamined.add(symbol); 
-			pinkSheetOrderNotPlaced.add(symbol); 
+            const recent = json.data.slice(0, LOOKBACK_DAYS);
 
-	    	return false; 
-	    }
+            /* -------------------------------
+               METRIC COLLECTION
+            ------------------------------- */
+            const volumes = [];
+            const volatility = [];
+            const closePrices = [];
+            let nonZeroDays = 0;
 
-	    /* -------------------------------
-	       USE DATA AS-IS (NO SORTING)
-	       index 0 = yesterday, 1 = day before, etc.
-	    ------------------------------- */
-	    const recent = json.data.slice(0, LOOKBACK_DAYS);
+            for (const day of recent) {
+                if (!('high' in day && 'low' in day && 'close' in day && 'volume' in day)) continue;
 
-	    /* -------------------------------
-	       METRIC COLLECTION
-	    ------------------------------- */
-	    const volumes = [];
-	    const volatility = [];
-	    const closePrices = [];
-	    let nonZeroDays = 0;
+                const close = parseFloat(day.close);
+                const high = parseFloat(day.high);
+                const low = parseFloat(day.low);
+                const vol = parseFloat(day.volume);
 
-	    for (const day of recent) {
-	        if (!('high' in day && 'low' in day && 'close' in day && 'volume' in day)) {
-	            continue;
-	        }
+                if (vol > 0) {
+                    nonZeroDays++;
+                    volumes.push(vol);
+                }
 
-	        const close = parseFloat(day.close);
-	        const high = parseFloat(day.high);
-	        const low = parseFloat(day.low);
-	        const vol = parseFloat(day.volume);
+                if (close > 0) volatility.push((high - low) / close);
 
-	        if (vol > 0) {
-	            nonZeroDays++;
-	            volumes.push(vol);
-	        }
+                closePrices.push(close);
+            }
 
-	        if (close > 0) {
-	            volatility.push((high - low) / close);
-	        }
+            /* -------------------------------
+               VALIDATION CHECKS
+            ------------------------------- */
+            if (nonZeroDays < MIN_NONZERO_VOLUME_DAYS) {
+                pinkSheetExamined.add(symbol); 
+                pinkSheetInProgress.delete(symbol);
+                pinkSheetOrderNotPlaced[symbol] = "nonZeroDays < MIN_NONZERO_VOLUME_DAYS"; 
+                return false;
+            }
 
-	        closePrices.push(parseFloat(close.toFixed(4)));
-	    }
+            if (median(volatility) < MIN_MEDIAN_VOLATILITY) {
+                pinkSheetExamined.add(symbol); 
+                pinkSheetInProgress.delete(symbol);
+                pinkSheetOrderNotPlaced[symbol] = "median(volatility) < MIN_MEDIAN_VOLATILITY"; 
+                return false;
+            }
 
-	    /* -------------------------------
-	       VALIDATION CHECKS
-	    ------------------------------- */
+            /* -------------------------------
+               IMPROVED PRICE PINNING CHECK
+               - Only flag if recent variance < threshold AND median volume < min
+            ------------------------------- */
+            const recentCloses = closePrices.slice(0, RECENT_DAYS_TO_CHECK);
+            const maxClose = Math.max(...recentCloses);
+            const minClose = Math.min(...recentCloses);
+            const priceVariance = (maxClose - minClose) / maxClose;
 
-	    if (nonZeroDays < MIN_NONZERO_VOLUME_DAYS) {
-			pinkSheetExamined.add(symbol); 
-			pinkSheetOrderNotPlaced.add(symbol); 
-	        return false;
-	    }
+            if (priceVariance < MIN_PRICE_VARIANCE && median(volumes) < MIN_VOLUME_RECENT) {
+                pinkSheetExamined.add(symbol); 
+                pinkSheetInProgress.delete(symbol);
+                pinkSheetOrderNotPlaced[symbol] = "Price pinned (very low variance + low volume)";
+                return false;
+            }
 
-	    if (median(volumes) < MIN_MEDIAN_VOLUME) {
-			pinkSheetExamined.add(symbol); 
-			pinkSheetOrderNotPlaced.add(symbol); 
-	        return false;
-	    }
+            /* -------------------------------
+               NEW: RECENT DAYS VOLUME CHECK
+            ------------------------------- */
+            const recentVolumes = volumes.slice(0, RECENT_DAYS_TO_CHECK);
+            const recentVolumePass = recentVolumes.every(v => v >= MIN_VOLUME_RECENT);
 
-	    if (median(volatility) < MIN_MEDIAN_VOLATILITY) {
-			pinkSheetExamined.add(symbol); 
-			pinkSheetOrderNotPlaced.add(symbol); 
-	        return false;
-	    }
+            if (!recentVolumePass) {
+                pinkSheetExamined.add(symbol);
+                pinkSheetInProgress.delete(symbol);
+                pinkSheetOrderNotPlaced[symbol] = `Recent ${RECENT_DAYS_TO_CHECK} days volume too low`;
+                return false;
+            }
 
-	    // Detect price pinning / wash trading
-	    if (new Set(closePrices).size <= 2) {
-			pinkSheetExamined.add(symbol); 
-			pinkSheetOrderNotPlaced.add(symbol); 
-	        return false;
-	    }
+            /* -------------------------------
+               SEND ORDER TO PYTHON
+            ------------------------------- */
+            const lastClose = pinkSheetPreviousClose[symbol]; 
+            if (!lastClose) {
+                console.warn(`No previous close stored for ${symbol}, cannot calculate 85% drop target`);
+                pinkSheetExamined.add(symbol); 
+                pinkSheetInProgress.delete(symbol);
+                pinkSheetOrderNotPlaced[symbol] = "No previous close available";
+                return false;
+            }
 
-		// Now we know that the order has passed the fitness test, 
-		// we send the order to Python, to send it to Trader Workstation 
+            pinkSheetExamined.add(symbol); 
+            pinkSheetInProgress.delete(symbol);
 
-		const lastClose = pinkSheetPreviousClose[symbol]; // pull from your cached array
-		if (!lastClose) {
-		    console.warn(`No previous close stored for ${symbol}, cannot calculate 85% drop target`);
-			pinkSheetExamined.add(symbol); 
-		    pinkSheetOrderNotPlaced.add(symbol);
-		    return false;
-		}
+            const targetPrice = parseFloat((lastClose * (1 - 0.85)).toFixed(4));
+            let numShares = Math.floor(50 / targetPrice / 100) * 100;
+            if (numShares < 100) numShares = 100;
 
-		pinkSheetExamined.add(symbol); 
+            const orderData = { symbol, action: "BUY", shares: numShares, price: targetPrice };
 
-		// Calculate 85% drop price, let's use $70 per trade/batch 
-		const targetPrice = parseFloat((lastClose * (1 - 0.85)).toFixed(4));
-		let numShares = Math.floor(50 / targetPrice / 100) * 100;
-		if (numShares < 100) numShares = 100; // Minimum 100 shares, in case price is high
+            fetch('http://localhost:5000/api/pink-sheet-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    pinkSheetOrderPlaced[symbol] = "Order placed successfully";
+                    pinkSheetOrderPlacedMP3.play();
+                } else {
+                    pinkSheetOrderFailed[symbol] = data.message || "Order rejected";
+                    pinkSheetOrderFailedMP3.play();
+                }
+            })
+            .catch(err => {
+                pinkSheetOrderFailed[symbol] = err.message || "Fetch error";
+                pinkSheetOrderFailedMP3.play();
+            });
 
-		const orderData = {
-		    symbol: symbol,
-		    action: "BUY",
-		    shares: numShares,
-		    price: targetPrice
-		};
-
-		// Send order to Python script
-		fetch('http://localhost:5000/api/pink-sheet-order', {
-		    method: 'POST',
-		    headers: { 'Content-Type': 'application/json' },
-		    body: JSON.stringify(orderData)
-		})
-		.then(response => response.json())
-		.then(data => {
-		    if (data.success) {
-		        console.log(symbol + " order response:", data.orders);
-				pinkSheetOrderPlaced.add(symbol); 
-				pinkSheetOrderPlacedMP3.play(); 
-		        /* data.orders.forEach(o => {
-		            alert(`${o.symbol} limit order at $${o.limit_price}: ${o.status} (${o.filled}/${o.remaining} filled)`);
-		        }); */ 
-		    } else {
-				pinkSheetOrderFailed.add(symbol); 
-				pinkSheetOrderFailedMP3.play(); 
-		        console.log(`${symbol} order failed: ${data.message}`);
-		    }
-		})
-		.catch(error => {
-		    console.error("Error sending order to Python:", error);
-				pinkSheetOrderFailed.add(symbol); 
-				pinkSheetOrderFailedMP3.play(); 
-		});
-
-	});   // fetching the OHLC data, callback function 
+        }); // end fetchOHLCJson callback
+    } catch (e) {
+        console.error("OHLC fetch failed hard:", e);
+        pinkSheetExamined.add(symbol);
+        pinkSheetInProgress.delete(symbol);
+        pinkSheetOrderNotPlaced[symbol] = "Callback exception";
+    }
 
 }
 
+
+
+
+
+setInterval(() => {
+    ohlcTokens = 5;
+    processOHLCQueue();
+}, 1000);
+
+function enqueuePinkSheet(symbol) {
+    if (pinkSheetQueue.includes(symbol)) return;
+    if (pinkSheetInProgress.has(symbol)) return;   // 🚨 prevent duplicates
+    if (pinkSheetExamined.has(symbol)) return;
+
+    pinkSheetQueue.push(symbol);
+    processOHLCQueue();
+}
+
+
+function processOHLCQueue() {
+    while (ohlcTokens > 0 && pinkSheetQueue.length > 0) {
+        const symbol = pinkSheetQueue.shift();
+        ohlcTokens--;
+
+        pinkSheetInProgress.add(symbol);
+
+        examinePinkSheet(symbol);
+    }
+}
 
 	function copyToClipboard(object){
   		object.select();
@@ -621,13 +658,15 @@ function examinePinkSheet(symbol) {
             	},
             	success: function(response) {
 	                console.log("Order placed successfully:", response);
+                	alert("Order placed successfully!");
             	},
             	error: function(xhr, status, error) {
                 	console.error("Error placing order:", error);
+                	alert("Failed to place order.");
             	}
         	});
     	} else {
-	        console.log("Invalid order format.");
+	        alert("Invalid order format.");
     	}
 	}
 
@@ -704,78 +743,51 @@ function examinePinkSheet(symbol) {
 				$('td', row).eq(4).addClass('innerTD');
 
 				if (
-						(
-							(
-						 	((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-						 	((change > parseFloat( $("#pink-dollar").val())) && (last > 1.00))
-						 	) 
-							&& (totalValue > 500)
-						) 
-					)
+				    (
+				        (
+				            ((change > parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
+				            ((change > parseFloat($("#pink-dollar").val())) && (last >= 1.00))
+				        ) 
+				        && (totalValue > 500)
+				    ) 
+				)
 				{
 					if (last < 1.00)
 					{
-
-
-
-
          				$(row).addClass('yellowClass');		
-
-         				var actualChange = checkPinkSheetChange(symbol, last); 
-
-						// if it's down greater than 60% and there's at least $500 in trading, 
-						// and it's been examined for proper previous close value, and it hasn't been examined yet, 
-						// then we examine it (for automated trade)
-/*
-						if ((change > 50) && (totalValue > 500) && (symbol in pinkSheetPreviousClose) && (!pinkSheetExamined.has(symbol)) && ($('#auto-pink-sheet-buy').is(":checked")) )
-						{
-							examinePinkSheet(symbol); 
-						}
-*/
-
-         				if ((!pinkSheetExamined.has(symbol)) && ($('#auto-pink-sheet-buy').is(":checked")))
-						{
-							examinePinkSheet(symbol); 
-						}
-
-
-         				if (actualChange > 20)
-         				{
-        					$('td', row).eq(3).addClass('greenClass');
-         				}
-
-						if (pinkSheetOrderPlaced.has(symbol)) 
-						{
-        					$('td', row).eq(0).addClass('greenClass');
-						}
-						
-						if (pinkSheetOrderNotPlaced.has(symbol))
-						{
-        					$('td', row).eq(0).addClass('pinkClass');
-						}
-
-						if (pinkSheetOrderFailed.has(symbol))
-						{
-        					$('td', row).eq(0).addClass('lightRedClass');
-						}
-
-
 					}
 					else
 					{
          				$(row).addClass('lightBlueClass');
 					}
 
-					// if 
-					if (change > 79)
-         			{
-	 					$('td', row).eq(6).addClass('orangeClass');
-         			}
+					if (pinkSheetOrderPlaced.has(symbol))
+					{
+    					$('td', row).eq(0).addClass('greenClass');
+					}
+					
+					if (pinkSheetOrderNotPlaced[symbol])
+					{
+    					$('td', row).eq(0).addClass('pinkClass');
+					}
+
+					if (pinkSheetOrderFailed[symbol])
+					{
+    					$('td', row).eq(0).addClass('lightRedClass');
+					}
+
          		}
 
 
          	} 
 		});
+
+		tablePink.on('draw', function() {
+			console.log("The pinkSheetOrderNotPlaced array is currently:");
+			console.log(pinkSheetOrderNotPlaced); 
+			console.log("The pinkSheetOrderFailed array is currently:");
+			console.log(pinkSheetOrderFailed); 
+		}); 
 
 		// NASDAQ
 		var tableNasdaq = $('#nasdaq').DataTable( {
@@ -1239,15 +1251,14 @@ function examinePinkSheet(symbol) {
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["ELAB", "MLEC", "ICU", "CANF", "RVYL", "PAVM", "CODX", "XTKG", "ORIS", "ILAG", "BIYA", "APVO", "ACET", "WOK", "SCWO", "ELPW", "ECDA", "ASRT", 
+	const corporateActionsStocks=["VMAR", "VSME", "GOVX", "DRCT", "AKAN", "ICON", "FTEL", "ELAB", "MLEC", "ICU", "CANF", "RVYL", "PAVM", "CODX", 
 
 
 
 
 // tipranks.com reverse splits 
 
-	"ICON", "FTEL", "DGLY", "QGEN", "VSME", "SOLCF", "AMCR", 
-
+	"SOLCF", "VMAR", "AMCR", "VRRCF", "OCG", 
 
 
 
@@ -1255,15 +1266,12 @@ function examinePinkSheet(symbol) {
 
 // capedge.com reverse splits 
 
-	"SNBH", "CODX", "PAVM", "RVYL", "MLEC", "ICU", "CANF", "ELAB", "ICON", "FTEL", "DGLY", "AMCR", 
+	"SNBH", "CODX", "PAVM", "RVYL", "MLEC", "ICU", "CANF", "ELAB", "ICON", "FTEL", "DGLY", "VSME", "AKAN", "DRCT", "CDIX", "GOVX", "AMCR", 
 
-	"ELPW", "ECDA", "ASRT", "SCWO", "WOK", "GRNL", "BIYA", "ORIS", "ILAG", "XTKG", "APVO", "ACET", "NUGN", "RPT", 
-
-
+	"RPT", 
 
 
 // Lockup expirations: 
-
 
 
 
@@ -1554,61 +1562,68 @@ function examinePinkSheet(symbol) {
 		    			}	
 					});
 
-					for (const [key, value] of Object.entries(arrayPink))
-					{
+					for (const [key, value] of Object.entries(arrayPink)) {
+					    const volumeString = value.volume.toString() + "00"; 
+					    const volume = parseFloat(volumeString);
+					    const last = parseFloat(value.last);
+					    const totalValue = parseFloat(volume * last); 
+					    const symbol = key; 
 
-						var volumeString = value.volume.toString() + "00"; 
-						var volume = parseFloat(volumeString);
-						var last = parseFloat(value.last);
-						var totalValue = parseFloat(volume*last); 
-						var change = parseFloat(value.change).toFixed(2);
-						var symbol = key; 
+					    // Only bother fetching previous close if totalValue > 500
+					    if (totalValue > 500) {
+					        checkPinkSheetChange(symbol, last, function(actualChange) {
+					            if (actualChange === null) return; // fetch failed, skip
 
-						if (symbol in pinkSheetPreviousClose) 
-						{
-							prevClose = pinkSheetPreviousClose[symbol]; 				
-							change = parseFloat((prevClose - last)*100/prevClose).toFixed(2); 
-						}
+					            // Use verified actualChange
+					            const changePercentagePink = actualChange.toFixed(2);
 
-						if (
-								(
-									(
-									 ((change >  parseFloat($("#pink-penny").val())) && (last < 1.00)) || 
-									 ((change > parseFloat( $("#pink-dollar").val())) && (last >= 1.00))
-									 ) 
-									&& (totalValue > 500)
-								)  
-							)
-							{
-								playSound = 1;
-							}
+					            // Play sound if conditions are met
+					            if (
+					                ((actualChange > parseFloat($("#pink-penny").val()) && last < 1.00) ||
+					                 (actualChange > parseFloat($("#pink-dollar").val()) && last >= 1.00))
+					            ) {
+					                playSound = 1;
+					            }
 
-						// this is for the impulse buy, if a pink is down 90% we don't need to check, 
-						// just put in the buy order.
-						var impulseBuy = "";
+					            // Impulse buy input
+					            let impulseBuy = "";
+					            const orderStub = createOrderStub(symbol, last, changePercentagePink);
+					            impulseBuy = `<input type="text" class="impulseBuyText" style="color: black" target="_blank"
+					                onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuyPink("${symbol}");' 
+					                value="${orderStub}" readonly>`;
 
-						var changePercentagePink = parseFloat(change).toFixed(2)
+					            const checkSec = $('#check-sec').is(":checked") ? "1" : "0";
 
-						if (totalValue > 500)
-						{
-							var orderStub = createOrderStub(jQuery.trim(key), last, change);
+					            // Now create the row
+					            tablePink.row.add([
+					                `<input type="text" class="symbolText" style="color: black" target="_blank"
+					                    onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(
+					                    "http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=${symbol}&vix=${vixNumber}&check-sec=${checkSec}"
+					                    ); removePink($(this))' value="${symbol}" readonly>`,
+					                last,
+					                value.low,
+					                changePercentagePink,
+					                volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+					                "<div class='pink' onclick='removePink($(this));'><i class='icon-remove'></i></div>",
+					                impulseBuy
+					            ]);
 
-							impulseBuy = "<input type=\"text\" class=\"impulseBuyText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); prepareImpulseBuyPink(\"" + jQuery.trim(key) + "\"); ' value=\"" + orderStub + "\" readonly>";
-						}
+								if (
+								    !pinkSheetExamined.has(symbol) &&
+								    $('#auto-pink-sheet-buy').is(":checked") &&
+								    (actualChange > parseFloat($("#pink-penny").val()))
+								) {
+								    enqueuePinkSheet(symbol);
+								}
 
-						var checkSec = $('#check-sec').is(":checked")?"1":"0"; 
 
-						tablePink.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removePink ($(this)) ' value=\"" + jQuery.trim(key) + "\" readonly>", 
-							value.last, 
-							value.low, 
-							changePercentagePink,
-							volumeString.replace(/\B(?=(\d{3})+(?!\d))/g, ","), 
-							"<div class='pink' onclick='removePink($(this));'><i class='icon-remove'></i></div>", 
-							impulseBuy
-		        			] ); 
 
-					}
+
+					        }); // end callback
+					    }
+					} // end for loop
+
+
 				} // if(arrayPink)
 				tablePink.draw();
 
@@ -2055,6 +2070,12 @@ function examinePinkSheet(symbol) {
   </div>
 
 </div>
+
+<div id="pink-sheet-fail">
+
+</div>
+
+
 
 
 
