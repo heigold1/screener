@@ -124,7 +124,7 @@
 	            },
 	            error: function(xhr, ajaxOptions, thrownError) {
 	                console.error("Error fetching prevClose for", symbol, thrownError);
-	                alert("ERROR in preparing order for " + symbol + ", message is " + xhr.statusText);
+	                console.log("ERROR in preparing order for " + symbol + ", message is " + xhr.statusText);
 	                callback(null); // signal failure
 	            }
 	        });
@@ -286,23 +286,19 @@ function getYMDTradeDate(daysBack) {
 
 
 
-function fetchOHLCJson(symbol, fromDate, toDate, callback) {
+function fetchOHLCJson(symbol, callback) {
     var xhr = new XMLHttpRequest();
+    var url = "http://ec2-34-221-98-254.us-west-2.compute.amazonaws.com/newslookup/marketstack-api-historical-data.php?symbol=" + encodeURIComponent(symbol);
 
-    var url =
-        "https://api.marketstack.com/v2/eod" +
-        "?access_key=d36ab142bed5a1430fcde797063f6b9a" +
-        "&symbols=" + encodeURIComponent(symbol) +
-        "&date_from=" + fromDate +
-        "&date_to=" + toDate;
+console.log("inside fetchOHLCJson, the url is:" + url); 
 
-    xhr.open("GET", url, true); // async = true (normal AJAX)
-
+    xhr.open("GET", url, true); // async
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 try {
                     var json = JSON.parse(xhr.responseText);
+console.log("inside fetchOHLCJson, json parsed ok"); 
                     callback(json);
                 } catch (e) {
                     callback({ error: true });
@@ -312,7 +308,6 @@ function fetchOHLCJson(symbol, fromDate, toDate, callback) {
             }
         }
     };
-
     xhr.send();
 }
 
@@ -358,19 +353,33 @@ function examinePinkSheet(symbol) {
     }
 
     try {
-        fetchOHLCJson(modifiedSymbol, fromDate, toDate, function(json){
+        fetchOHLCJson(modifiedSymbol, function(json){
 
-            /* -------------------------------
-               HANDLE NO DATA RESPONSE
-            ------------------------------- */
-            if (json.error || !json.data) {
-                pinkSheetExamined.add(symbol); 
-                pinkSheetInProgress.delete(symbol);
-                pinkSheetOrderNotPlaced[symbol] = "No OHLC data returned";
-                return false; 
-            }
 
-            const recent = json.data.slice(0, LOOKBACK_DAYS);
+console.log("just came back from fetchOHLCJson, the json is: ");
+console.log(json); 
+
+
+    console.log("RAW JSON RETURNED:", json);
+if (json?.error) {
+    console.warn("Fetch error");
+    return;
+}
+
+if (!Array.isArray(json.ohlc) || json.ohlc.length === 0) {
+    console.warn("No OHLC data returned for", symbol);
+    pinkSheetExamined.add(symbol); 
+    pinkSheetInProgress.delete(symbol);
+    pinkSheetOrderNotPlaced[symbol] = "No OHLC data";
+    return;
+}
+
+
+console.log("SYMBOL SENT:", modifiedSymbol);
+
+
+			const recent = json.ohlc.slice(0, LOOKBACK_DAYS + DATE_BUFFER_DAYS);
+
 
             /* -------------------------------
                METRIC COLLECTION
@@ -380,23 +389,34 @@ function examinePinkSheet(symbol) {
             const closePrices = [];
             let nonZeroDays = 0;
 
+console.log("RECENT RAW:", recent);
+
+
             for (const day of recent) {
-                if (!('high' in day && 'low' in day && 'close' in day && 'volume' in day)) continue;
+                if (!('h' in day && 'l' in day && 'c' in day && 'v' in day))
+                {
+console.log("(!('high' in day && 'low' in day && 'close' in day && 'volume' in day)) failed "); 
+                	continue;	
+                } 
+console.log("DAY OBJ:", day);
 
-                const close = parseFloat(day.close);
-                const high = parseFloat(day.high);
-                const low = parseFloat(day.low);
-                const vol = parseFloat(day.volume);
+                const close = parseFloat(day.c);
+                const high = parseFloat(day.h);
+                const low = parseFloat(day.l);
+				const vol = Number(day.v);
 
-                if (vol > 0) {
-                    nonZeroDays++;
-                    volumes.push(vol);
-                }
+				if (Number.isFinite(vol) && vol > 0) {
+    				nonZeroDays++;
+    				volumes.push(vol);
+				}
 
                 if (close > 0) volatility.push((high - low) / close);
 
                 closePrices.push(close);
             }
+
+console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
+
 
             /* -------------------------------
                VALIDATION CHECKS
@@ -1251,14 +1271,16 @@ function processOHLCQueue() {
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["VMAR", "VSME", "GOVX", "DRCT", "AKAN", "ICON", "FTEL", "ELAB", "MLEC", "ICU", "CANF", "RVYL", "PAVM", "CODX", 
+	const corporateActionsStocks=["OCG", "HUBC", "VMAR", "VSME", "GOVX", "DRCT", "AKAN", "ICON", "FTEL", "ELAB", "MLEC", "ICU", "CANF", "RVYL", "PAVM",	 
+
 
 
 
 
 // tipranks.com reverse splits 
 
-	"SOLCF", "VMAR", "AMCR", "VRRCF", "OCG", 
+	"AMCR", "OCG", "ASBP", "HUBC", "VRRCF", "FTFT", "PCLA", 
+
 
 
 
@@ -1266,9 +1288,11 @@ function processOHLCQueue() {
 
 // capedge.com reverse splits 
 
-	"SNBH", "CODX", "PAVM", "RVYL", "MLEC", "ICU", "CANF", "ELAB", "ICON", "FTEL", "DGLY", "VSME", "AKAN", "DRCT", "CDIX", "GOVX", "AMCR", 
+	"SNBH", "CODX", "PAVM", "RVYL", "MLEC", "ICU", "CANF", "ELAB", "ICON", "FTEL", "DGLY", "VSME", "AKAN", "DRCT", "CDIX", "GOVX", "VMAR", "AMCR", "WHLR", 
 
-	"RPT", 
+
+
+
 
 
 // Lockup expirations: 
