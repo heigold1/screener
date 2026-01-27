@@ -1271,7 +1271,7 @@ function processOHLCQueue() {
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["OCG", "HUBC", "VMAR", "VSME", "GOVX", "DRCT", "AKAN", "ICON", "FTEL", "ELAB", "MLEC", "ICU", "CANF", "RVYL", "PAVM",	 
+	
 
 
 
@@ -1279,7 +1279,6 @@ function processOHLCQueue() {
 
 // tipranks.com reverse splits 
 
-	"AMCR", "OCG", "ASBP", "HUBC", "VRRCF", "FTFT", "PCLA", 
 
 
 
@@ -1288,14 +1287,13 @@ function processOHLCQueue() {
 
 // capedge.com reverse splits 
 
-	"SNBH", "CODX", "PAVM", "RVYL", "MLEC", "ICU", "CANF", "ELAB", "ICON", "FTEL", "DGLY", "VSME", "AKAN", "DRCT", "CDIX", "GOVX", "VMAR", "AMCR", "WHLR", 
-
 
 
 
 
 
 // Lockup expirations: 
+
 
 
 
@@ -1916,7 +1914,7 @@ function processOHLCQueue() {
 			</div>
 			<br>
 			<div>
-				Penny: <input id="pink-penny" type="text" name="fname" value="35"  style="width: 35px; font-size: 18px"><br>
+				Penny: <input id="pink-penny" type="text" name="fname" value="30"  style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="pink-dollar" type="text" name="lname" value="25" style="width: 35px; font-size: 18px">
 			</div>
 		</div>
