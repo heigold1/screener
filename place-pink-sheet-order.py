@@ -21,6 +21,7 @@ import requests
 import configparser
 import xml.etree.ElementTree as ET
 
+
 # ==========================================================
 # FLASK SETUP
 # ==========================================================
@@ -43,21 +44,27 @@ IB_CLIENT_ID = 2
 # E*TRADE SETUP
 # ==========================================================
 
-config = configparser.ConfigParser()
-config.read(r"C:\xampp\htdocs\newslookup\etrade.ini")
 
-consumer_key = config["OAuth"]["oauth_consumer_key"]
-consumer_secret = config["OAuth"]["consumer_secret"]
-access_token = config["OAuth"]["oauth_token"]
-access_token_secret = config["OAuth"]["oauth_token_secret"]
+import os
 
-ETRADE_ACCOUNT_ID = "S11DfWByF1AJIO-pGBEw-g"
+
+
+
 
 # ==========================================================
 # E*TRADE HELPERS
 # ==========================================================
 
-def build_oauth_header(url, method):
+def build_oauth_header(url, method, consumer_key, consumer_secret, access_token, access_token_secret):
+    """
+    Build OAuth 1.0 header for E*TRADE requests (cross-platform safe).
+    """
+    # Remove any leading/trailing whitespace
+    consumer_key = consumer_key.strip()
+    consumer_secret = consumer_secret.strip()
+    access_token = access_token.strip()
+    access_token_secret = access_token_secret.strip()
+
     oauth_nonce = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
     oauth_timestamp = str(int(time.time()))
 
@@ -70,29 +77,37 @@ def build_oauth_header(url, method):
         "oauth_version": "1.0"
     }
 
+    # Build parameter string (sorted by key)
     param_string = "&".join(
-        f"{urllib.parse.quote(k, safe='')}={urllib.parse.quote(v, safe='')}"
+        f"{urllib.parse.quote(str(k), safe='')}={urllib.parse.quote(str(v), safe='')}"
         for k, v in sorted(oauth_params.items())
     )
 
-    base_string = "&".join([
+    # Build signature base string
+    base_elems = [
         method.upper(),
         urllib.parse.quote(url, safe=''),
         urllib.parse.quote(param_string, safe='')
-    ])
+    ]
+    base_string = "&".join(base_elems)
 
-    signing_key = f"{urllib.parse.quote(consumer_secret)}&{urllib.parse.quote(access_token_secret)}"
+    # Signing key
+    signing_key = f"{urllib.parse.quote(consumer_secret, safe='')}&{urllib.parse.quote(access_token_secret, safe='')}"
 
+    # HMAC-SHA1 signature
     signature = base64.b64encode(
-        hmac.new(signing_key.encode(), base_string.encode(), hashlib.sha1).digest()
+        hmac.new(signing_key.encode('utf-8'), base_string.encode('utf-8'), hashlib.sha1).digest()
     ).decode()
 
     oauth_params["oauth_signature"] = signature
 
-    return "OAuth " + ", ".join(
-        f'{urllib.parse.quote(k)}="{urllib.parse.quote(v)}"'
+    # Build header string
+    header = "OAuth " + ", ".join(
+        f'{urllib.parse.quote(k, safe="")}="{urllib.parse.quote(v, safe="")}"'
         for k, v in oauth_params.items()
     )
+
+    return header
 
 
 def generate_client_order_id():
@@ -128,12 +143,33 @@ def _fill_xml(elem, data):
             _fill_xml(elem, item)
 
 
+def clean_token(token):
+    # Remove non-printable characters, BOM, whitespace, and quotes
+    return "".join(c for c in token if c.isprintable()).strip().replace('\ufeff', '').strip('"')
+
 # ==========================================================
 # E*TRADE ORDER
 # ==========================================================
 
 def place_etrade_order(symbol, shares, target_price):
     try:
+        # --- Load credentials from INI file ---
+        config_path = r"C:\xampp\htdocs\newslookup\etrade.ini"
+        config = configparser.ConfigParser()
+        config.read(config_path)
+
+        app.logger.info(f"etrade.ini exists? {os.path.exists(config_path)}")
+
+        consumer_key = clean_token(config["OAuth"]["oauth_consumer_key"])
+        consumer_secret = clean_token(config["OAuth"]["consumer_secret"])
+        access_token = clean_token(config["OAuth"]["oauth_token"])
+        access_token_secret = clean_token(config["OAuth"]["oauth_token_secret"])
+
+        app.logger.info(f"Consumer key: {consumer_key}")
+        app.logger.info(f"Access token: {access_token}")
+
+        ETRADE_ACCOUNT_ID = "S11DfWByF1AJIO-pGBEw-g"
+
         prices = [round(target_price, 4)]
         results = []
         any_success = False
@@ -166,28 +202,40 @@ def place_etrade_order(symbol, shares, target_price):
                 }
             }
 
+            header = build_oauth_header(preview_url, "POST", consumer_key, consumer_secret, access_token, access_token_secret)
+            print("DEBUG OAUTH HEADER:", header)
+
+
             headers = {
-                "Authorization": build_oauth_header(preview_url, "POST"),
+                "Authorization": build_oauth_header(
+                    preview_url, "POST",
+                    consumer_key, consumer_secret, access_token, access_token_secret
+                ),
                 "Content-Type": "application/json"
             }
 
-            preview_response = requests.post(
-                preview_url, headers=headers, json=preview_payload, verify=False
-            )
-
+            preview_response = requests.post(preview_url, headers=headers, json=preview_payload, verify=False)
 
             print("=== PREVIEW STATUS ===", preview_response.status_code)
             print(preview_response.text)
 
             if preview_response.status_code != 200:
-                results.append({"price": price, "stage": "preview_http_error", "response": preview_response.text})
+                results.append({
+                    "price": price,
+                    "stage": "preview_http_error",
+                    "response": preview_response.text
+                })
                 continue
 
             root = ET.fromstring(preview_response.text)
             preview_id_node = root.find(".//previewId")
 
             if preview_id_node is None:
-                results.append({"price": price, "stage": "preview_parse_error", "response": preview_response.text})
+                results.append({
+                    "price": price,
+                    "stage": "preview_parse_error",
+                    "response": preview_response.text
+                })
                 continue
 
             preview_id = preview_id_node.text.strip()
@@ -199,28 +247,27 @@ def place_etrade_order(symbol, shares, target_price):
                 "orderType": "EQ",
                 "clientOrderId": client_order_id,
                 "PreviewIds": {"previewId": preview_id},
-                "Order": preview_payload["Order"]
+                "Order": preview_payload["PreviewOrderRequest"]["Order"]
             }
 
             xml_body = dict_to_xml("PlaceOrderRequest", place_payload)
             xml_string = ET.tostring(xml_body, encoding="utf-8", xml_declaration=True)
 
-
             headers = {
-                "Authorization": build_oauth_header(place_url, "POST"),
+                "Authorization": build_oauth_header(
+                    place_url, "POST",
+                    consumer_key, consumer_secret, access_token, access_token_secret
+                ),
                 "Content-Type": "application/xml",
                 "Accept": "application/xml"
             }
 
-            place_response = requests.post(
-                place_url, headers=headers, data=xml_string, verify=False
-            )
+            place_response = requests.post(place_url, headers=headers, data=xml_string, verify=False)
 
             print("=== PLACE STATUS ===", place_response.status_code)
             print(place_response.text)
 
             success = place_response.status_code == 200 and "<orderId>" in place_response.text
-
             results.append({
                 "price": price,
                 "success": success,
