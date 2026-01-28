@@ -34,8 +34,9 @@
 	let ohlcTokens = 5;
 
 	var pinkSheetOrderPlacedMP3 = new Audio('./wav/pink-sheet-order-placed.mp3'); 
+	var pinkSheetOrderPlacedIBMP3 = new Audio('./wav/pink-sheet-order-placed-ib.mp3'); 
+	var pinkSheetOrderPlacedETradeMP3 = new Audio('./wav/pink-sheet-order-placed-etrade.mp3'); 
 	var pinkSheetOrderFailedMP3 = new Audio('./wav/pink-sheet-order-failed.mp3'); 
-
 
 	function openNewsLookupWindow(link){
 		newsLookupWindow = window.open(link, "newslookup-window"); 
@@ -491,15 +492,36 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
                 body: JSON.stringify(orderData)
             })
             .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    pinkSheetOrderPlaced[symbol] = "Order placed successfully";
-                    pinkSheetOrderPlacedMP3.play();
-                } else {
-                    pinkSheetOrderFailed[symbol] = data.message || "Order rejected";
-                    pinkSheetOrderFailedMP3.play();
-                }
-            })
+			.then(data => {
+
+			    if (!data || data.success !== true) {
+			        pinkSheetOrderFailed[symbol] = data?.error || "Order rejected";
+			        pinkSheetOrderFailedMP3.play();
+			        return;
+			    }
+
+			    switch (data.route) {
+
+			        case 1:
+			            pinkSheetOrderPlaced[symbol] = "IB order placed (smart ladder)";
+			            pinkSheetOrderPlacedIBMP3.play();
+			            console.log("IB RESULT:", data.result);
+			            break;
+
+			        case 2:
+			            pinkSheetOrderPlaced[symbol] = "E*TRADE fallback used (smart ladder)";
+			            pinkSheetOrderPlacedETradeMP3.play();
+			            console.log("ETRADE RESULT:", data.result);
+			            break;
+
+			        case 0:
+			        default:
+			            pinkSheetOrderFailed[symbol] = "No broker accepted the order";
+			            pinkSheetOrderFailedMP3.play();
+			            console.warn("ROUTER FAILURE:", data.result);
+			            break;
+			    }
+			})
             .catch(err => {
                 pinkSheetOrderFailed[symbol] = err.message || "Fetch error";
                 pinkSheetOrderFailedMP3.play();
@@ -1271,7 +1293,7 @@ function processOHLCQueue() {
 
 // stockanalysis.com 
 
-	
+	const corporateActionsStocks=["BJDX", "REVB", "XXII", "PCLA", "NIVF", "MTEN", "MKDW", "LRHC", "GRI", "CISS", "BNRG", "UONEK", "UONE", "SLE", "CCTG", "DCX", "SXTP", "PBM", "NVNO", "FTFT", "BTOG", "OCG", "HUBC", "ASBP", "AMCR", "VMAR", 
 
 
 
@@ -1279,6 +1301,7 @@ function processOHLCQueue() {
 
 // tipranks.com reverse splits 
 
+	"REVB", "RBGLY", "AREB", "ATOS", "INTJ", "CUBA", "AWP", 
 
 
 
@@ -1287,7 +1310,9 @@ function processOHLCQueue() {
 
 // capedge.com reverse splits 
 
+	"VMAR", "AMCR", "HUBC", "ASBP", "OCG", "PBM", "SXTP", "BTOG", "NVNO", "WHLR", "ATVK", "FTFT", "CCTG", "UONE", "SDCH", "SLE", "MTEN", "XXII", "GRI", "WGMI", "BNRG", "LRHC", "CISS", "NIVF", "MKDW", "PCLA", "NUGN", 
 
+	"AREB", "ATOS", "AWP", 
 
 
 
