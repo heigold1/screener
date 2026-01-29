@@ -151,22 +151,20 @@ def clean_token(token):
 # E*TRADE ORDER
 # ==========================================================
 
-def place_etrade_order(symbol, shares, target_price):
+def place_etrade_order(symbol, shares, target_price, max_retries=3, retry_delay=3):
+    """
+    Place an order with E*TRADE, retrying on temporary 503 Service Unavailable errors.
+    """
     try:
         # --- Load credentials from INI file ---
         config_path = r"C:\xampp\htdocs\newslookup\etrade.ini"
         config = configparser.ConfigParser()
         config.read(config_path)
 
-        app.logger.info(f"etrade.ini exists? {os.path.exists(config_path)}")
-
         consumer_key = clean_token(config["OAuth"]["oauth_consumer_key"])
         consumer_secret = clean_token(config["OAuth"]["consumer_secret"])
         access_token = clean_token(config["OAuth"]["oauth_token"])
         access_token_secret = clean_token(config["OAuth"]["oauth_token_secret"])
-
-        app.logger.info(f"Consumer key: {consumer_key}")
-        app.logger.info(f"Access token: {access_token}")
 
         ETRADE_ACCOUNT_ID = "S11DfWByF1AJIO-pGBEw-g"
 
@@ -175,114 +173,112 @@ def place_etrade_order(symbol, shares, target_price):
         any_success = False
 
         for price in prices:
-            print(f">>> E*TRADE attempting {symbol} @ {price}")
-            client_order_id = generate_client_order_id()
+            attempt = 0
+            while attempt < max_retries and not any_success:
+                attempt += 1
+                print(f">>> E*TRADE attempting {symbol} @ {price} (Attempt {attempt}/{max_retries})")
+                client_order_id = generate_client_order_id()
 
-            # ---------- PREVIEW ----------
-            preview_url = f"https://api.etrade.com/v1/accounts/{ETRADE_ACCOUNT_ID}/orders/preview"
+                # ---------- PREVIEW ----------
+                preview_url = f"https://api.etrade.com/v1/accounts/{ETRADE_ACCOUNT_ID}/orders/preview"
+                preview_payload = {
+                    "PreviewOrderRequest": {
+                        "orderType": "EQ",
+                        "clientOrderId": client_order_id,
+                        "Order": [{
+                            "allOrNone": "false",
+                            "priceType": "LIMIT",
+                            "orderTerm": "GOOD_FOR_DAY",
+                            "marketSession": "REGULAR",
+                            "stopPrice": "",
+                            "limitPrice": price,
+                            "Instrument": [{
+                                "Product": {"securityType": "EQ", "symbol": symbol},
+                                "orderAction": "BUY",
+                                "quantityType": "QUANTITY",
+                                "quantity": shares
+                            }]
+                        }]
+                    }
+                }
 
-            preview_payload = {
-                "PreviewOrderRequest": {
+                headers = {
+                    "Authorization": build_oauth_header(preview_url, "POST", consumer_key, consumer_secret, access_token, access_token_secret),
+                    "Content-Type": "application/json"
+                }
+
+                preview_response = requests.post(preview_url, headers=headers, json=preview_payload, verify=False)
+                print("=== PREVIEW STATUS ===", preview_response.status_code)
+                print(preview_response.text)
+
+                if preview_response.status_code != 200:
+                    results.append({
+                        "price": price,
+                        "stage": "preview_http_error",
+                        "response": preview_response.text
+                    })
+                    if preview_response.status_code == 503:
+                        print(f"503 Service Unavailable during preview, retrying in {retry_delay}s...")
+                        time.sleep(retry_delay)
+                        continue
+                    break
+
+                root = ET.fromstring(preview_response.text)
+                preview_id_node = root.find(".//previewId")
+                if preview_id_node is None:
+                    results.append({
+                        "price": price,
+                        "stage": "preview_parse_error",
+                        "response": preview_response.text
+                    })
+                    break
+
+                preview_id = preview_id_node.text.strip()
+
+                # ---------- PLACE ----------
+                place_url = f"https://api.etrade.com/v1/accounts/{ETRADE_ACCOUNT_ID}/orders/place"
+                place_payload = {
                     "orderType": "EQ",
                     "clientOrderId": client_order_id,
-                    "Order": [{
-                        "allOrNone": "false",
-                        "priceType": "LIMIT",
-                        "orderTerm": "GOOD_FOR_DAY",
-                        "marketSession": "REGULAR",
-                        "stopPrice": "",
-                        "limitPrice": price,
-                        "Instrument": [{
-                            "Product": {"securityType": "EQ", "symbol": symbol},
-                            "orderAction": "BUY",
-                            "quantityType": "QUANTITY",
-                            "quantity": shares
-                        }]
-                    }]
+                    "PreviewIds": {"previewId": preview_id},
+                    "Order": preview_payload["PreviewOrderRequest"]["Order"]
                 }
-            }
 
-            header = build_oauth_header(preview_url, "POST", consumer_key, consumer_secret, access_token, access_token_secret)
-            print("DEBUG OAUTH HEADER:", header)
+                xml_body = dict_to_xml("PlaceOrderRequest", place_payload)
+                xml_string = ET.tostring(xml_body, encoding="utf-8", xml_declaration=True)
+                headers = {
+                    "Authorization": build_oauth_header(place_url, "POST", consumer_key, consumer_secret, access_token, access_token_secret),
+                    "Content-Type": "application/xml",
+                    "Accept": "application/xml"
+                }
 
+                place_response = requests.post(place_url, headers=headers, data=xml_string, verify=False)
+                print("=== PLACE STATUS ===", place_response.status_code)
+                print(place_response.text)
 
-            headers = {
-                "Authorization": build_oauth_header(
-                    preview_url, "POST",
-                    consumer_key, consumer_secret, access_token, access_token_secret
-                ),
-                "Content-Type": "application/json"
-            }
+                if place_response.status_code == 503 or "Service Unavailable" in place_response.text:
+                    print(f"503 Service Unavailable during place, retrying in {retry_delay}s...")
+                    time.sleep(retry_delay)
+                    continue  # retry
 
-            preview_response = requests.post(preview_url, headers=headers, json=preview_payload, verify=False)
-
-            print("=== PREVIEW STATUS ===", preview_response.status_code)
-            print(preview_response.text)
-
-            if preview_response.status_code != 200:
+                success = place_response.status_code == 200 and "<orderId>" in place_response.text
                 results.append({
                     "price": price,
-                    "stage": "preview_http_error",
-                    "response": preview_response.text
+                    "success": success,
+                    "preview": preview_response.text,
+                    "place": place_response.text
                 })
-                continue
 
-            root = ET.fromstring(preview_response.text)
-            preview_id_node = root.find(".//previewId")
-
-            if preview_id_node is None:
-                results.append({
-                    "price": price,
-                    "stage": "preview_parse_error",
-                    "response": preview_response.text
-                })
-                continue
-
-            preview_id = preview_id_node.text.strip()
-
-            # ---------- PLACE ----------
-            place_url = f"https://api.etrade.com/v1/accounts/{ETRADE_ACCOUNT_ID}/orders/place"
-
-            place_payload = {
-                "orderType": "EQ",
-                "clientOrderId": client_order_id,
-                "PreviewIds": {"previewId": preview_id},
-                "Order": preview_payload["PreviewOrderRequest"]["Order"]
-            }
-
-            xml_body = dict_to_xml("PlaceOrderRequest", place_payload)
-            xml_string = ET.tostring(xml_body, encoding="utf-8", xml_declaration=True)
-
-            headers = {
-                "Authorization": build_oauth_header(
-                    place_url, "POST",
-                    consumer_key, consumer_secret, access_token, access_token_secret
-                ),
-                "Content-Type": "application/xml",
-                "Accept": "application/xml"
-            }
-
-            place_response = requests.post(place_url, headers=headers, data=xml_string, verify=False)
-
-            print("=== PLACE STATUS ===", place_response.status_code)
-            print(place_response.text)
-
-            success = place_response.status_code == 200 and "<orderId>" in place_response.text
-            results.append({
-                "price": price,
-                "success": success,
-                "preview": preview_response.text,
-                "place": place_response.text
-            })
-
-            if success:
-                any_success = True
+                if success:
+                    any_success = True
+                    break  # exit retry loop if successful
 
         return any_success, results
 
     except Exception as e:
         print(">>> E*TRADE ERROR:", e)
         return False, str(e)
+
 
 # ==========================================================
 # SMART ROUTER
