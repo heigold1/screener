@@ -101,7 +101,7 @@
 	    } else {
 	        // Fetch previous close from server
 	        $.ajax({
-	            url: 'http://ec2-52-26-196-108.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
+	            url: 'http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
 	            data: { symbol: symbol },
 	            async: true,
 	            dataType: 'html',
@@ -142,7 +142,7 @@
 		var orerStub = ""; 
  
     	$.ajax({
-	        url: 'http://ec2-52-26-196-108.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
+	        url: 'http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
         	data: {symbol: symbol, 
                    amount: "100", 
                    percentage: "84"},
@@ -289,7 +289,7 @@ function getYMDTradeDate(daysBack) {
 
 function fetchOHLCJson(symbol, callback) {
     var xhr = new XMLHttpRequest();
-    var url = "http://ec2-52-26-196-108.us-west-2.compute.amazonaws.com/newslookup/marketstack-api-historical-data.php?symbol=" + encodeURIComponent(symbol);
+    var url = "http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/marketstack-api-historical-data.php?symbol=" + encodeURIComponent(symbol);
 
 console.log("inside fetchOHLCJson, the url is:" + url); 
 
@@ -1049,7 +1049,7 @@ function processOHLCQueue() {
 
 		$(document).on('click', '#check-earnings', function (evt) {
 		    $.ajax({
-		        url: 'http://ec2-52-26-196-108.us-west-2.compute.amazonaws.com/newslookup/get-earnings-stocks.php',
+		        url: 'http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/get-earnings-stocks.php',
 		        async: true, 
 		        dataType: 'json',
 		        success:  function (data) {
@@ -1173,7 +1173,7 @@ function processOHLCQueue() {
 
 			copyToClipboard(data);
 
-			openNewsLookupWindow("http://ec2-52-26-196-108.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber  + "&check-sec=" + checkSec); 
+			openNewsLookupWindow("http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber  + "&check-sec=" + checkSec); 
 
 		});
 
@@ -1293,7 +1293,7 @@ function processOHLCQueue() {
 
 // stockanalysis.com 
 
-	const corporateActionsStocks=["ASST", "SLE", "FCUV", "SXTC", "CCTG", "UONEK", "REVB", "EDBL", "LRHC", "EDHL", "CISS", "AREB", "RVSN", "NIVF", "GRI", "AZN", "BNRG", "MKDW", "IBG", "ADIL", "MTEN", "UONE", "RLYB", "UGRO", "PCLA", "PBM", "ATOS", "BJDX", "XXII", "PFSA", 
+
 
 
 
@@ -1301,7 +1301,6 @@ function processOHLCQueue() {
 
 // tipranks.com reverse splits 
 
-	"RLYB", "ADIL", "ASST", "PRFX", "CUBA", "CUBA", "EDHL", "PFSA", "UGRO", "FCUV", "AWP", "NDLS", 
 
 
 
@@ -1310,15 +1309,14 @@ function processOHLCQueue() {
 
 // capedge.com reverse splits 
 
-	"AREB", "ATOS", "OTMC", "PBM", "BOTY", "SXTC", "EDBL", "ILAL", "RVSN", "INTJ", "ADIL", "RLYB", "HERZ", "AWP", "NDLS", 
 
-	"CCTG", "SLE", "SDCH", "UONE", "MKDW", "XXII", "GRI", "WGMI", "BNRG", "LRHC", "MTEN", "CISS", "NIVF", "PCLA", "YJGJ", "REVB", "NUGN", "BJDX", "IBG", 
 
 
 
 
 
 // Lockup expirations: 
+
 
 
 
@@ -1476,7 +1474,7 @@ function processOHLCQueue() {
 						}
 
 						tableNasdaq.row.add([
-							"<input type='text' class='symbolText' style='color: black; " + symbolBackground + " ' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-52-26-196-108.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type='text' class='symbolText' style='color: black; " + symbolBackground + " ' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -1575,7 +1573,7 @@ function processOHLCQueue() {
 						}
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black; " + symbolBackground + "' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-52-26-196-108.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black; " + symbolBackground + "' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
@@ -1646,7 +1644,7 @@ function processOHLCQueue() {
 					            tablePink.row.add([
 					                `<input type="text" class="symbolText" style="color: black" target="_blank"
 					                    onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(
-					                    "http://ec2-52-26-196-108.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=${symbol}&vix=${vixNumber}&check-sec=${checkSec}"
+					                    "http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=${symbol}&vix=${vixNumber}&check-sec=${checkSec}"
 					                    ); removePink($(this))' value="${symbol}" readonly>`,
 					                last,
 					                value.low,
