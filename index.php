@@ -101,7 +101,7 @@
 	    } else {
 	        // Fetch previous close from server
 	        $.ajax({
-	            url: 'http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
+	            url: 'http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/pink-sheet-prev-close.php?',
 	            data: { symbol: symbol },
 	            async: true,
 	            dataType: 'html',
@@ -142,7 +142,7 @@
 		var orerStub = ""; 
  
     	$.ajax({
-	        url: 'http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
+	        url: 'http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/prepare-order.php?',
         	data: {symbol: symbol, 
                    amount: "100", 
                    percentage: "84"},
@@ -289,7 +289,7 @@ function getYMDTradeDate(daysBack) {
 
 function fetchOHLCJson(symbol, callback) {
     var xhr = new XMLHttpRequest();
-    var url = "http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/marketstack-api-historical-data.php?symbol=" + encodeURIComponent(symbol);
+    var url = "http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/marketstack-api-historical-data.php?symbol=" + encodeURIComponent(symbol);
 
 console.log("inside fetchOHLCJson, the url is:" + url); 
 
@@ -481,7 +481,7 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
             pinkSheetInProgress.delete(symbol);
 
             const targetPrice = parseFloat((lastClose * (1 - 0.85)).toFixed(4));
-            let numShares = Math.floor(50 / targetPrice / 100) * 100;
+            let numShares = Math.floor(80 / targetPrice / 100) * 100;
             if (numShares < 100) numShares = 100;
 
             const orderData = { symbol, action: "BUY", shares: numShares, price: targetPrice };
@@ -1049,7 +1049,7 @@ function processOHLCQueue() {
 
 		$(document).on('click', '#check-earnings', function (evt) {
 		    $.ajax({
-		        url: 'http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/get-earnings-stocks.php',
+		        url: 'http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/get-earnings-stocks.php',
 		        async: true, 
 		        dataType: 'json',
 		        success:  function (data) {
@@ -1173,7 +1173,7 @@ function processOHLCQueue() {
 
 			copyToClipboard(data);
 
-			openNewsLookupWindow("http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber  + "&check-sec=" + checkSec); 
+			openNewsLookupWindow("http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + symbol + "&vix=" + vixNumber  + "&check-sec=" + checkSec); 
 
 		});
 
@@ -1293,7 +1293,7 @@ function processOHLCQueue() {
 
 // stockanalysis.com 
 
-
+	const corporateActionsStocks=["FGNX", "JFBR", "LFWD", "BYAH", "CRE", "INTS", "BTM", "SVRE", "TRNR", "RPGL", "SFHG", "DSY", "NDLS", "ZDAI", "NBY", "SMX", "DULL", "WTO", "ADVB", "FRSX", "INTJ", "EEIQ", "AURE", "MWG", 
 
 
 
@@ -1301,6 +1301,7 @@ function processOHLCQueue() {
 
 // tipranks.com reverse splits 
 
+	"FRSX", "SFHG", "VCIG", "IXHL", "PTLE", "BURU", "PPBT", "SDNSF", "BHLL", 
 
 
 
@@ -1309,14 +1310,15 @@ function processOHLCQueue() {
 
 // capedge.com reverse splits 
 
+	"CRE", "FGNX", "INTJ", "DTCK", "SMX", "JFBR", "EEIQ", "WTO", "NDLS", "AURE", "INTS", "ZDAI", "BYAH", "ADVB", "DSY", "NBY", "BTM", "RPGL", "MWG", "TRNR", "LFWD", "EUBG", "SVRE", "ZSL", "FRSX", "PTLE", 
 
+	"PPBT", "BURU", "BHLL", 
 
 
 
 
 
 // Lockup expirations: 
-
 
 
 
@@ -1474,7 +1476,7 @@ function processOHLCQueue() {
 						}
 
 						tableNasdaq.row.add([
-							"<input type='text' class='symbolText' style='color: black; " + symbolBackground + " ' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type='text' class='symbolText' style='color: black; " + symbolBackground + " ' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNasdaq($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low, 
 							value.change.toFixed(2),
@@ -1573,7 +1575,7 @@ function processOHLCQueue() {
 						}
 
 						tableNYSEAmex.row.add([
-							"<input type=\"text\" class=\"symbolText\" style='color: black; " + symbolBackground + "' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
+							"<input type=\"text\" class=\"symbolText\" style='color: black; " + symbolBackground + "' target='_blank'  onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(\"http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=" + key +  "&vix=" + vixNumber + "&check-sec=" + checkSec + "\"); removeNyseAmex($(this));' value=\"" + jQuery.trim(key) + "\" readonly>", 
 							value.last, 
 							value.low,
 							value.change.toFixed(2),
@@ -1644,7 +1646,7 @@ function processOHLCQueue() {
 					            tablePink.row.add([
 					                `<input type="text" class="symbolText" style="color: black" target="_blank"
 					                    onclick='console.log($(this)); copyToClipboard($(this)); openNewsLookupWindow(
-					                    "http://ec2-52-35-7-90.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=${symbol}&vix=${vixNumber}&check-sec=${checkSec}"
+					                    "http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/index.php?symbol=${symbol}&vix=${vixNumber}&check-sec=${checkSec}"
 					                    ); removePink($(this))' value="${symbol}" readonly>`,
 					                last,
 					                value.low,
