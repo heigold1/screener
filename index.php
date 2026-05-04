@@ -1292,8 +1292,10 @@ function processOHLCQueue() {
 				 ********************************************/
 
 // stockanalysis.com 
+// corporateActionsStocks
 
-	const corporateActionsStocks=["FGNX", "JFBR", "LFWD", "BYAH", "CRE", "INTS", "BTM", "SVRE", "TRNR", "RPGL", "SFHG", "DSY", "NDLS", "ZDAI", "NBY", "SMX", "DULL", "WTO", "ADVB", "FRSX", "INTJ", "EEIQ", "AURE", "MWG", 
+	const corporateActionsStocks=["BRAI", "POWL", "BKNG", 
+
 
 
 
@@ -1301,7 +1303,6 @@ function processOHLCQueue() {
 
 // tipranks.com reverse splits 
 
-	"FRSX", "SFHG", "VCIG", "IXHL", "PTLE", "BURU", "PPBT", "SDNSF", "BHLL", 
 
 
 
@@ -1310,9 +1311,7 @@ function processOHLCQueue() {
 
 // capedge.com reverse splits 
 
-	"CRE", "FGNX", "INTJ", "DTCK", "SMX", "JFBR", "EEIQ", "WTO", "NDLS", "AURE", "INTS", "ZDAI", "BYAH", "ADVB", "DSY", "NBY", "BTM", "RPGL", "MWG", "TRNR", "LFWD", "EUBG", "SVRE", "ZSL", "FRSX", "PTLE", 
 
-	"PPBT", "BURU", "BHLL", 
 
 
 
@@ -1320,6 +1319,7 @@ function processOHLCQueue() {
 
 // Lockup expirations: 
 
+	"BETA", "CEPV", "ELWT", "XZO", "WSTN", 
 
 
 
@@ -1354,7 +1354,8 @@ function processOHLCQueue() {
 				  "TFFP", // Winding down operations, news came out on November 15th, 2024 
 				  "YHC", // Dropped 77% on mere purchase order news on March 21s, 2025 
 				  "WOLF", // At risk of declaring bankruptcy, May 21st, 2025 
-				  "YYAI", // Dropped like 85% on barely any news, October 7th, 2025 
+				  "YYAI", // Dropped like 85% on barely any news, October 7th, 2025
+				  "CMCT", // Dropped 70% on no news, March 17th, 2026 
                 ]; 
 
 
@@ -1977,7 +1978,7 @@ function processOHLCQueue() {
 			<label for="check-sec">Check SEC</label>
 		</div>
 		<div>
-			<input type="checkbox" id="auto-pink-sheet-buy">
+			<input type="checkbox" id="auto-pink-sheet-buy" checked>
 			<label for="check-sec">Auto Pink Sheet Buy</label>
 		</div>
 		<br>
