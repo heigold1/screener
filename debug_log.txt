@@ -194,3 +194,10 @@ POST data: Array
     [price] => 0.0128
 )
 
+POST data: Array
+(
+    [symbol] => JPTE
+    [shares] => 45400
+    [price] => 0.0022
+)
+

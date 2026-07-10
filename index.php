@@ -335,12 +335,16 @@ function examinePinkSheet(symbol) {
     const MIN_NONZERO_VOLUME_DAYS = 4;
     const MIN_MEDIAN_VOLATILITY = 0.08;
 
-    // NEW: Recent volume check
+    // Recent volume check
     const RECENT_DAYS_TO_CHECK = 2;      // last 2 days
     const MIN_VOLUME_RECENT = 200000;    // minimum volume per recent day
 
-    // NEW: Price variance threshold for pinning detection
+    // Price variance threshold for pinning detection
     const MIN_PRICE_VARIANCE = 0.005;    // 0.5% price movement
+
+    // Recent volatility spike override
+    const RECENT_VOLATILITY_DAYS = 3;        // how many recent days to check for a spike
+    const MIN_RECENT_VOLATILITY = 0.15;      // recent median volatility needed to override baseline fail
 
     /* -------------------------------
        DATE WINDOW
@@ -356,10 +360,8 @@ function examinePinkSheet(symbol) {
     try {
         fetchOHLCJson(modifiedSymbol, function(json){
 
-
 console.log("just came back from fetchOHLCJson, the json is: ");
 console.log(json); 
-
 
     console.log("RAW JSON RETURNED:", json);
 if (json?.error) {
@@ -375,12 +377,9 @@ if (!Array.isArray(json.ohlc) || json.ohlc.length === 0) {
     return;
 }
 
-
 console.log("SYMBOL SENT:", modifiedSymbol);
 
-
 			const recent = json.ohlc.slice(0, LOOKBACK_DAYS + DATE_BUFFER_DAYS);
-
 
             /* -------------------------------
                METRIC COLLECTION
@@ -391,7 +390,6 @@ console.log("SYMBOL SENT:", modifiedSymbol);
             let nonZeroDays = 0;
 
 console.log("RECENT RAW:", recent);
-
 
             for (const day of recent) {
                 if (!('h' in day && 'l' in day && 'c' in day && 'v' in day))
@@ -406,9 +404,14 @@ console.log("DAY OBJ:", day);
                 const low = parseFloat(day.l);
 				const vol = Number(day.v);
 
-				if (Number.isFinite(vol) && vol > 0) {
-    				nonZeroDays++;
+				// FIX: always push vol (including 0) so the array stays aligned
+				// to calendar days — previously 0-volume days were silently
+				// dropped, shifting recentVolumes/recentCloses out of sync.
+				if (Number.isFinite(vol)) {
     				volumes.push(vol);
+    				if (vol > 0) nonZeroDays++;
+				} else {
+					volumes.push(0);
 				}
 
                 if (close > 0) volatility.push((high - low) / close);
@@ -417,7 +420,6 @@ console.log("DAY OBJ:", day);
             }
 
 console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
-
 
             /* -------------------------------
                VALIDATION CHECKS
@@ -429,11 +431,27 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
                 return false;
             }
 
-            if (median(volatility) < MIN_MEDIAN_VOLATILITY) {
-                pinkSheetExamined.add(symbol); 
-                pinkSheetInProgress.delete(symbol);
-                pinkSheetOrderNotPlaced[symbol] = "median(volatility) < MIN_MEDIAN_VOLATILITY"; 
-                return false;
+            /* -------------------------------
+               VOLATILITY CHECK (with recent-spike override)
+               - If the full-lookback median fails, check whether the last
+                 few days show a spike strong enough to override — catches
+                 fresh breakouts that follow a prior dead/flat stretch.
+            ------------------------------- */
+            const baselineMedianVol = median(volatility);
+
+            if (baselineMedianVol < MIN_MEDIAN_VOLATILITY) {
+
+                const recentVolatility = volatility.slice(0, RECENT_VOLATILITY_DAYS);
+                const recentMedianVol = median(recentVolatility);
+
+                if (recentMedianVol < MIN_RECENT_VOLATILITY) {
+                    pinkSheetExamined.add(symbol); 
+                    pinkSheetInProgress.delete(symbol);
+                    pinkSheetOrderNotPlaced[symbol] = `baseline median(volatility)=${baselineMedianVol.toFixed(4)} < ${MIN_MEDIAN_VOLATILITY}, recent median=${recentMedianVol.toFixed(4)} < ${MIN_RECENT_VOLATILITY} (no spike override)`;
+                    return false;
+                }
+
+                console.log(symbol, `Baseline volatility failed but recent spike override passed: recentMedianVol=${recentMedianVol.toFixed(4)}`);
             }
 
             /* -------------------------------
@@ -453,7 +471,7 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
             }
 
             /* -------------------------------
-               NEW: RECENT DAYS VOLUME CHECK
+               RECENT DAYS VOLUME CHECK
             ------------------------------- */
             const recentVolumes = volumes.slice(0, RECENT_DAYS_TO_CHECK);
             const recentVolumePass = recentVolumes.every(v => v >= MIN_VOLUME_RECENT);
@@ -1294,8 +1312,7 @@ function processOHLCQueue() {
 // stockanalysis.com 
 // corporateActionsStocks
 
-	const corporateActionsStocks=["BRAI", "POWL", "BKNG", 
-
+	const corporateActionsStocks=["KLAC", "SILA", "CRWD", "MLI", 
 
 
 
@@ -1319,7 +1336,6 @@ function processOHLCQueue() {
 
 // Lockup expirations: 
 
-	"BETA", "CEPV", "ELWT", "XZO", "WSTN", 
 
 
 
@@ -1356,6 +1372,7 @@ function processOHLCQueue() {
 				  "WOLF", // At risk of declaring bankruptcy, May 21st, 2025 
 				  "YYAI", // Dropped like 85% on barely any news, October 7th, 2025
 				  "CMCT", // Dropped 70% on no news, March 17th, 2026 
+				  "VRXA", // Recent merger, went in at 40%, it dropped 62% wiping out my two-tier stop loss, June 16th, 2026 
                 ]; 
 
 
@@ -1444,6 +1461,7 @@ function processOHLCQueue() {
 	            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
 	            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
 						{
+ 							console.log("playSound triggered by:", key, "change:", value.change, "last:", value.last);
 							playSound = 1;
 						}
 
