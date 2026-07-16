@@ -312,6 +312,20 @@ console.log("inside fetchOHLCJson, json parsed ok");
     xhr.send();
 }
 
+function fetchOHLCWithFallback(symbol, callback) {
+    fetchOHLCJson(symbol, function(json) {
+        const noData = !json?.error && (!Array.isArray(json?.ohlc) || json.ohlc.length === 0);
+
+        if (noData && symbol.length === 5) {
+            const truncatedSymbol = symbol.slice(0, 4);
+            console.warn(`No OHLC data for ${symbol}, retrying with ${truncatedSymbol}`);
+            fetchOHLCJson(truncatedSymbol, callback);
+        } else {
+            callback(json);
+        }
+    });
+}
+
 
 /* -------------------------------
    Helper function to calculate median
@@ -324,6 +338,8 @@ function median(arr) {
         ? sorted[mid]
         : (sorted[mid - 1] + sorted[mid]) / 2;
 }
+
+/* Automate Pink Sheet fitness algorithm */ 
 
 function examinePinkSheet(symbol) {
 
@@ -351,25 +367,28 @@ function examinePinkSheet(symbol) {
     ------------------------------- */
     const fromDate = getYMDTradeDate(LOOKBACK_DAYS + DATE_BUFFER_DAYS);
     const toDate = getYMDTradeDate(1);
-    let modifiedSymbol = symbol; 
 
-    if (symbol.length === 5) {
-        modifiedSymbol = symbol.slice(0, 4);
-    }
+
 
     try {
-        fetchOHLCJson(modifiedSymbol, function(json){
+        fetchOHLCWithFallback(symbol, function(json){
 
 console.log("just came back from fetchOHLCJson, the json is: ");
 console.log(json); 
 
     console.log("RAW JSON RETURNED:", json);
 if (json?.error) {
+
     console.warn("Fetch error");
     return;
 }
 
 if (!Array.isArray(json.ohlc) || json.ohlc.length === 0) {
+
+
+
+
+
     console.warn("No OHLC data returned for", symbol);
     pinkSheetExamined.add(symbol); 
     pinkSheetInProgress.delete(symbol);
@@ -377,7 +396,7 @@ if (!Array.isArray(json.ohlc) || json.ohlc.length === 0) {
     return;
 }
 
-console.log("SYMBOL SENT:", modifiedSymbol);
+console.log("SYMBOL SENT:", symbol);
 
 			const recent = json.ohlc.slice(0, LOOKBACK_DAYS + DATE_BUFFER_DAYS);
 
@@ -1312,7 +1331,7 @@ function processOHLCQueue() {
 // stockanalysis.com 
 // corporateActionsStocks
 
-	const corporateActionsStocks=["KLAC", "SILA", "CRWD", "MLI", 
+		const corporateActionsStocks=["MLI", "CRWD", "SILA",
 
 
 
