@@ -25,7 +25,7 @@
 	const MINIMUM_LOW_DIFF = 9; 
 	var pinkSheetPreviousClose = []; 
 	var pinkSheetExamined = new Set(); 
-	var pinkSheetOrderPlaced = new Set(); 
+	var pinkSheetOrderPlaced = {};
 	var pinkSheetOrderNotPlaced = {}; 
 	var pinkSheetOrderFailed = {}; 
 
@@ -848,7 +848,7 @@ function processOHLCQueue() {
          				$(row).addClass('lightBlueClass');
 					}
 
-					if (pinkSheetOrderPlaced.has(symbol))
+					if (pinkSheetOrderPlaced[symbol])
 					{
     					$('td', row).eq(0).addClass('greenClass');
 					}
