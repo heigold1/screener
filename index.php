@@ -105,9 +105,17 @@
 	            data: { symbol: symbol },
 	            async: true,
 	            dataType: 'html',
-	            success: function(data) {
+					success: function(data) {
 	                try {
 	                    const responseData = JSON.parse(data);
+
+	                    // Check if the server sent back an error object instead of a real prevClose
+	                    if (responseData.error) {
+	                        console.warn("No prevClose available for", symbol, "-", responseData.errorMessage);
+	                        callback(null); // signal failure, but not a bug -- just no data
+	                        return;
+	                    }
+
 	                    const prevClose = parseFloat(responseData.prevClose);
 
 	                    // Cache it
