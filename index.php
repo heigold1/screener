@@ -1986,7 +1986,7 @@ function processOHLCQueue() {
 			</div>
 			<br>
 			<div>
-				Penny: <input id="pink-penny" type="text" name="fname" value="30"  style="width: 35px; font-size: 18px"><br>
+				Penny: <input id="pink-penny" type="text" name="fname" value="10"  style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="pink-dollar" type="text" name="lname" value="25" style="width: 35px; font-size: 18px">
 			</div>
 		</div>
@@ -2023,7 +2023,7 @@ function processOHLCQueue() {
 			<label for="check-sec">Check SEC</label>
 		</div>
 		<div>
-			<input type="checkbox" id="auto-pink-sheet-buy" checked>
+			<input type="checkbox" id="auto-pink-sheet-buy">
 			<label for="check-sec">Auto Pink Sheet Buy</label>
 		</div>
 		<br>
