@@ -43,7 +43,6 @@
 	}
 
 	function closeModalWindow(){
-		console.log("inside closeModal");
 		var modal = document.getElementById('myModal');
 		modal.style.display = "none";
 	}
@@ -298,16 +297,12 @@ function getYMDTradeDate(daysBack) {
 function fetchOHLCJson(symbol, callback) {
     var xhr = new XMLHttpRequest();
     var url = "http://ec2-52-89-7-59.us-west-2.compute.amazonaws.com/newslookup/marketstack-api-historical-data.php?symbol=" + encodeURIComponent(symbol);
-
-console.log("inside fetchOHLCJson, the url is:" + url); 
-
     xhr.open("GET", url, true); // async
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 try {
                     var json = JSON.parse(xhr.responseText);
-console.log("inside fetchOHLCJson, json parsed ok"); 
                     callback(json);
                 } catch (e) {
                     callback({ error: true });
@@ -381,28 +376,20 @@ function examinePinkSheet(symbol) {
     try {
         fetchOHLCWithFallback(symbol, function(json){
 
-console.log("just came back from fetchOHLCJson, the json is: ");
-console.log(json); 
+		if (json?.error) {
 
-    console.log("RAW JSON RETURNED:", json);
-if (json?.error) {
+		    console.warn("Fetch error");
+		    return;
+		}
 
-    console.warn("Fetch error");
-    return;
-}
+		if (!Array.isArray(json.ohlc) || json.ohlc.length === 0) {
 
-if (!Array.isArray(json.ohlc) || json.ohlc.length === 0) {
-
-
-
-
-
-    console.warn("No OHLC data returned for", symbol);
-    pinkSheetExamined.add(symbol); 
-    pinkSheetInProgress.delete(symbol);
-    pinkSheetOrderNotPlaced[symbol] = "No OHLC data";
-    return;
-}
+		    console.warn("No OHLC data returned for", symbol);
+		    pinkSheetExamined.add(symbol); 
+		    pinkSheetInProgress.delete(symbol);
+		    pinkSheetOrderNotPlaced[symbol] = "No OHLC data";
+		    return;
+		}
 
 console.log("SYMBOL SENT:", symbol);
 
@@ -874,6 +861,8 @@ function processOHLCQueue() {
 			console.log(pinkSheetOrderNotPlaced); 
 			console.log("The pinkSheetOrderFailed array is currently:");
 			console.log(pinkSheetOrderFailed); 
+			console.log("the pinkSheetOrderPlaced array is currenty:"); 
+			console.log(pinkSheetOrderPlaced); 
 		}); 
 
 		// NASDAQ
@@ -1488,7 +1477,6 @@ function processOHLCQueue() {
 	            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
 	            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
 						{
- 							console.log("playSound triggered by:", key, "change:", value.change, "last:", value.last);
 							playSound = 1;
 						}
 
