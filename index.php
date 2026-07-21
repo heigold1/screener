@@ -365,6 +365,8 @@ function examinePinkSheet(symbol) {
     const RECENT_VOLATILITY_DAYS = 3;        // how many recent days to check for a spike
     const MIN_RECENT_VOLATILITY = 0.15;      // recent median volatility needed to override baseline fail
 
+
+
     /* -------------------------------
        DATE WINDOW
     ------------------------------- */
@@ -509,7 +511,11 @@ function examinePinkSheet(symbol) {
             pinkSheetExamined.add(symbol); 
             pinkSheetInProgress.delete(symbol);
 
-            const targetPrice = parseFloat((lastClose * (1 - 0.85)).toFixed(4));
+
+            // If it's over $2.00/share then we can to in earlier, like 75%.  Otherwise go in at 85% 
+			const discountRate = lastClose >= 2.00 ? 0.75 : 0.85;
+			const targetPrice = parseFloat((lastClose * (1 - discountRate)).toFixed(4));
+
             let numShares = Math.floor(80 / targetPrice / 100) * 100;
             if (numShares < 100) numShares = 100;
 
