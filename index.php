@@ -28,6 +28,7 @@
 	var pinkSheetOrderPlaced = {};
 	var pinkSheetOrderNotPlaced = {}; 
 	var pinkSheetOrderFailed = {}; 
+	var pinkSheetWarning = {};
 
 	const pinkSheetQueue = [];
 	const pinkSheetInProgress = new Set();
@@ -354,9 +355,10 @@ function examinePinkSheet(symbol) {
     const MIN_NONZERO_VOLUME_DAYS = 4;
     const MIN_MEDIAN_VOLATILITY = 0.08;
 
-    // Recent volume check
-    const RECENT_DAYS_TO_CHECK = 2;      // last 2 days
-    const MIN_VOLUME_RECENT = 200000;    // minimum volume per recent day
+	// Recent liquidity check (dollar volume = close * volume)
+    const RECENT_WINDOW_DAYS = 5;        // look at last 5 days
+    const MIN_DAYS_PASSING = 2;          // require at least 2 of those 5 days to clear the bar
+    const MIN_DOLLAR_VOLUME_RECENT = 30000;  // minimum (close * volume) per qualifying day
 
     // Price variance threshold for pinning detection
     const MIN_PRICE_VARIANCE = 0.005;    // 0.5% price movement
@@ -405,9 +407,10 @@ function examinePinkSheet(symbol) {
             /* -------------------------------
                METRIC COLLECTION
             ------------------------------- */
-            const volumes = [];
+			const volumes = [];
             const volatility = [];
             const closePrices = [];
+            const dollarVolumes = [];
             let nonZeroDays = 0;
 
             for (const day of recent) {
@@ -434,6 +437,7 @@ function examinePinkSheet(symbol) {
                 if (close > 0) volatility.push((high - low) / close);
 
                 closePrices.push(close);
+                dollarVolumes.push(close * (Number.isFinite(vol) ? vol : 0));	
             }
 
             /* -------------------------------
@@ -446,11 +450,13 @@ function examinePinkSheet(symbol) {
                 return false;
             }
 
-            /* -------------------------------
-               VOLATILITY CHECK (with recent-spike override)
-               - If the full-lookback median fails, check whether the last
-                 few days show a spike strong enough to override — catches
-                 fresh breakouts that follow a prior dead/flat stretch.
+			/* -------------------------------
+               VOLATILITY CHECK — SOFT/LOG-ONLY
+               - No longer blocks the order. Past daily volatility can't
+                 tell us anything about a live 10%+ drop happening right
+                 now — the real-time trigger + dollar-volume liquidity
+                 check are the meaningful signals. Recorded as a warning
+                 for reference only, execution continues either way.
             ------------------------------- */
             const baselineMedianVol = median(volatility);
 
@@ -460,10 +466,7 @@ function examinePinkSheet(symbol) {
                 const recentMedianVol = median(recentVolatility);
 
                 if (recentMedianVol < MIN_RECENT_VOLATILITY) {
-                    pinkSheetExamined.add(symbol); 
-                    pinkSheetInProgress.delete(symbol);
-                    pinkSheetOrderNotPlaced[symbol] = `baseline median(volatility)=${baselineMedianVol.toFixed(4)} < ${MIN_MEDIAN_VOLATILITY}, recent median=${recentMedianVol.toFixed(4)} < ${MIN_RECENT_VOLATILITY} (no spike override) - ` + timeString;
-                    return false;
+                    pinkSheetWarning[symbol] = `Low historical volatility (baseline=${baselineMedianVol.toFixed(4)}, recent=${recentMedianVol.toFixed(4)}) - not blocking - ` + timeString;
                 }
             }
 
@@ -476,23 +479,28 @@ function examinePinkSheet(symbol) {
             const minClose = Math.min(...recentCloses);
             const priceVariance = (maxClose - minClose) / maxClose;
 
-            if (priceVariance < MIN_PRICE_VARIANCE && median(volumes) < MIN_VOLUME_RECENT) {
+			if (priceVariance < MIN_PRICE_VARIANCE && median(dollarVolumes) < MIN_DOLLAR_VOLUME_RECENT) {
                 pinkSheetExamined.add(symbol); 
                 pinkSheetInProgress.delete(symbol);
                 pinkSheetOrderNotPlaced[symbol] = "Price pinned (very low variance + low volume) - " + timeString;
                 return false;
             }
 
-            /* -------------------------------
-               RECENT DAYS VOLUME CHECK
+			/* -------------------------------
+               RECENT DAYS LIQUIDITY CHECK
+               - Requires at least MIN_DAYS_PASSING out of the last
+                 RECENT_WINDOW_DAYS days to clear the dollar-volume bar,
+                 rather than every single day — a single quiet day
+                 shouldn't veto an otherwise active/liquid stock.
             ------------------------------- */
-            const recentVolumes = volumes.slice(0, RECENT_DAYS_TO_CHECK);
-            const recentVolumePass = recentVolumes.every(v => v >= MIN_VOLUME_RECENT);
+            const recentDollarVolumes = dollarVolumes.slice(0, RECENT_WINDOW_DAYS);
+            const daysPassing = recentDollarVolumes.filter(dv => dv >= MIN_DOLLAR_VOLUME_RECENT).length;
+            const recentVolumePass = daysPassing >= MIN_DAYS_PASSING;
 
             if (!recentVolumePass) {
                 pinkSheetExamined.add(symbol);
                 pinkSheetInProgress.delete(symbol);
-                pinkSheetOrderNotPlaced[symbol] = `Recent ${RECENT_DAYS_TO_CHECK} days volume too low - ` + timeString;
+                pinkSheetOrderNotPlaced[symbol] = `Only ${daysPassing}/${RECENT_WINDOW_DAYS} recent days cleared $${MIN_DOLLAR_VOLUME_RECENT} dollar volume (need ${MIN_DAYS_PASSING}) - ` + timeString;
                 return false;
             }
 
