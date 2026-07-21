@@ -371,6 +371,13 @@ function examinePinkSheet(symbol) {
     const fromDate = getYMDTradeDate(LOOKBACK_DAYS + DATE_BUFFER_DAYS);
     const toDate = getYMDTradeDate(1);
 
+    const now = new Date();
+	const timeString = now.toLocaleTimeString('en-US', {
+	    hour: '2-digit',
+	    minute: '2-digit',
+	    hour12: true
+	});
+
 
 
     try {
@@ -387,11 +394,9 @@ function examinePinkSheet(symbol) {
 		    console.warn("No OHLC data returned for", symbol);
 		    pinkSheetExamined.add(symbol); 
 		    pinkSheetInProgress.delete(symbol);
-		    pinkSheetOrderNotPlaced[symbol] = "No OHLC data";
+		    pinkSheetOrderNotPlaced[symbol] = "No OHLC data - " + timeString;
 		    return;
 		}
-
-console.log("SYMBOL SENT:", symbol);
 
 			const recent = json.ohlc.slice(0, LOOKBACK_DAYS + DATE_BUFFER_DAYS);
 
@@ -403,15 +408,11 @@ console.log("SYMBOL SENT:", symbol);
             const closePrices = [];
             let nonZeroDays = 0;
 
-console.log("RECENT RAW:", recent);
-
             for (const day of recent) {
                 if (!('h' in day && 'l' in day && 'c' in day && 'v' in day))
                 {
-console.log("(!('high' in day && 'low' in day && 'close' in day && 'volume' in day)) failed "); 
                 	continue;	
                 } 
-console.log("DAY OBJ:", day);
 
                 const close = parseFloat(day.c);
                 const high = parseFloat(day.h);
@@ -433,15 +434,13 @@ console.log("DAY OBJ:", day);
                 closePrices.push(close);
             }
 
-console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
-
             /* -------------------------------
                VALIDATION CHECKS
             ------------------------------- */
             if (nonZeroDays < MIN_NONZERO_VOLUME_DAYS) {
                 pinkSheetExamined.add(symbol); 
                 pinkSheetInProgress.delete(symbol);
-                pinkSheetOrderNotPlaced[symbol] = "nonZeroDays < MIN_NONZERO_VOLUME_DAYS"; 
+                pinkSheetOrderNotPlaced[symbol] = "nonZeroDays < MIN_NONZERO_VOLUME_DAYS - " + timeString; 
                 return false;
             }
 
@@ -461,11 +460,9 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
                 if (recentMedianVol < MIN_RECENT_VOLATILITY) {
                     pinkSheetExamined.add(symbol); 
                     pinkSheetInProgress.delete(symbol);
-                    pinkSheetOrderNotPlaced[symbol] = `baseline median(volatility)=${baselineMedianVol.toFixed(4)} < ${MIN_MEDIAN_VOLATILITY}, recent median=${recentMedianVol.toFixed(4)} < ${MIN_RECENT_VOLATILITY} (no spike override)`;
+                    pinkSheetOrderNotPlaced[symbol] = `baseline median(volatility)=${baselineMedianVol.toFixed(4)} < ${MIN_MEDIAN_VOLATILITY}, recent median=${recentMedianVol.toFixed(4)} < ${MIN_RECENT_VOLATILITY} (no spike override) - ` + timeString;
                     return false;
                 }
-
-                console.log(symbol, `Baseline volatility failed but recent spike override passed: recentMedianVol=${recentMedianVol.toFixed(4)}`);
             }
 
             /* -------------------------------
@@ -480,7 +477,7 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
             if (priceVariance < MIN_PRICE_VARIANCE && median(volumes) < MIN_VOLUME_RECENT) {
                 pinkSheetExamined.add(symbol); 
                 pinkSheetInProgress.delete(symbol);
-                pinkSheetOrderNotPlaced[symbol] = "Price pinned (very low variance + low volume)";
+                pinkSheetOrderNotPlaced[symbol] = "Price pinned (very low variance + low volume) - " + timeString;
                 return false;
             }
 
@@ -493,7 +490,7 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
             if (!recentVolumePass) {
                 pinkSheetExamined.add(symbol);
                 pinkSheetInProgress.delete(symbol);
-                pinkSheetOrderNotPlaced[symbol] = `Recent ${RECENT_DAYS_TO_CHECK} days volume too low`;
+                pinkSheetOrderNotPlaced[symbol] = `Recent ${RECENT_DAYS_TO_CHECK} days volume too low - ` + timeString;
                 return false;
             }
 
@@ -505,7 +502,7 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
                 console.warn(`No previous close stored for ${symbol}, cannot calculate 85% drop target`);
                 pinkSheetExamined.add(symbol); 
                 pinkSheetInProgress.delete(symbol);
-                pinkSheetOrderNotPlaced[symbol] = "No previous close available";
+                pinkSheetOrderNotPlaced[symbol] = "No previous close available - " + timeString;
                 return false;
             }
 
@@ -527,7 +524,7 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
 			.then(data => {
 
 			    if (!data || data.success !== true) {
-			        pinkSheetOrderFailed[symbol] = data?.error || "Order rejected";
+			        pinkSheetOrderFailed[symbol] = (data?.error || "Order rejected") + " - " + timeString;
 			        pinkSheetOrderFailedMP3.play();
 			        return;
 			    }
@@ -535,27 +532,27 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
 			    switch (data.route) {
 
 			        case 1:
-			            pinkSheetOrderPlaced[symbol] = "IB order placed (smart ladder)";
+			            pinkSheetOrderPlaced[symbol] = "IB order placed (smart ladder) - " + timeString;
 			            pinkSheetOrderPlacedIBMP3.play();
 			            console.log("IB RESULT:", data.result);
 			            break;
 
 			        case 2:
-			            pinkSheetOrderPlaced[symbol] = "E*TRADE fallback used (smart ladder)";
+			            pinkSheetOrderPlaced[symbol] = "E*TRADE fallback used (smart ladder) - " + timeString;
 			            pinkSheetOrderPlacedETradeMP3.play();
 			            console.log("ETRADE RESULT:", data.result);
 			            break;
 
 			        case 0:
 			        default:
-			            pinkSheetOrderFailed[symbol] = "No broker accepted the order";
+			            pinkSheetOrderFailed[symbol] = "No broker accepted the order - " + timeString;
 			            pinkSheetOrderFailedMP3.play();
 			            console.warn("ROUTER FAILURE:", data.result);
 			            break;
 			    }
 			})
             .catch(err => {
-                pinkSheetOrderFailed[symbol] = err.message || "Fetch error";
+                pinkSheetOrderFailed[symbol] = (err.message || "Fetch error") + " - " + timeString;
                 pinkSheetOrderFailedMP3.play();
             });
 
@@ -564,7 +561,7 @@ console.log(symbol, "nonZeroDays:", nonZeroDays, "volumes:", volumes);
         console.error("OHLC fetch failed hard:", e);
         pinkSheetExamined.add(symbol);
         pinkSheetInProgress.delete(symbol);
-        pinkSheetOrderNotPlaced[symbol] = "Callback exception";
+        pinkSheetOrderNotPlaced[symbol] = "Callback exception - " + timeString;
     }
 
 }
