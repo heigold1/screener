@@ -872,8 +872,10 @@ function processOHLCQueue() {
 			console.log(pinkSheetOrderNotPlaced); 
 			console.log("The pinkSheetOrderFailed array is currently:");
 			console.log(pinkSheetOrderFailed); 
-			console.log("the pinkSheetOrderPlaced array is currenty:"); 
+			console.log("The pinkSheetOrderPlaced array is currenty:"); 
 			console.log(pinkSheetOrderPlaced); 
+			console.log("The pinkSheetWarning array is currently: ")
+			console.log(pinkSheetWarning); 
 		}); 
 
 		// NASDAQ
