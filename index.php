@@ -1772,7 +1772,11 @@ function processOHLCQueue() {
 			<thead>
 				<tr>
 					<th colspan=7>
-					PINK
+					PINK 
+						<label>
+    					<input type="checkbox" id="playPinkSheetSounds" name="playPinkSheetSounds" checked>
+    						Play Sounds
+						</label>
 					</th>
 				</tr>
 				<tr height = "15px;">
@@ -1834,6 +1838,10 @@ function processOHLCQueue() {
 				<tr>
 					<th colspan=9>
 					NASDAQ
+						<label>
+    					<input type="checkbox" id="playNasdaqSounds" name="playNasdaqSounds" checked>
+    						Play Sounds
+						</label>
 					</th>
 				</tr>
 				<tr height = "15px;">
@@ -1907,6 +1915,10 @@ function processOHLCQueue() {
 				<tr>
 					<th colspan=9>
 					NYSE/AMEX
+						<label>
+    					<input type="checkbox" id="playNYSESounds" name="playNYSESounds" checked>
+    						Play Sounds
+						</label>
 					</th>
 				</tr>
 
