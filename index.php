@@ -360,7 +360,9 @@ function examinePinkSheet(symbol) {
     const MIN_DAYS_PASSING = 2;          // require at least 2 of those 5 days to clear the bar
     const MIN_DOLLAR_VOLUME_RECENT = 30000;  // minimum (close * volume) per qualifying day
 
+	const RECENT_DAYS_TO_CHECK = 14;     // full lookback window (LOOKBACK_DAYS + DATE_BUFFER_DAYS) — pinning check looks at the whole 2-week history, not just recent days    
     // Price variance threshold for pinning detection
+
     const MIN_PRICE_VARIANCE = 0.005;    // 0.5% price movement
 
     // Recent volatility spike override
@@ -1706,7 +1708,10 @@ function processOHLCQueue() {
 								if (
 								    !pinkSheetExamined.has(symbol) &&
 								    $('#auto-pink-sheet-buy').is(":checked") &&
-								    (actualChange > parseFloat($("#pink-penny").val()))
+								    (
+								        (actualChange > parseFloat($("#pink-penny").val()) && last < 1.00) ||
+								        (actualChange > parseFloat($("#pink-dollar").val()) && last >= 1.00)
+								    )
 								) {
 								    enqueuePinkSheet(symbol);
 								}
@@ -1772,11 +1777,13 @@ function processOHLCQueue() {
 			<thead>
 				<tr>
 					<th colspan=7>
-					PINK 
-						<label>
-    					<input type="checkbox" id="playPinkSheetSounds" name="playPinkSheetSounds" checked>
-    						Play Sounds
-						</label>
+						<div style="display: flex; align-items: center; justify-content: center">
+							<span>PINK</span>
+							<label style="display: inline-flex; align-items: center; margin-left: 15px;">
+								<input type="checkbox" id="playPinkSheetSounds" name="playPinkSheetSounds" checked>
+								Play Sounds
+							</label>
+						</div>
 					</th>
 				</tr>
 				<tr height = "15px;">
@@ -1837,11 +1844,13 @@ function processOHLCQueue() {
 			<thead>
 				<tr>
 					<th colspan=9>
-					NASDAQ
-						<label>
-    					<input type="checkbox" id="playNasdaqSounds" name="playNasdaqSounds" checked>
-    						Play Sounds
-						</label>
+						<div style="display: flex; align-items: center; justify-content: center">
+							<span>NASDAQ</span>
+							<label style="display: inline-flex; align-items: center; margin-left: 15px;">
+								<input type="checkbox" id="playNasdaqSounds" name="playNasdaqSounds" checked>
+								Play Sounds
+							</label>
+						</div>
 					</th>
 				</tr>
 				<tr height = "15px;">
@@ -1914,11 +1923,13 @@ function processOHLCQueue() {
 			<thead>
 				<tr>
 					<th colspan=9>
-					NYSE/AMEX
-						<label>
-    					<input type="checkbox" id="playNYSESounds" name="playNYSESounds" checked>
-    						Play Sounds
-						</label>
+						<div style="display: flex; align-items: center; justify-content: center">
+							<span>NYSE/AMEX</span>
+							<label style="display: inline-flex; align-items: center; margin-left: 15px;">
+								<input type="checkbox" id="playNYSESounds" name="playNYSESounds" checked>
+								Play Sounds
+							</label>
+						</div>
 					</th>
 				</tr>
 
