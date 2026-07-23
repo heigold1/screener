@@ -1482,15 +1482,23 @@ function processOHLCQueue() {
 						{
 							differenceInLow = lowCurrHash[key] - lowPrevHash[key]; 
 
-							if (differenceInLow > MINIMUM_LOW_DIFF)
+							if (
+									(differenceInLow > MINIMUM_LOW_DIFF)  && 
+					        		$("#playNasdaqSounds").is(':checked') 
+								)
 							{
 								playSound = 1;
 								fastDrop = true; 
 							}
 						}
 
-	            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
-	            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
+	            		if (
+	            			(
+	            				((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
+	            				((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))) 
+	            			)
+	            				&& $("#playNasdaqSounds").is(':checked') 
+	            			)  
 						{
 							playSound = 1;
 						}
@@ -1581,15 +1589,22 @@ function processOHLCQueue() {
 						{
 							differenceInLow =  lowCurrHash[key] - lowPrevHash[key]; 
 
-							if (differenceInLow > MINIMUM_LOW_DIFF)
+							if (
+									(differenceInLow > MINIMUM_LOW_DIFF)  && 
+					        		$("#playNasdaqSounds").is(':checked') 
+								)
 							{
 								playSound = 1;
 								fastDrop = true; 
 							}
 						}
 
-	            		if (((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
-	            			((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))))
+	            		if (
+		            			(
+		            				((value.last > 1.00) && (value.change > parseFloat($("#nas-nyse-dollar").val()))) || 
+		            				((value.last < 1.00) && (value.change > parseFloat($("#nas-nyse-penny").val()))) 
+		            			) && $("#playNYSESounds").is(':checked') 
+	            			) 
 						{
 							playSound = 1;
 						}
@@ -1676,8 +1691,11 @@ function processOHLCQueue() {
 
 					            // Play sound if conditions are met
 					            if (
+					            	(
 					                ((actualChange > parseFloat($("#pink-penny").val()) && last < 1.00) ||
-					                 (actualChange > parseFloat($("#pink-dollar").val()) && last >= 1.00))
+					                 (actualChange > parseFloat($("#pink-dollar").val()) && last >= 1.00)) 
+					                )
+					                && $("#playPinkSheetSounds").is(':checked') 
 					            ) {
 					                playSound = 1;
 					            }
