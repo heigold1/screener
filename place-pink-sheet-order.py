@@ -1,6 +1,6 @@
 # ==========================================================
 # SMART ORDER ROUTER: INTERACTIVE BROKERS → E*TRADE FALLBACK
-# 3-TIER PRICE LADDER ON BOTH BROKERS
+# 3-TIER PRICE LADDER ON INTERACTIVE BROKERS, 1-TIER FOR E*TRADE 
 # ==========================================================
 
 from flask import Flask, request, jsonify
@@ -20,6 +20,7 @@ import urllib.parse
 import requests
 import configparser
 import xml.etree.ElementTree as ET
+import math 
 
 
 # ==========================================================
@@ -207,7 +208,7 @@ def place_etrade_order(symbol, shares, target_price, max_retries=3, retry_delay=
                     "Content-Type": "application/json"
                 }
 
-                preview_response = requests.post(preview_url, headers=headers, json=preview_payload, verify=False)
+                preview_response = requests.post(preview_url, headers=headers, json=preview_payload)
                 print("=== PREVIEW STATUS ===", preview_response.status_code)
                 print(preview_response.text)
 
@@ -252,7 +253,7 @@ def place_etrade_order(symbol, shares, target_price, max_retries=3, retry_delay=
                     "Accept": "application/xml"
                 }
 
-                place_response = requests.post(place_url, headers=headers, data=xml_string, verify=False)
+                place_response = requests.post(place_url, headers=headers, data=xml_string)
                 print("=== PLACE STATUS ===", place_response.status_code)
                 print(place_response.text)
 
@@ -279,23 +280,6 @@ def place_etrade_order(symbol, shares, target_price, max_retries=3, retry_delay=
         print(">>> E*TRADE ERROR:", e)
         return False, str(e)
 
-
-# ==========================================================
-# SMART ROUTER
-# ==========================================================
-
-def smart_order(symbol, shares, price, ib_result):
-    if ib_result.get("any_accepted"):
-        return 1, ib_result
-
-    print(">>> SMART ROUTER: IB rejected → routing to E*TRADE")
-    success, response = place_etrade_order(symbol, shares, price)
-
-    if success:
-        return 2, {"etrade": response}
-
-    return 0, {"etrade_error": response}
-
 # ==========================================================
 # IB WORKER THREAD
 # ==========================================================
@@ -311,15 +295,9 @@ def ib_worker():
         if task is None:
             break
 
-        symbol, action, shares, target_price, result_holder = task
+        symbol, action, ib_tiers, result_holder, done_event = task   # 👈 now 5 items
 
         try:
-            prices = [
-                round(target_price, 4),
-                round(target_price * 0.8, 4),
-                round(target_price * 0.6, 4)
-            ]
-
             contract = Stock(symbol=symbol, exchange='SMART', currency='USD')
             qualified = ib.qualifyContracts(contract)
             if not qualified:
@@ -330,28 +308,45 @@ def ib_worker():
             any_accepted = False
             errors = []
 
-            for price in prices:
-                order = LimitOrder(action, shares, price)
-                order.tif = 'DAY'
-                order.outsideRth = True
+            for price, shares in ib_tiers:
+                try:
+                    order = LimitOrder(action, shares, price)
+                    order.tif = 'DAY'
+                    order.outsideRth = True
 
-                trade = ib.placeOrder(contract, order)
-                ib.sleep(1.0)
+                    trade = ib.placeOrder(contract, order)
+                    ib.sleep(1.0)
 
-                status = trade.orderStatus.status
-                trade_errors = [log.message for log in trade.log if log.errorCode != 0]
+                    status = trade.orderStatus.status
+                    trade_errors = [log.message for log in trade.log if log.errorCode != 0]
 
-                if status not in ("Cancelled", "Inactive"):
-                    any_accepted = True
+                    orders.append({
+                        "price": price,
+                        "shares": shares,
+                        "orderId": trade.order.orderId,
+                        "status": status,
+                        "errors": trade_errors
+                    })
+                    errors.extend(trade_errors)
 
-                orders.append({
-                    "price": price,
-                    "orderId": trade.order.orderId,
-                    "status": status,
-                    "errors": trade_errors
-                })
+                    if status not in ("Cancelled", "Inactive"):
+                        any_accepted = True
+                    else:
+                        # Tier rejected — for pink sheets this means IB won't
+                        # trade this symbol at all. Skip remaining tiers and
+                        # let it fall through to the single E*TRADE order.
+                        break
 
-                errors.extend(trade_errors)
+                except Exception as tier_err:
+                    orders.append({
+                        "price": price,
+                        "shares": shares,
+                        "orderId": None,
+                        "status": "error",
+                        "errors": [str(tier_err)]
+                    })
+                    errors.append(str(tier_err))
+                    break   # broker/symbol failure — abort remaining tiers → E*TRADE
 
             result_holder["orders"] = orders
             result_holder["any_accepted"] = any_accepted
@@ -360,7 +355,9 @@ def ib_worker():
         except Exception as e:
             result_holder["error"] = str(e)
 
-        task_queue.task_done()
+        finally:
+            done_event.set()          # 👈 ALWAYS signal completion, even on exception
+            task_queue.task_done()
 
 # ==========================================================
 # START IB WORKER
@@ -379,20 +376,73 @@ def place_order():
 
         symbol = data['symbol'].upper()
         action = data['action'].upper()
-        shares = int(data['shares'])
-        price = float(data['price'])
+        last_close = float(data['lastClose'])
+
+        ORDER_DOLLARS = 50
+
+        # 75% / 85% / 95% drop off previous close
+        tier_prices = [
+            round(last_close * 0.25, 4),
+            round(last_close * 0.15, 4),
+            round(last_close * 0.05, 4)
+        ]
+
+        ib_tiers = []
+        for price in tier_prices:
+            shares = math.floor(ORDER_DOLLARS / price / 100) * 100
+            if shares < 100:
+                shares = 100
+            ib_tiers.append((price, shares))
 
         result_holder = {}
-        task_queue.put((symbol, action, shares, price, result_holder))
-        task_queue.join()
+        done_event = threading.Event()          # 👈 worker signals completion
+        task_queue.put((symbol, action, ib_tiers, result_holder, done_event))
 
-        route_code, broker_result = smart_order(symbol, shares, price, result_holder)
+        IB_TIMEOUT_SECONDS = 15                  # tune to taste (3 tiers × ~1s each + overhead)
+        finished = done_event.wait(timeout=IB_TIMEOUT_SECONDS)
+
+        if not finished:
+            # IB worker did not respond in time — treat as IB failure, fall back to E*TRADE
+            print(f">>> IB TIMEOUT after {IB_TIMEOUT_SECONDS}s for {symbol} — routing to E*TRADE")
+            result_holder["error"] = f"IB timeout after {IB_TIMEOUT_SECONDS}s"
+            # fall through to the E*TRADE fallback below (any_accepted is absent/falsy)
+
+        if result_holder.get("any_accepted"):
+            orders = [
+                {
+                    "broker": "IBKR",
+                    "price": o["price"],
+                    "shares": o["shares"],
+                    "status": o["status"]
+                }
+                for o in result_holder.get("orders", [])
+            ]
+            return jsonify({
+                "success": True,
+                "route": "IB",
+                "symbol": symbol,
+                "orders": orders,
+                "ib_result": result_holder
+            })
+
+        # IB rejected everything — fall back to E*TRADE at tier 1 (75%) only
+        print(">>> SMART ROUTER: IB rejected → routing to E*TRADE")
+        etrade_price, etrade_shares = ib_tiers[0]
+        etrade_success, etrade_result = place_etrade_order(symbol, etrade_shares, etrade_price)
+
+        orders = [{
+            "broker": "ETRADE",
+            "price": etrade_price,
+            "shares": etrade_shares,
+            "status": "accepted" if etrade_success else "failed"
+        }]
 
         return jsonify({
-            "success": route_code != 0,
-            "route": route_code,
+            "success": etrade_success,
+            "route": "E*TRADE" if etrade_success else "NONE",
             "symbol": symbol,
-            "result": broker_result
+            "orders": orders,
+            "result": {"etrade": etrade_result} if etrade_success else {"etrade_error": etrade_result}
         })
 
     except Exception as e:

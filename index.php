@@ -29,6 +29,7 @@
 	var pinkSheetOrderNotPlaced = {}; 
 	var pinkSheetOrderFailed = {}; 
 	var pinkSheetWarning = {};
+	const pinkSheetOrders = {}; 
 
 	const pinkSheetQueue = [];
 	const pinkSheetInProgress = new Set();
@@ -521,15 +522,7 @@ function examinePinkSheet(symbol) {
             pinkSheetExamined.add(symbol); 
             pinkSheetInProgress.delete(symbol);
 
-
-            // If it's over $2.00/share then we can to in earlier, like 75%.  Otherwise go in at 85% 
-			const discountRate = lastClose >= 2.00 ? 0.75 : 0.85;
-			const targetPrice = parseFloat((lastClose * (1 - discountRate)).toFixed(4));
-
-            let numShares = Math.floor(80 / targetPrice / 100) * 100;
-            if (numShares < 100) numShares = 100;
-
-            const orderData = { symbol, action: "BUY", shares: numShares, price: targetPrice };
+            const orderData = { symbol, action: "BUY", lastClose };
 
             fetch('http://localhost:5000/api/pink-sheet-order', {
                 method: 'POST',
@@ -547,19 +540,19 @@ function examinePinkSheet(symbol) {
 
 			    switch (data.route) {
 
-			        case 1:
+			        case "IB":
 			            pinkSheetOrderPlaced[symbol] = "IB order placed (smart ladder) - " + timeString;
 			            pinkSheetOrderPlacedIBMP3.play();
-			            console.log("IB RESULT:", data.result);
+			            console.log("IB RESULT:", data.ib_result);
 			            break;
 
-			        case 2:
+			        case "E*TRADE":
 			            pinkSheetOrderPlaced[symbol] = "E*TRADE fallback used (smart ladder) - " + timeString;
 			            pinkSheetOrderPlacedETradeMP3.play();
 			            console.log("ETRADE RESULT:", data.result);
 			            break;
 
-			        case 0:
+			        case "NONE":
 			        default:
 			            pinkSheetOrderFailed[symbol] = "No broker accepted the order - " + timeString;
 			            pinkSheetOrderFailedMP3.play();
@@ -1343,7 +1336,7 @@ function processOHLCQueue() {
 // stockanalysis.com 
 // corporateActionsStocks
 
-		const corporateActionsStocks=["MLI", "CRWD", "SILA",
+	const corporateActionsStocks=["SNFCA", "WLFC", "SNEX", "NSA", 
 
 
 
@@ -1366,6 +1359,8 @@ function processOHLCQueue() {
 
 
 // Lockup expirations: 
+
+	"BOBS", "CEPS", "EIKN", "FPS", "HCIC", 
 
 
 
