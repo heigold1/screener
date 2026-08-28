@@ -1336,7 +1336,7 @@ function processOHLCQueue() {
 // stockanalysis.com 
 // corporateActionsStocks
 
-	const corporateActionsStocks=["SNFCA", "WLFC", "SNEX", "NSA", 
+	const corporateActionsStocks=["RUSHB", "SFBS", "APH", "MNST", "IESC", "RUSHA", 
 
 
 
@@ -1360,7 +1360,6 @@ function processOHLCQueue() {
 
 // Lockup expirations: 
 
-	"BOBS", "CEPS", "EIKN", "FPS", "HCIC", 
 
 
 

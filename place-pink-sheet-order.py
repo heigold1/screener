@@ -380,18 +380,24 @@ def place_order():
 
         ORDER_DOLLARS = 50
 
-        # 75% / 85% / 95% drop off previous close
+        # 84.5% / 94.5% drop off previous close
         tier_prices = [
-            round(last_close * 0.25, 4),
-            round(last_close * 0.15, 4),
-            round(last_close * 0.05, 4)
+            round(last_close * 0.155, 4),
+            round(last_close * 0.055, 4)
         ]
 
         ib_tiers = []
         for price in tier_prices:
-            shares = math.floor(ORDER_DOLLARS / price / 100) * 100
-            if shares < 100:
-                shares = 100
+            raw_shares = math.floor(ORDER_DOLLARS / price)
+            if raw_shares >= 1000:
+                round_to = 100
+            elif raw_shares >= 10:
+                round_to = 10
+            else:
+                round_to = 1
+            shares = math.floor(raw_shares / round_to) * round_to
+            if shares < 1:
+                shares = 1
             ib_tiers.append((price, shares))
 
         result_holder = {}
