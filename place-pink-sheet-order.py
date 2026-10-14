@@ -378,7 +378,7 @@ def place_order():
         action = data['action'].upper()
         last_close = float(data['lastClose'])
 
-        ORDER_DOLLARS = 50
+        ORDER_DOLLARS = 100
 
         # 84.5% / 94.5% drop off previous close
         tier_prices = [
