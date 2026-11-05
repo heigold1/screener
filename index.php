@@ -1336,7 +1336,7 @@ function processOHLCQueue() {
 // stockanalysis.com 
 // corporateActionsStocks
 
-	const corporateActionsStocks=["RUBI", 
+const corporateActionsStocks=["LGMK", "BUUU", "LXP", 
 
 
 
@@ -1360,7 +1360,8 @@ function processOHLCQueue() {
 
 // Lockup expirations: 
 
-	"ARXS", "MAIR", 
+	"MOBI", "ODTX", "OTAI", 
+
 
 
 

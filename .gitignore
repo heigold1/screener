@@ -1,0 +1,4 @@
+pink_reports/
+pink_orders.db
+__pycache__/
+*.bak.py

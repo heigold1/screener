@@ -1,6 +1,8 @@
 # ==========================================================
 # SMART ORDER ROUTER: INTERACTIVE BROKERS → E*TRADE FALLBACK
-# 3-TIER PRICE LADDER ON INTERACTIVE BROKERS, 1-TIER FOR E*TRADE 
+# 2-TIER PRICE LADDER ON INTERACTIVE BROKERS (84.5% / 94.5% drop),
+# 1-TIER FOR E*TRADE (84.5% drop)
+# Every order is logged to SQLite via order_log.py (pink_orders.db)
 # ==========================================================
 
 from flask import Flask, request, jsonify
@@ -20,7 +22,10 @@ import urllib.parse
 import requests
 import configparser
 import xml.etree.ElementTree as ET
-import math 
+import math
+import re
+
+import order_log   # SQLite order logging (order_log.py in the same folder)
 
 
 # ==========================================================
@@ -147,6 +152,19 @@ def _fill_xml(elem, data):
 def clean_token(token):
     # Remove non-printable characters, BOM, whitespace, and quotes
     return "".join(c for c in token if c.isprintable()).strip().replace('\ufeff', '').strip('"')
+
+
+def extract_etrade_order_id(etrade_result):
+    """Pull <orderId> out of the E*TRADE place response (for logging). Returns None if not found."""
+    try:
+        if isinstance(etrade_result, list):
+            for r in etrade_result:
+                m = re.search(r"<orderId>\s*(\d+)\s*</orderId>", str(r.get("place", "")))
+                if m:
+                    return m.group(1)
+    except Exception:
+        pass
+    return None
 
 # ==========================================================
 # E*TRADE ORDER
@@ -404,7 +422,7 @@ def place_order():
         done_event = threading.Event()          # 👈 worker signals completion
         task_queue.put((symbol, action, ib_tiers, result_holder, done_event))
 
-        IB_TIMEOUT_SECONDS = 15                  # tune to taste (3 tiers × ~1s each + overhead)
+        IB_TIMEOUT_SECONDS = 15                  # tune to taste (2 tiers × ~1s each + overhead)
         finished = done_event.wait(timeout=IB_TIMEOUT_SECONDS)
 
         if not finished:
@@ -414,6 +432,16 @@ def place_order():
             # fall through to the E*TRADE fallback below (any_accepted is absent/falsy)
 
         if result_holder.get("any_accepted"):
+            # ---- LOG: one row per IB tier ----
+            for tier_num, o in enumerate(result_holder.get("orders", []), start=1):
+                order_log.log_order(
+                    symbol=symbol, action=action, last_close=last_close,
+                    route="IB", broker="IBKR", tier=tier_num,
+                    order_price=o["price"], shares=o["shares"],
+                    status=o["status"], order_id=o.get("orderId"),
+                    error="; ".join(o.get("errors") or []) or None
+                )
+
             orders = [
                 {
                     "broker": "IBKR",
@@ -431,10 +459,22 @@ def place_order():
                 "ib_result": result_holder
             })
 
-        # IB rejected everything — fall back to E*TRADE at tier 1 (75%) only
+        # IB rejected everything — fall back to E*TRADE at tier 1 (84.5% drop) only
         print(">>> SMART ROUTER: IB rejected → routing to E*TRADE")
         etrade_price, etrade_shares = ib_tiers[0]
         etrade_success, etrade_result = place_etrade_order(symbol, etrade_shares, etrade_price)
+
+        # ---- LOG: the E*TRADE fallback order (with why IB failed) ----
+        ib_reason = result_holder.get("error") or "; ".join(result_holder.get("errors") or []) or "IB rejected"
+        order_log.log_order(
+            symbol=symbol, action=action, last_close=last_close,
+            route="E*TRADE" if etrade_success else "NONE", broker="ETRADE", tier=1,
+            order_price=etrade_price, shares=etrade_shares,
+            status="accepted" if etrade_success else "failed",
+            order_id=extract_etrade_order_id(etrade_result) if etrade_success else None,
+            error=("IB: " + ib_reason) if etrade_success
+                  else ("IB: " + ib_reason + " | E*TRADE: " + str(etrade_result)[:500])
+        )
 
         orders = [{
             "broker": "ETRADE",
@@ -459,6 +499,7 @@ def place_order():
 # ==========================================================
 
 if __name__ == '__main__':
+    order_log.init_db()   # create pink_orders.db / table if missing
     app.run(
         host='0.0.0.0',
         port=5000,
