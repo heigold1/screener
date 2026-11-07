@@ -1336,7 +1336,7 @@ function processOHLCQueue() {
 // stockanalysis.com 
 // corporateActionsStocks
 
-const corporateActionsStocks=["LGMK", "BUUU", "LXP", 
+	const corporateActionsStocks=["BUUU", "LGMK", "LXP", 
 
 
 
@@ -1360,7 +1360,7 @@ const corporateActionsStocks=["LGMK", "BUUU", "LXP",
 
 // Lockup expirations: 
 
-	"MOBI", "ODTX", "OTAI", 
+
 
 
 
@@ -2022,7 +2022,7 @@ const corporateActionsStocks=["LGMK", "BUUU", "LXP",
 			</div>
 			<br>
 			<div>
-				Penny: <input id="pink-penny" type="text" name="fname" value="10"  style="width: 35px; font-size: 18px"><br>
+				Penny: <input id="pink-penny" type="text" name="fname" value="25"  style="width: 35px; font-size: 18px"><br>
   				$1.00: <input id="pink-dollar" type="text" name="lname" value="25" style="width: 35px; font-size: 18px">
 			</div>
 		</div>
@@ -2032,8 +2032,8 @@ const corporateActionsStocks=["LGMK", "BUUU", "LXP",
 			</div>
 			<br>
 			<div>
-				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="18" style="width: 35px; font-size: 18px"><br>
-  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="11" style="width: 35px; font-size: 18px">
+				Penny: <input id="nas-nyse-penny" type="text" name="fname" value="21" style="width: 35px; font-size: 18px"><br>
+  				$1.00: <input id="nas-nyse-dollar" type="text" name="lname" value="21" style="width: 35px; font-size: 18px">
 			</div>
 
 		</div>
